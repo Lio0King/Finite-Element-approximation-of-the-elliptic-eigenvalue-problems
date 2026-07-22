@@ -13,6 +13,7 @@
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 
+\jot = 0.5em  % Increases the default spacing between all aligned math lines
 
 \begin{document}
 
@@ -23,14 +24,14 @@
 \section{Introduction}
 In modern science to solve complex problems various simulations based on mathematical models are used. By doing so, researchers are able to quickly test hypotheses, change parameters and solve equations that are too complex or impossible to physically recreate. One of these mathematical tools is Finite Element Method (FEM) that is used to solve differntial equations.
 
-Differential equations are widely used for predictions models and simulations of the physical phenomenas. However, the closer they describe the reality, the more complex they become, therefore scientists reduce the number variables to the be left with the most useful ones. But, even reduced system can be too complex to solve it analytically, that is the reason why numerical analysis comes in. it allows to design and implememt an algorithms to find approximate but highly accurate numeric solutions. 
+Many physical systems are governed by partial differential equations whose analytical solutions are either extremely difficult or impossible to obtain, that is the reason why numerical analysis comes in. It allows to design and implememt an algorithms to find approximate but highly accurate numeric solutions. 
 
 So, to solve the elliptic partial differential problems we will use the numerical method which finds the solutions accurately, however still has the error, so in this project the finite element approximation will be explored and will be checked how accurately it gives the solution and how quickly the solution goes to the desirable value (convergence analysis) by comparing with the known previously obtained results.
-
+In this project 2 important eigenproblems will be explored: Laplace and \text{Schr\"{o}dinger}.
 \section{Mathematical Background}
 
 \subsection{Elliptic partial differential equations}
-One of the branches of differential equations is elliptic differential equation, which has the general form:
+One of the branches of differenial equations is elliptic differential equation, which has the general form:
 \begin{equation}
 A*u_{xx} + B*u_{xy} + C*u_{yy} + D*u_{x} + E*u_{y} + F*u = G (1)
 \end{equation}
@@ -45,13 +46,73 @@ Elliptic equations differ from hyperbolic and parabolic equations because they d
 
 
 \subsection{Eigenvalue problems}
+Mathematically, an eigenvalue problem is an equation in which a linear transformation applied to a specific vector - eigenvector, results in the exact same vector scaled by a constant multiplier - eigenvalue. The basic eigenvalue problem for a linear transformation A acting on a nonzero vector x is defined as:
+\begin{equation}
+A\vec{x} = \lambda\vec{x}
+\end{equation}
+where $A$ is an $n \times n$ matrix or linear operator which is known; $x$ is an eigenvector - a nonzero column vector that represents the main direction of the system, which need to be found; $\lambda$ is an eigenvalue - a scalar that needs to be found.
+The main idea is that when the transformation A operates on x, the eigenvector does not change its direction, it only stretches, compresses, or flips.
+\subsection{Generalised matrix eigenvalue problem}
+Another variation of the eigenvalue problem is the $generalised eigenvalue problem$. It can be represented in two forms:
 
+- the vector form:
+\begin{equation}
+A\vec{x_{i}} = \lambda_{i} * B * \vec{x_{i}}
+\end{equation}
+- the matrix form:
+\begin{equation}
+AX = BXD
+\end{equation}
+Where $X$ is the column matrix of the eigenvectors; $D$ is a diagonal matrix of eigenvalues; $B$ acts as a weighting matrix or a matrix tensor that defines a new inner product for the vector space. 
+In other words, it changes the geometry of the problem by measuring vectors not in the standard Euclidean space, but relative to the properties of $B$ itself [1]. It usually represents a specific geometric or physical constraint [2]. 
+In this project the generalised eigenvalue problem was chosen because it is better when comparing systems with dual constraints (physical forces and their underlying mass). In addition, because both (in the Laplace case) matrices are symmetric, the solvers preserve these structural properties, guaranteeing real eigenvalues. Also, solving generalised problem avoids explicitly forming $B^{-1}A$, preserving symmetry and improving numerical accuracy, which would be useful for both Laplace and \text{Schr\"{o}dinger} problems.
 \subsection{Weak formulation}
-- weak formulation also known as Galerkin method, is an approach of multiplying the problem by an arbitrary test function that will disappear at the end
-- using integration by parts (for 1D) or Green's formula (for 2D) will obtain the weak form
+Weak formulation is an approach of multiplying the differential equation by an arbitrary test function that will disappear at the end. More precisely it is an integral representation that relaxes the strict smoothness required for the $strong form$, therefore it requires the equation to be satisfied in an average or integral sense [4].
+The way from the strong form to weak requires following steps:
+
+Firstly, write the strong form (we will take Poisson equation on the interval I with Dirichlet boundary condition as an example):
+\begin{equation}
+    \begin{cases}
+        -u''(x) = f(x), where x \in I = [0, L] \\
+        u(0) = u(L) = 0
+    \end{cases}
+\end{equation}
+
+Then, multiply by a test function (rewrite as variational formulation):
+\begin{equation}
+-u''(x) * v(x) = f(x) * v(x)
+\end{equation}
+
+Where $v(x)$ is a continuous test function which is assumed to vanish at end points.
+Finally, integrate over the domain using integration by parts (in our case the domain is the interval I = [0, L]):
+\begin{equation}
+\begin{aligned}     
+    \int_{0}^{L}f(x) \cdot v(x) \, dx 
+        &= \int_{0}^{L}-u''(x) \cdot v(x) \, dx \\ 
+        &= \left[ -v(x) \cdot u'(x) \right]\Big|_{0}^{L} \\ 
+        &\quad + \int_{0}^{L}u'(x) \cdot v'(x) \, dx \\ 
+        &= \int_{0}^{L}u'(x) \cdot v'(x) \, dx \\ 
+        &\quad - u'(L) \cdot v(L) + u'(0) \cdot v(0) \\
+\end{aligned}
+\end{equation}
+
+Since $v(0) = v(L) = 0$ by Dirichlet BCs:
+\begin{equation}
+\int_{0}^{L}f(x) \cdot v(x) \, dx = \int_{0}^{L}u'(x) \cdot v'(x) \, dx
+\end{equation}
+
+The form obtained in (9) is called a weak form in 1D. For 2D and higher dimentions integration by parts follows the divergence theorem is used, in particular the Green's Theorem presented in (10):
+\begin{equation}
+\int_{\Omega}-\Delta{u}v \, dx = \int_{\Omega}\nabla{u} \dot \nabla{v} \, dx - \int_{\partial{\Omega}} n \dot \nabla{u}v \, ds 
+\end{equation}
+
+We are going from strong form to the weak one because weak form allows us to solve problems where derivatives might be discontinuous or non-existent and it handles the boundary conditions naturally. In addition to this, it reduces the order of derivatives, which can simplify further computations.
 
 
 \subsection{Bilinear forms}
+
+\subsection{Sobolev spaces}
+
 
 \subsection{Galerkin approximation}
 
@@ -64,7 +125,7 @@ Local Approximation: While the exact physical behavior of a structure is continu
 Continuity: Shape functions, ensure that the solution remains continuous across the boundaries between adjacent elements.
 
 
-\subsection{Generalised matrix eigenvalue problem}
+
 
 \section{Finite Element Method (FEM)}
 
@@ -194,6 +255,10 @@ the errors were converging quadratically which can be concluded by the graphs of
 
 
 \begin{thebibliography}{00}
+[2] https://www.sciencedirect.com/topics/engineering/generalized-eigenvalue
+[1] https://arxiv.org/pdf/1903.11240
+[3] https://www.researchgate.net/publication/235012188_An_Algorithm_for_the_Generalized_Matrix_Eigenvalue_Problem_Ax_Lambda_Bx
+[4] https://www.researchgate.net/post/What_is_the_difference_between_strong_form_and_weak_form
 \bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
 \bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
 \bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
