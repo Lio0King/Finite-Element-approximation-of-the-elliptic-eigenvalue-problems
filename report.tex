@@ -27,7 +27,7 @@ In modern science to solve complex problems various simulations based on mathema
 Many physical systems are governed by partial differential equations whose analytical solutions are either extremely difficult or impossible to obtain, that is the reason why numerical analysis comes in. It allows to design and implememt an algorithms to find approximate but highly accurate numeric solutions. 
 
 So, to solve the elliptic partial differential problems we will use the numerical method which finds the solutions accurately, however still has the error, so in this project the finite element approximation will be explored and will be checked how accurately it gives the solution and how quickly the solution goes to the desirable value (convergence analysis) by comparing with the known previously obtained results.
-In this project 2 important eigenproblems will be explored: Laplace and \text{Schr\"{o}dinger}.
+In this project 2 important eigenproblems will be explored: Laplace and the Time-Independent \text{Schr\"{o}dinger}.
 \section{Mathematical Background}
 
 \subsection{Elliptic partial differential equations}
@@ -98,20 +98,54 @@ Finally, integrate over the domain using integration by parts (in our case the d
 
 Since $v(0) = v(L) = 0$ by Dirichlet BCs:
 \begin{equation}
-\int_{0}^{L}f(x) \cdot v(x) \, dx = \int_{0}^{L}u'(x) \cdot v'(x) \, dx
+    \int_{0}^{L}f(x) \cdot v(x) \, dx = \int_{0}^{L}u'(x) \cdot v'(x) \, dx
 \end{equation}
 
 The form obtained in (9) is called a weak form in 1D. For 2D and higher dimentions integration by parts follows the divergence theorem is used, in particular the Green's Theorem presented in (10):
 \begin{equation}
-\int_{\Omega}-\Delta{u}v \, dx = \int_{\Omega}\nabla{u} \dot \nabla{v} \, dx - \int_{\partial{\Omega}} n \dot \nabla{u}v \, ds 
+    \int_{\Omega}-\Delta{u}v \, dx = \int_{\Omega}\nabla{u} \dot \nabla{v} \, dx - \int_{\partial{\Omega}} n \dot \nabla{u}v \, ds 
 \end{equation}
 
 We are going from strong form to the weak one because weak form allows us to solve problems where derivatives might be discontinuous or non-existent and it handles the boundary conditions naturally. In addition to this, it reduces the order of derivatives, which can simplify further computations.
 
 
 \subsection{Bilinear forms}
+In partial differential equations, a bilinear form is a mapping function $B: V \times V \rightarrow \mathbb{R}$ that takes two functions from a vector space and returns a scalar. In the weak formulation of a PDE, it represents the differential operator and boundary conditions. It is also linear in both arguments independently [6]. This is illustrated in (10).
 
-\subsection{Sobolev spaces}
+Linearity in the first argument:
+\begin{equation}
+\begin{aligned}
+    B(u + \alpha v, w) = B(u, w) + \alpha B(v, w) \\
+    \text{Linearity in the second argument:} \\
+    B(u, v + \alpha w) = B(u, v) + \alpha B(u, w)
+\end{aligned}
+\end{equation}
+Therefore, Poisson equation (9) can be transformed into the abstract variational form - find $u \in V$ such that it will satisfy the (11).
+\begin{equation}
+\begin{aligned}
+    B(u, v) = L(v) \forall v \in V, where \\
+    B(u, v) = \int_{\Omega}\nabla{u} \dot \nabla{v} \, dx \\
+    L(v) = \int_{\Omega}-\Delta{u}v \, dx
+\end{aligned}
+\end{equation}
+
+
+\subsection{Sobolev and Hilbert spaces}
+The main challenge for the numerical analysis is accepting that real world problems, discrete data sets and constraints fundamentally lack smoothness. Of course it is possible to force artificial smoothness, but it will lead to inefficiency, information loss or incorrect interpretation. That is why, in numerical methods scientists do not use functions from $C^{n}(\Omega)$ space, becuase requiring continuous derivatives is too restrictive for approximate solutions. That is where the Sobolev and Hilbert spaces come in.
+
+Finite Element Method (FEM) uses piecewise-defined basis functions (this topic would be discussed later). Within each element the function might be perfectly smooth, but across element boundaries, the derivative is discontinuous. Therefor, we need to use the space that will allow us to have discontinuous derivatives, which is Sobolev space, however to be able to introduce the Sobolev space fully we need first to introduce the Lebesque function space. 
+
+Lebesque function space is a space of "p-th power integrable" functions which is defined by (12). 
+\begin{equation}
+f \in L^p if \int |f|^p < \infty 
+\end{equation}
+And its norm or length is defined in (13):
+\begin{equation}
+||f||_{L^p} = \Bigg(\int_{\Omega} |f|^p \, dx \Bigg)^{\frac{1}{p}}
+\end{equation}
+When $p=2$, $L^{2}(\Omega)$ space possesses an inner product, allowing us to define angles, distances and perform orthogonal projections.
+The Sobolev space, which is typically denoted as $W^{k, p}(\Omega)$, consists of all functions in $L^{p}(\Omega)$ whose weak (or distributional) derivatives up to order $k$ also belong to $L^{p}(\Omega)$. We are interested in Sobolev spaces because of its special case $H^{k}(\Omega)$ also known as Hilbert space, which uses the $L^2$ norm. For solving PDEs we are going to use $H^{1}(\Omega)$ since it only requires first order derivatives which we have according to (9). Since we know that we have the Dirichlet boundary condition we can introduce $H_{0}^{1}(\Omega)$ that represents functions in the space $H^{1}(\Omega)$ whose boundary values are zero.
+But why did we need all these spaces? The answer is that for the FEM if our functions will belong to the $H^1$ it requires the derivatives to be square integrable, but not continuous, therefore we will be able to integrate (9) over our domain full of piecewise polynomials. 
 
 
 \subsection{Galerkin approximation}
@@ -259,6 +293,8 @@ the errors were converging quadratically which can be concluded by the graphs of
 [1] https://arxiv.org/pdf/1903.11240
 [3] https://www.researchgate.net/publication/235012188_An_Algorithm_for_the_Generalized_Matrix_Eigenvalue_Problem_Ax_Lambda_Bx
 [4] https://www.researchgate.net/post/What_is_the_difference_between_strong_form_and_weak_form
+[5] https://www.geeksforgeeks.org/engineering-mathematics/bilinear-form/
+[6] https://www.scribd.com/document/931572146/Bilinear-Form-Linear-Algebra-Notes
 \bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
 \bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
 \bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
