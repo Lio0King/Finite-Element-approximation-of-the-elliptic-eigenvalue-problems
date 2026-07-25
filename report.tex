@@ -29,6 +29,7 @@ In modern science to solve complex problems various simulations based on mathema
 Many physical systems are governed by partial differential equations whose analytical solutions are either extremely difficult or impossible to obtain, that is the reason why numerical analysis comes in. It allows to design and implememt an algorithms to find approximate but highly accurate numeric solutions. 
 
 So, to solve the elliptic partial differential problems we will use the numerical method which finds the solutions accurately, however still has the error, so in this project the finite element approximation will be explored and will be checked how accurately it gives the solution and how quickly the solution goes to the desirable value (convergence analysis) by comparing with the known previously obtained results.
+
 In this project 2 important eigenproblems will be explored: Laplace and the Time-Independent \text{Schr\"{o}dinger}.
 
 
@@ -250,32 +251,27 @@ This whole process is called finite element discretisation. This process is what
 The next chapter will describe what are the basis functions that we use to break the problem from infinite-dimentions to finite, how they are defined and how to use them to solve elliptic PDEs.
 
 
+
 \section{Finite Element Method (FEM)}
 
+Finite Element Method is a tool for numerical solution of two-point boundary value problem. The basic idea is to divide the domain into elements (in our case triangles) and look for a polynomial approximations to the unknown functions on each triangle, in other words we approximate locally - while the exact physical behavior of a structure is continuous, the solution within each individual element is approximated using simple mathematical functions, typically linear or quadratic polynomials. After that we rewrite the boundary value problem as a variational equation, and then seek a solution approximation to this equation from the space of continuous piecewise linears [10].
 
-Local Approximation: While the exact physical behavior of a structure is continuous, the solution within each individual element is approximated using simple mathematical functions, typically linear or quadratic polynomials.
+This method has few very important advantages. First of all, it can easily deal with complex geometries and higher order approximations of the solutions. Also, it works for many types of physics like structural loads, heat transfer, and fluid flow. Moreover, it can be easily visualised, which helps with finding the vulnerabilities in design[11].
 
-Finite element method a general tool for numerical solution of two-point boundary value problems
-- it can easily deal with complex geometries and higher order approximations of the solutions
-- basic idea is to divide the domain into elements (in our case triangles) and look for a polynomial approximations to the unknown functions on each triangle
-- rewrite the boundary value problem as a variational equation and then seek a solution approximation of this equation from the space of continuous piecewise polynomials
+In this project we will use 2D Finite Element Approximation to find solutions of the Laplace eigenproblem and the Time-Independent \text{Schr\"{o}dinger} eigenproblem on the unit square domain.
 
-problem 
 
 \subsection{Mesh}
+In order to divide our domain into smaller pieces we first need to introduce the pattern of how we are going to divide it.
 
+\subsubsection{Triangulations}
+If we want to divide the interval in 1D we will use intervals, that can be either equal to each other or be differnt length. In 2D idea is the same, but instead of small line intervals we need to add one more point to be able to move from 1D line to 2D surface which is a triangle. The domain divided into triangles is called triangulation.
+
+Now it is time to give formal definition from [10].
+
+Let $\Omega \subset \mathbb{R}^2$ be a bounded two-dimensional domain with smooth or polygonal boundary $\partial\Omega$. A triangulation, or a mash $\mathfrak{K}$ of $\Omega$ is a set $\{K\}$ of triangles $K$, such that $\Omega = \bigcup_{K \in mathfrak{K}}K$, and such that the intersection of two triangles is either an edge, a corner, or empty. No corner triangle is allowed to be hanging, that is lie on the edge of another triangle. The corners of the triangles are called the nodes.
 
 \subsection{Reference element}
-
-
-\subsection{Basis (shape) functions}
-
-
-\subsection{Finite element approximation}
-- the aim is to approximate the unknown function by a sum 
-$u(x) = \sum_{i=0}^N c_i*\psi_i(x)$,
-where $\psi_i$ are prescribed functions and $c_0,\dots, c_N$ are unknown coefficients to be determined.
-
 
 \subsection{Piecewise polynomial spaces}
 
@@ -288,6 +284,11 @@ where $\psi_i$ are prescribed functions and $c_0,\dots, c_N$ are unknown coeffic
 \subsubsection{P2 Elements}
 - p2 elements are the continuous piecewise polynomials of degree 2, therefore their gradients will be linear
 - give better approximation $O(h^4)$ in other words will give us more precise approximation with less mesh refinement
+
+
+
+\subsection{Basis (shape) functions}
+
 
 \subsection{Finite element approximation}
 - the aim is to approximate the unknown function by a sum 
@@ -394,6 +395,8 @@ the errors were converging quadratically which can be concluded by the graphs of
 [7] https://mathworld.wolfram.com/Lax-MilgramTheorem.html
 [8] https://math.stackexchange.com/questions/4668104/determining-the-bilinear-form-a-is-bounded
 [9] https://www.scribd.com/document/314330469/Compare-Ritz-to-Galerkin
+[10] Larson The Finite Element Method: Theory, Implementation,and Applications
+[11] https://innovationatwork.ieee.org/the-advantages-of-fem/
 \bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
 \bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
 \bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
