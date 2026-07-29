@@ -24,39 +24,48 @@
 
 \maketitle
 \section{Introduction}
-In modern science to solve complex problems various simulations based on mathematical models are used. By doing so, researchers are able to quickly test hypotheses, change parameters and solve equations that are too complex or impossible to physically recreate. One of these mathematical tools is Finite Element Method (FEM) that is used to solve differntial equations.
+In modern science to solve complex problems various simulations based on mathematical models are used.
+By doing so, researchers are able to quickly test hypotheses, change parameters and solve equations that are too complex or impossible to physically recreate. 
+One of these mathematical tools is Finite Element Method (FEM) that is used to solve differntial equations.
 
-Many physical systems are governed by partial differential equations whose analytical solutions are either extremely difficult or impossible to obtain, that is the reason why numerical analysis comes in. It allows to design and implememt an algorithms to find approximate but highly accurate numeric solutions. 
+Many physical systems are governed by partial differential equations whose analytical solutions are either extremely difficult or impossible to obtain, that is the reason why numerical analysis comes in.
+It allows to design and implememt an algorithms to find approximate but highly accurate numeric solutions. 
 
-So, to solve the elliptic partial differential problems we will use the numerical method which finds the solutions accurately, however still has the error, so in this project the finite element approximation will be explored and will be checked how accurately it gives the solution and how quickly the solution goes to the desirable value (convergence analysis) by comparing with the known previously obtained results.
+So, to solve the elliptic partial differential problems we will use the numerical method which finds the solutions accurately, however still has the error, 
+so in this project the finite element approximation will be explored and will be checked how accurately it gives the solution and how quickly the solution goes to the desirable value (convergence analysis) by comparing with the known previously obtained results.
 
-In this project 2 important eigenproblems will be explored: Laplace and the Time-Independent \text{Schr\"{o}dinger}.
+In addition 2 important eigenproblems will be explored: Laplace and the Time-Independent \text{Schr\"{o}dinger}.
 
 
 
 \section{Mathematical Background}
-
+In this section there would be given a brief introduction to the mathematical knowledge required to understand this project.
 
 \subsection{Elliptic partial differential equations}
 One of the branches of differenial equations is elliptic differential equation, which has the general form:
 \begin{equation}
-A*u_{xx} + B*u_{xy} + C*u_{yy} + D*u_{x} + E*u_{y} + F*u = G (1)
+A\cdot u_{xx} + B\cdot u_{xy} + C\cdot u_{yy} + D\cdot u_{x} + E\cdot u_{y} + F\cdot u = G
+\label{eq:elliptic PDE}
 \end{equation}
 
-The equation (1) is classified as elliptic if the discriminant is strictly negative:
+The equation \ref{eq:elliptic PDE} is classified as elliptic if the discriminant is strictly negative:
 \begin{equation}
 B^2 - 4*A*C < 0
 \end{equation}
 
-Elliptic equations differ from hyperbolic and parabolic equations because they describe the steady state, time-independent phenomena. Moreover, their solutions depend only on spatial variables and require boundary conditions rather than initial conditions, the most common are Dirichlet (specifying the value on the boundary) and Neumann (specifying the derivative or the flux at the boundary). In addition to this, changes at any point of the domain influences the solution, reflecting the global nature of elliptic problems.
+Elliptic equations differ from hyperbolic and parabolic equations because they describe the steady state, time-independent phenomena. 
+Moreover, their solutions depend only on spatial variables and require boundary conditions rather than initial conditions, the most common are Dirichlet (specifying the value on the boundary) and Neumann (specifying the derivative or the flux at the boundary). 
+In addition to this, changes at any point of the domain influences the solution, reflecting the global nature of elliptic problems.
 
 
 \subsection{Eigenvalue problems}
-Mathematically, an eigenvalue problem is an equation in which a linear transformation applied to a specific vector - eigenvector, results in the exact same vector scaled by a constant multiplier - eigenvalue. The basic eigenvalue problem for a linear transformation A acting on a nonzero vector x is defined as:
+Mathematically, an eigenvalue problem is an equation in which a linear transformation applied to a specific vector - eigenvector, results in the exact same vector scaled by a constant multiplier - eigenvalue. 
+The basic eigenvalue problem for a linear transformation A acting on a nonzero vector x is defined as:
 \begin{equation}
 A\vec{x} = \lambda\vec{x}
 \end{equation}
 where $A$ is an $n \times n$ matrix or linear operator which is known; $x$ is an eigenvector - a nonzero column vector that represents the main direction of the system, which need to be found; $\lambda$ is an eigenvalue - a scalar that needs to be found.
+
 The main idea is that when the transformation A operates on x, the eigenvector does not change its direction, it only stretches, compresses, or flips.
 
 
@@ -65,7 +74,7 @@ Another variation of the eigenvalue problem is the $generalised eigenvalue probl
 
 - the vector form:
 \begin{equation}
-A\vec{x_{i}} = \lambda_{i} * B * \vec{x_{i}}
+A\vec{x_{i}} = \lambda_{i} \cdot B \cdot \vec{x_{i}}
 \end{equation}
 - the matrix form:
 \begin{equation}
@@ -75,11 +84,13 @@ Where $X$ is the column matrix of the eigenvectors; $D$ is a diagonal matrix of 
 
 In other words, it changes the geometry of the problem by measuring vectors not in the standard Euclidean space, but relative to the properties of $B$ itself [1]. It usually represents a specific geometric or physical constraint [2]. 
 
-In this project the generalised eigenvalue problem was chosen because it is better when comparing systems with dual constraints (physical forces and their underlying mass). In addition, because both (in the Laplace case) matrices are symmetric, the solvers preserve these structural properties, guaranteeing real eigenvalues. Also, solving generalised problem avoids explicitly forming $B^{-1}A$, preserving symmetry and improving numerical accuracy, which would be useful for both Laplace and \text{Schr\"{o}dinger} problems.
+In this project the generalised eigenvalue problem was chosen because it is better when comparing systems with dual constraints (physical forces and their underlying mass). 
+In addition, because both (in the Laplace case) matrices are symmetric, the solvers preserve these structural properties, guaranteeing real eigenvalues. Also, solving generalised problem avoids explicitly forming $B^{-1}A$, preserving symmetry and improving numerical accuracy, which would be useful for both Laplace and \text{Schr\"{o}dinger} problems.
 
 
 \subsection{Weak formulation}
-Weak formulation is an approach of multiplying the differential equation by an arbitrary test function that will disappear at the end. More precisely it is an integral representation that relaxes the strict smoothness required for the $strong form$, therefore it requires the equation to be satisfied in an average or integral sense [4].
+Weak formulation is an approach of multiplying the differential equation by an arbitrary test function that will disappear at the end. 
+More precisely it is an integral representation that relaxes the strict smoothness required for the $strong form$, therefore it requires the equation to be satisfied in an average or integral sense [4].
 
 The way from the strong form to weak requires following steps:
 
@@ -88,6 +99,7 @@ Firstly, write the strong form (we will take Poisson equation on the interval I 
     \begin{cases}
         -u''(x) = f(x), where x \in I = [0, L] \\
         u(0) = u(L) = 0
+        \label{eq:Poisson}
     \end{cases}
 \end{equation}
 Then, multiply by a test function (rewrite as variational formulation):
@@ -112,18 +124,21 @@ Finally, integrate over the domain using integration by parts (in our case the d
 Since $v(0) = v(L) = 0$ by Dirichlet BCs:
 \begin{equation}
     \int_{0}^{L}f(x) \cdot v(x) \, dx = \int_{0}^{L}u'(x) \cdot v'(x) \, dx
+    \label{eq:weak form}
 \end{equation}
 
-The form obtained in (9) is called a weak form in 1D. For 2D and higher dimentions integration by parts follows the divergence theorem is used, in particular the Green's Theorem presented in (10):
+The form obtained in \ref{eq:weak form} is called a weak form in 1D. For 2D and higher dimentions integration by parts follows the divergence theorem is used, in particular the Green's Theorem presented in \ref{eq:Green theorem}:
 \begin{equation}
-    \int_{\Omega}-\Delta{u}v \, dx = \int_{\Omega}\nabla{u} \dot \nabla{v} \, dx - \int_{\partial{\Omega}} n \dot \nabla{u}v \, ds 
+    \int_{\Omega}-\Delta{u}v \, dx = \int_{\Omega}\nabla{u} \dot \nabla{v} \, dx - \int_{\partial{\Omega}} n \dot \nabla{u}v \, ds
+    \label{eq:Green theorem}
 \end{equation}
 
 We are going from strong form to the weak one because weak form allows us to solve problems where derivatives might be discontinuous or non-existent and it handles the boundary conditions naturally. In addition to this, it reduces the order of derivatives, which can simplify further computations.
 
 
 \subsection{Bilinear forms}
-In partial differential equations, a bilinear form is a mapping function $B: V \times V \rightarrow \mathbb{R}$ that takes two functions from a vector space and returns a scalar. In the weak formulation of a PDE, it represents the differential operator and boundary conditions. It is also linear in both arguments independently [6]. This is illustrated in (11).
+In partial differential equations, a bilinear form is a mapping function $B: V \times V \rightarrow \mathbb{R}$ that takes two functions from a vector space and returns a scalar. 
+In the weak formulation of a PDE, it represents the differential operator and boundary conditions. It is also linear in both arguments independently [6]. This is illustrated in \ref{eq:bilinear form}.
 
 Linearity in the first argument:
 \begin{equation}
@@ -131,59 +146,72 @@ Linearity in the first argument:
     B(u + \alpha v, w) = B(u, w) + \alpha B(v, w) \\
     \text{Linearity in the second argument:} \\
     B(u, v + \alpha w) = B(u, v) + \alpha B(u, w)
+    \label{eq:bilinear form}
 \end{aligned}
 \end{equation}
-Therefore, the left hand side of weak formulation of the Poisson equation (9) can be transformed into the abstract variational form - find $u \in V$ such that it will satisfy the (12).
+Therefore, the left hand side of weak formulation of the Poisson equation \ref{eq:weak form} can be transformed into the abstract variational form - find $u \in V$ such that it will satisfy the \ref{eq:bilinear Poisson}.
 \begin{equation}
 \begin{aligned}
     B(u, v) &= L(v) \, \forall v \in V, where \\
     B(u, v) &= \int_{\Omega}\nabla{u} \dot \nabla{v} \, dx \\
     L(v) &= \int_{\Omega}fv \, dx
+    \label{eq:bilinear Poisson}
 \end{aligned}
 \end{equation}
 
 
 \subsection{Sobolev and Hilbert spaces}
-The main challenge for the numerical analysis is accepting that real world problems, discrete data sets and constraints fundamentally lack smoothness. Of course it is possible to force artificial smoothness, but it will lead to inefficiency, information loss or incorrect interpretation. That is why, in numerical methods scientists do not use functions from $C^{n}(\Omega)$ space, becuase requiring continuous derivatives is too restrictive for approximate solutions. That is where the Sobolev and Hilbert spaces come in.
+The main challenge for the numerical analysis is accepting that real world problems, discrete data sets and constraints fundamentally lack smoothness. 
+Of course it is possible to force artificial smoothness, but it will lead to inefficiency, information loss or incorrect interpretation. 
+That is why, in numerical methods scientists do not use functions from $C^{n}(\Omega)$ space, because requiring continuous derivatives is too restrictive for approximate solutions. 
+That is where the Sobolev and Hilbert spaces come in.
 
-Finite Element Method (FEM) uses piecewise-defined basis functions (this topic would be discussed later). Within each element the function might be perfectly smooth, but across element boundaries, the derivative is discontinuous. Therefore, we need to use the space that will allow us to have discontinuous derivatives, which is Sobolev space, however to be able to introduce the Sobolev space fully we need first to introduce the Lebesque function space. 
+Finite Element Method (FEM) uses piecewise-defined basis functions (this topic would be discussed later). Within each element the function might be perfectly smooth, but across element boundaries, the derivative is discontinuous. 
+Therefore, we need to use the space that will allow us to have discontinuous derivatives, which is Sobolev space, however to be able to introduce the Sobolev space fully we need first to introduce the Lebesque function space. 
 
-Lebesque function space is a space of "p-th power integrable" functions which are defined by (13). 
+Lebesque function space is a space of "p-th power integrable" functions which are defined by \ref{eq:Lebesque space}. 
 \begin{equation}
-    f \in L^p if \int |f|^p < \infty 
+    f \in L^p if \int |f|^p < \infty
+    \label{eq:Lebesque space}
 \end{equation}
-And their norms or lengths are defined in (14):
+And their norms or lengths are defined in \ref{eq:Lebesque norm}:
 \begin{equation}
     ||f||_{L^p} = \Bigg(\int_{\Omega} |f|^p \, dx \Bigg)^{\frac{1}{p}}
+    \label{eq:Lebesque norm}
 \end{equation}
 
 When $p=2$, $L^{2}(\Omega)$ space possesses an inner product, allowing us to define angles, distances and perform orthogonal projections.
 
-The Sobolev space, which is typically denoted as $W^{k, p}(\Omega)$, consists of all functions in $L^{p}(\Omega)$ whose weak (or distributional) derivatives up to order $k$ also belong to $L^{p}(\Omega)$. We are interested in Sobolev spaces because of its special case $H^{k}(\Omega)$ also known as Hilbert space, which uses the $L^2$ norm. For solving PDEs we are going to use $H^{1}(\Omega)$ since it only requires first order derivatives which we have according to (9). Since we know that we have the Dirichlet boundary condition we can introduce $H_{0}^{1}(\Omega)$ that represents functions in the space $H^{1}(\Omega)$ whose boundary values are zero.
+The Sobolev space, which is typically denoted as $W^{k, p}(\Omega)$, consists of all functions in $L^{p}(\Omega)$ whose weak (or distributional) derivatives up to order $k$ also belong to $L^{p}(\Omega)$. 
+We are interested in Sobolev spaces because of its special case $H^{k}(\Omega)$ also known as Hilbert space, which uses the $L^2$ norm. For solving PDEs we are going to use $H^{1}(\Omega)$ since it only requires first order derivatives which we have according to \ref{eq:weak form}. 
+Since we know that we have the Dirichlet boundary condition we can introduce $H_{0}^{1}(\Omega)$ that represents functions in the space $H^{1}(\Omega)$ whose boundary values are zero.
 
-But why did we need all these spaces? The answer is that for the FEM if our functions will belong to the $H^1$ it requires the derivatives to be square integrable, but not continuous, therefore we will be able to integrate (9) over our domain full of piecewise polynomials. 
+But why did we need all these spaces? The answer is that for the FEM if our functions will belong to the $H^1$ it requires the derivatives to be square integrable, but not continuous, therefore we will be able to integrate \ref{eq:weak form} over our domain full of piecewise polynomials. 
 
 
 \subsection{Existence of the solution}
-Two of the most important questions in mathematics are the questions of existence and uniqueness. So what we want to ask while solving the PDE using FEM is why do we have a solution and is this solution unique. The answer for these questions is the Lax-Miligram theorem.
+Two of the most important questions in mathematics are the questions of existence and uniqueness. So what we want to ask while solving the PDE using FEM is why do we have a solution and is this solution unique. The answer for these questions is the Lax-Milgram theorem.
 
-According to Lax-Miligram theorem: for every bounded linear functional $f$ on $H$, there exists a unique $x_{f} \in H$ such that (15) is true. 
+According to Lax-Milgram theorem: for every bounded linear functional $f$ on $H$, there exists a unique $x_{f} \in H$ such that \ref{eq:Milgram} is true. 
 \begin{equation}
-f(x) = \phi(x, x_{f}) \forall x \in H
+    f(x) = \phi(x, x_{f}) \forall x \in H
+    \label{eq:Milgram}
 \end{equation}
 
 Where $\phi(x, x_f)$ is a bounded coercive bilinear form of a Hilbert space [7].
 
-It is worth mentioning that Lax-Miligram theorem follows as a corollary to the Stampacchia theorems that states: any function $f \in H$ necessearily corresponds to a unique function $u \in H$ for which the inequality (16) is satisfied for all functions $v \in H$.
+It is worth mentioning that Lax-Milgram theorem follows as a corollary to the Stampacchia theorems that states: any function $f \in H$ necessearily corresponds to a unique function $u \in H$ for which the inequality \ref{eq:Stampacchia inequality} is satisfied for all functions $v \in H$.
 \begin{equation}
     \phi(u, v - u) \geq \langle f, v - u \rangle_H
+    \label{eq:Stampacchia inequality}
 \end{equation}
-Where $\langle f, v - u \rangle_H$ is an inner product, which in Hilbert spaces defined by (17).
+Where $\langle f, v - u \rangle_H$ is an inner product, which in Hilbert spaces defined by \ref{eq:inner product}.
 \begin{equation}
     \langle u, v \rangle_H^{1}(\Omega) = \int_{\Omega}(uv + \nabla u \dot \nabla v) \, dx
+    \label{eq:inner product}
 \end{equation}
 
-So using (12) we will have that $a(u, v)$ is a bilinear form and $L(v)$ is a linear functional. 
+So using \ref{eq:bilinear Poisson} we will have that $a(u, v)$ is a bilinear form and $L(v)$ is a linear functional. 
 
 Firstly, we need to say that $a(u, v)$ is bounded, in other words $|a(u, v)| \leq M{||u||}||v||$ (the proof can be found in [8]).
 
@@ -195,58 +223,68 @@ Therefore, by the Lax-Milgram Theorem these properties guaratee that a unique ex
 
 
 \subsection{The Rayleigh-Ritz/Galerkin approximation}
-The idea explored in this section is the core of the Finite Element Approximation (FEA). The solution of PDEs belongs to infinite-dimensional space, so our goal is to go from the infinite-dimentional space to finite-dimentional subspace. To do so we cn use one of two methods: Rayleigh-Ritz approximation or Galerkin approximation which will give the equivalent solution of the variational problem [9].
+The idea explored in this section is the core of the Finite Element Approximation (FEA). The solution of PDEs belongs to infinite-dimensional space, so our goal is to go from the infinite-dimentional space to finite-dimentional subspace. 
+To do so we cn use one of two methods: Rayleigh-Ritz approximation or Galerkin approximation which will give the equivalent solution of the variational problem [9].
 
-So, we will go through the Rayleigh-Ritz approximation process. We will look at the arbitrary problem $\lambda w = -\Delta w$, whose weak form can be expressed as in (18).
+So, we will go through the Rayleigh-Ritz approximation process. We will look at the arbitrary problem $\lambda w = -\Delta w$, whose weak form can be expressed as in \ref{eq:2D weak}.
 \begin{equation}
     \lambda \int_{\Omega}wv \, dx = - \int_{\Omega}\nabla{w} \dot \nabla{v} \, dx
+    \label{eq:2D weak}
 \end{equation}
 
-By definition of the weak form, the equation must hold for any arbitrary function $v$, therefore if it holds for every basis function defined by $\phi_j$ that spans the subspace, then it holds for any linear combination of them. So, we can rewrite (18) as it is shown in (19).
+By definition of the weak form, the equation must hold for any arbitrary function $v$, therefore if it holds for every basis function defined by $\phi_j$ that spans the subspace, then it holds for any linear combination of them. So, we can rewrite \ref{eq:2D weak} as it is shown in \ref{eq:arbitrary 2D weak form}.
 \begin{equation}
-     \lambda \int_{\Omega}w\phi_j \, dx = - \int_{\Omega}\nabla{w} \dot \nabla{\phi_j} \, dx
+    \lambda \int_{\Omega}w\phi_j \, dx = - \int_{\Omega}\nabla{w} \dot \nabla{\phi_j} \, dx
+    \label{eq:arbitrary 2D weak form}
 \end{equation}
 
-Recalling the definition of the inner product $\langle u, v \rangle = \int_{a}^{b}uv \, dx$ helps us to turn (19) into (20).
+Recalling the definition of the inner product $\langle u, v \rangle = \int_{a}^{b}uv \, dx$ helps us to turn \ref{eq:arbitrary 2D weak form} into \ref{eq:inner product 2D weak form}.
 \begin{equation}
     \lambda \langle w, \phi_j \rangle = \langle \nabla{w} \dot \nabla{\phi_j} \rangle
+    \label{eq:inner product 2D weak form}
 \end{equation}
 
-Let $w_{1}, \dots , w_{n}$ be $n$ arbitrary trial functions. Therefore, because we project our infinite-dimentional problem onto finite-dimensional subspace we can express our unknown function $w$ as the linear combination of our trial functions which is shown in (21).
+Let $w_{1}, \dots , w_{n}$ be $n$ arbitrary trial functions. Therefore, because we project our infinite-dimentional problem onto finite-dimensional subspace we can express our unknown function $w$ as the linear combination of our trial functions which is shown in \ref{eq:linear combination of trial functions}.
 \begin{equation}
     w = \sum^n_{k=1}c_k w_k
+    \label{eq:linear combination of trial functions}
 \end{equation}
 
-Substituting (21) into the (20) gives us (22).
+Substituting \ref{eq:linear combination of trial functions} into the \ref{eq:inner product 2D weak form} gives us \ref{eq:phi_i, phi_j weak form}.
 \begin{equation}
     \lambda \langle \sum^n_{k=1}c_k w_k, \phi_j \rangle = \langle \nabla \Bigg(\sum^n_{k=1}c_k w_k\Bigg) \dot \nabla{\phi_j} \rangle
+    \label{eq:phi_i, phi_j weak form}
 \end{equation}
 
 Because our $w$ is a closed subspace, it inherits the same boundness and coercivity constants, so if we reapply Max-Milgram theorem, we will prove that the discrete FEM has a unique solution.
 
 Now we know that solution exists and is unique, but how do we find it?
 
-Following the properties of the inner product we can rewrite (22) as (23).
+Following the properties of the inner product we can rewrite \ref{eq:phi_i, phi_j weak form} as \ref{eq:sum out of inner product}.
 \begin{equation}
     \lambda \sum^n_{k=1}c_k\langle w_k, \phi_j \rangle = \sum^n_{k=1}c_k \langle \nabla{w_k} \dot \nabla{\phi_j} \rangle
+    \label{eq:sum out of inner product}
 \end{equation}
 
-This allows us to define (24).
+This allows us to define \ref{eq:stiffness and mass matrices}.
 \begin{equation}
 \begin{aligned}
     A = (a_jk) &= \langle w_k, \phi_j \rangle \\
     M = &= \langle \nabla{w_k} \dot \nabla{\phi_j} \rangle \\
     \vec{c} &= (c_k)^T
+    \label{eq:stiffness and mass matrices}
 \end{aligned}
 \end{equation}
 
-So, (24) transforms into (25).
+So, \ref{eq:sum out of inner product} transforms into \ref{eq:weak formulation in matrix form}.
 \begin{equation}
     \lambda M\vec{c} = A\vec{c} 
+    \label{eq:weak formulation in matrix form}
 \end{equation}
 Which is exactly the form of the generalised eigenvalue problem, where $A$ is so-called stiffness matrix and $M$ is a mass matrix (the properties and meaning of those matrices will be cleared later). 
 
-This whole process is called finite element discretisation. This process is what makes FEA so powerful because it allows us to breake down a complex continuous physical domain into a finite number of smaller, interconnected subregions (elements). This transforms complex governing differential equations into a manageable system of algebraic equations that can be solved numerically.
+This whole process is called finite element discretisation. This process is what makes FEA so powerful because it allows us to breake down a complex continuous physical domain into a finite number of smaller, interconnected subregions (elements).
+This transforms complex governing differential equations into a manageable system of algebraic equations that can be solved numerically.
 
 The next chapter will describe what are the basis functions that we use to break the problem from infinite-dimentions to finite, how they are defined and how to use them to solve elliptic PDEs.
 
@@ -254,7 +292,9 @@ The next chapter will describe what are the basis functions that we use to break
 
 \section{Finite Element Method (FEM)}
 
-Finite Element Method is a tool for numerical solution of two-point boundary value problem. The basic idea is to divide the domain into elements (in our case triangles) and look for a polynomial approximations to the unknown functions on each triangle, in other words we approximate locally - while the exact physical behavior of a structure is continuous, the solution within each individual element is approximated using simple mathematical functions, typically linear or quadratic polynomials. After that we rewrite the boundary value problem as a variational equation, and then seek a solution approximation to this equation from the space of continuous piecewise linears [10].
+Finite Element Method is a tool for numerical solution of two-point boundary value problem. The basic idea is to divide the domain into elements (in our case triangles) and look for a polynomial approximations to the unknown functions on each triangle, 
+in other words we approximate locally - while the exact physical behavior of a structure is continuous, the solution within each individual element is approximated using simple mathematical functions, typically linear or quadratic polynomials. 
+After that we rewrite the boundary value problem as a variational equation, and then seek a solution approximation to this equation from the space of continuous piecewise linears [10].
 
 This method has few very important advantages. First of all, it can easily deal with complex geometries and higher order approximations of the solutions. Also, it works for many types of physics like structural loads, heat transfer, and fluid flow. Moreover, it can be easily visualised, which helps with finding the vulnerabilities in design[11].
 
@@ -265,20 +305,47 @@ In this project we will use 2D Finite Element Approximation to find solutions of
 In order to divide our domain into smaller pieces we first need to introduce the pattern of how we are going to divide it.
 
 \subsubsection{Triangulations}
-If we want to divide the interval in 1D we will use intervals, that can be either equal to each other or be differnt length. In 2D idea is the same, but instead of small line intervals we need to add one more point to be able to move from 1D line to 2D surface which is a triangle. The domain divided into triangles is called triangulation.
+If we want to divide the interval in 1D we will use intervals, that can be either equal to each other or be differnt length. 
+In 2D idea is the same, but instead of small line intervals we need to add one more point to be able to move from 1D line to 2D surface which is a triangle. The domain divided into triangles is called triangulation.
 
 Now it is time to give formal definition from [10].
 
-Let $\Omega \subset \mathbb{R}^2$ be a bounded two-dimensional domain with smooth or polygonal boundary $\partial\Omega$. A triangulation, or a mash $\mathfrak{K}$ of $\Omega$ is a set $\{K\}$ of triangles $K$, such that $\Omega = \bigcup_{K \in mathfrak{K}}K$, and such that the intersection of two triangles is either an edge, a corner, or empty. No corner triangle is allowed to be hanging, that is lie on the edge of another triangle. The corners of the triangles are called the nodes.
+Let $\Omega \subset \mathbb{R}^2$ be a bounded two-dimensional domain with smooth or polygonal boundary $\partial\Omega$. A triangulation, or a mesh $\mathfrak{K}$ of $\Omega$ is a set $\{K\}$ of triangles $K$, such that $\Omega = \bigcup_{K \in \mathfrak{K}}K$, and such that the intersection of two triangles is either an edge, a corner, or empty. 
+No corner triangle is allowed to be hanging, that is lie on the edge of another triangle. The corners of the triangles are called the nodes [10].
 
-\subsection{Reference element}
+\subsubsection{Mesh generation}
+To generate the triangular mesh the built-in Delaunay algorithm was used [12]. Which is taking a set of 2D coordinates and determines the triangulations with the given points as triangle nodes. 
+This method has own advantages and disadvantages. Delaunay algorithm are optimal in the sence that the angles of all triangles are maximal, however practically when the mesh needs to respect the boundaries of the domain, it can lead to triangles with poor quality [10].
 
 \subsection{Piecewise polynomial spaces}
-
+In order to interpolate our unknown function on each element we need to decide what family of functions we are going to use for this interpolation. 
+Polynomials are the best candidates for this becuase they are mathematically simple to integrate and differentiate, they can be easily translated into code and the accuracy will be easily improved by increasing the order of the polynomials. And becuase in this project we are going to use first order (P1) and second order polynomials (P2) to interpolate our unknown function on each element of the mesh that is why we "introduce" the space of piecewise polynomials. 
 
 \subsubsection{P1 Elements}
-- p1 elements are the continuous piecewise polynomials of degree 1, therefore their gradients are the constants
-- have the theoretical $O(h^2)$
+To construct the piecewise linear function, we are letting $K$ be a triangle and in \ref{eq:P1 space} we define the space of linear functions on $K$ denotes $P_1(K)$.
+\begin{equation}
+    P_1(K) = {v: v = c_0 + c_1x_1 + c_2x_2, (x1, x2) \in K, c_0, c_1, c_2 \in \mathbb{R}}
+    \label{eq:P1 space}
+\end{equation}
+Simply, $P_1(K)$ contains all functions of the form $v = c_0 + c_1x_1 + c_2x_2$ on $K$.
+
+We know from [10] that a function $v$ in $V_h$ is uniquely determined by its nodal values. So, we let the nodal values be our degrees of freedom construct the corresponding basis ${\phi_j}_{j=1}^n_p \subset V_h$ with the condition defined in \ref{eq:hat functions}, because these functions define the basis they are called $\mathcal{basis functions}$.
+\begin{equation}
+    \phi_j(N_i) = \begin{cases}
+        1, i = j \\
+        0, i \neq j \end{cases} i, j = 1, 2, \dots, n_p
+    \label{eq:hat functions}
+\end{equation}
+The picture from [10] illustrates a typical basis function $\phi_j$ which because of their shape sometimes are called hat functions.
+
+From linear algebra we know that we can write every function $v \in V_h$ using our basis functions. This is shown in \ref{eq:linear combination of basis functions}.
+\begin{equation}
+    v = \sum_{i=1}^{n_p} \alpha_i\phi_i\
+    \label{eq:linear combination of basis functions}
+\end{equation}
+Where $\alpha_i = v(N_i), i = 1, 2, \dots, n_p$, are the nodal values of $v$.
+
+It is worth mentioning since the project explores the convergence of the Finite Element Approximation that P1 elements have the theoretical convergence $O(h^2)$. We are expecting to get this number in our computer implementation.
 
 
 \subsubsection{P2 Elements}
@@ -286,8 +353,13 @@ Let $\Omega \subset \mathbb{R}^2$ be a bounded two-dimensional domain with smoot
 - give better approximation $O(h^4)$ in other words will give us more precise approximation with less mesh refinement
 
 
+\subsection{Reference (Standard) element}
+When we divided our domain into triangulations, now we have to look at each small triangle separately, in other words we need to zoom in our domain, to give more precise information about our unknown function. But in practice we can deal with the complex triangulations that will have different sizes, shapes and orientations, so we need to come up with the "common factor" that we can relate to every small triangle in our mesh. That is why we are going to use reference triangle.
 
-\subsection{Basis (shape) functions}
+By definition reference triangle is a triangle with vertices in: (1, 0), (0, 1) and (0, 0) [13]. [13] https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf
+
+
+
 
 
 \subsection{Finite element approximation}
@@ -397,6 +469,8 @@ the errors were converging quadratically which can be concluded by the graphs of
 [9] https://www.scribd.com/document/314330469/Compare-Ritz-to-Galerkin
 [10] Larson The Finite Element Method: Theory, Implementation,and Applications
 [11] https://innovationatwork.ieee.org/the-advantages-of-fem/
+[12] https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/
+
 \bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
 \bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
 \bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
@@ -407,17 +481,17 @@ the errors were converging quadratically which can be concluded by the graphs of
 \end{thebibliography}
 \vspace{12pt}
 
-
+\appendices
 \section{Proof of coercivity}
 
 To prove that \(a(v,v) \ge \alpha \Vert{}v\Vert{}_{H^1}^2\) for some \(\alpha > 0\), evaluate the bilinear form at identical arguments:
-
-\(a(v,v)=\int _{\Omega }\nabla v\cdot \nabla v\,dx=\int _{\Omega }|\nabla v|{}^{2}\,dx=\|\nabla v\|{}_{L^{2}}^{2}\)
-
+\begin{equation}
+(a(v,v)=\int _{\Omega }\nabla v\cdot \nabla v\,dx=\int _{\Omega }|\nabla v|{}^{2}\,dx=\|\nabla v\|{}_{L^{2}}^{2}\)
+\end{equation}
 Because \(\Omega \) is a bounded domain, the Poincaré inequality asserts that there exists a positive constant \(C_{\Omega }\) depending only on the geometry of \(\Omega \) such that:
-
-\(\|v\|{}_{L^{2}}^{2}\le C_{\Omega }^{2}\|\nabla v\|{}_{L^{2}}^{2}\quad \forall v\in H_{0}^{1}(\Omega )\)
-
+\begin{equation}
+(\|v\|{}_{L^{2}}^{2}\le C_{\Omega }^{2}\|\nabla v\|{}_{L^{2}}^{2}\quad \forall v\in H_{0}^{1}(\Omega )\)
+\end{equation}
 Relate this inequality to the full \(H^{1}\)-norm:
 
 \(\|v\|{}_{H^{1}}^{2}=\|v\|{}_{L^{2}}^{2}+\|\nabla v\|{}_{L^{2}}^{2}\le C_{\Omega }^{2}\|\nabla v\|{}_{L^{2}}^{2}+\|\nabla v\|{}_{L^{2}}^{2}=(C_{\Omega }^{2}+1)\|\nabla v\|{}_{L^{2}}^{2}\)
