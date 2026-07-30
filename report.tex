@@ -29,7 +29,7 @@ By doing so, researchers are able to quickly test hypotheses, change parameters 
 One of these mathematical tools is Finite Element Method (FEM) that is used to solve differntial equations.
 
 Many physical systems are governed by partial differential equations whose analytical solutions are either extremely difficult or impossible to obtain, that is the reason why numerical analysis comes in.
-It allows to design and implememt an algorithms to find approximate but highly accurate numeric solutions. 
+It allows to design and implement an algorithms to find approximate but highly accurate numeric solutions. 
 
 So, to solve the elliptic partial differential problems we will use the numerical method which finds the solutions accurately, however still has the error, 
 so in this project the finite element approximation will be explored and will be checked how accurately it gives the solution and how quickly the solution goes to the desirable value (convergence analysis) by comparing with the known previously obtained results.
@@ -42,7 +42,7 @@ In addition 2 important eigenproblems will be explored: Laplace and the Time-Ind
 In this section there would be given a brief introduction to the mathematical knowledge required to understand this project.
 
 \subsection{Elliptic partial differential equations}
-One of the branches of differenial equations is elliptic differential equation, which has the general form:
+One of the branches of differential equations is elliptic differential equation, which has the general form:
 \begin{equation}
 A\cdot u_{xx} + B\cdot u_{xy} + C\cdot u_{yy} + D\cdot u_{x} + E\cdot u_{y} + F\cdot u = G
 \label{eq:elliptic PDE}
@@ -70,7 +70,7 @@ The main idea is that when the transformation A operates on x, the eigenvector d
 
 
 \subsection{Generalised matrix eigenvalue problem}
-Another variation of the eigenvalue problem is the $generalised eigenvalue problem$. It can be represented in two forms:
+Another variation of the eigenvalue problem is the generalised eigenvalue problem. It can be represented in two forms:
 
 - the vector form:
 \begin{equation}
@@ -219,12 +219,12 @@ Then we show that our bilinear form is coercive (or elliptical) which is $a(v, v
 
 To establish continuity of $L(v)$, we must show that $|L(v)| \leq C_{L}||v||_{H^1}$ for a constant $C_{L} > 0$ (proof can be found in Appendix A).
 
-Therefore, by the Lax-Milgram Theorem these properties guaratee that a unique exact solution $u \in V$ exists and stable.
+Therefore, by the Lax-Milgram Theorem these properties guaranty that a unique exact solution $u \in V$ exists and stable.
 
 
 \subsection{The Rayleigh-Ritz/Galerkin approximation}
-The idea explored in this section is the core of the Finite Element Approximation (FEA). The solution of PDEs belongs to infinite-dimensional space, so our goal is to go from the infinite-dimentional space to finite-dimentional subspace. 
-To do so we cn use one of two methods: Rayleigh-Ritz approximation or Galerkin approximation which will give the equivalent solution of the variational problem [9].
+The idea explored in this section is the core of the Finite Element Approximation (FEA). The solution of PDEs belongs to infinite-dimensional space, so our goal is to go from the infinite-dimensional space to finite-dimensional subspace. 
+To do so we can use one of two methods: Rayleigh-Ritz approximation or Galerkin approximation which will give the equivalent solution of the variational problem [9].
 
 So, we will go through the Rayleigh-Ritz approximation process. We will look at the arbitrary problem $\lambda w = -\Delta w$, whose weak form can be expressed as in \ref{eq:2D weak}.
 \begin{equation}
@@ -256,7 +256,7 @@ Substituting \ref{eq:linear combination of trial functions} into the \ref{eq:inn
     \label{eq:phi_i, phi_j weak form}
 \end{equation}
 
-Because our $w$ is a closed subspace, it inherits the same boundness and coercivity constants, so if we reapply Max-Milgram theorem, we will prove that the discrete FEM has a unique solution.
+Because our $w$ is a closed subspace, it inherits the same boundedness and coercivity constants, so if we reapply Max-Milgram theorem, we will prove that the discrete FEM has a unique solution.
 
 Now we know that solution exists and is unique, but how do we find it?
 
@@ -305,7 +305,7 @@ In this project we will use 2D Finite Element Approximation to find solutions of
 In order to divide our domain into smaller pieces we first need to introduce the pattern of how we are going to divide it.
 
 \subsubsection{Triangulations}
-If we want to divide the interval in 1D we will use intervals, that can be either equal to each other or be differnt length. 
+If we want to divide the interval in 1D we will use intervals, that can be either equal to each other or be different length. 
 In 2D idea is the same, but instead of small line intervals we need to add one more point to be able to move from 1D line to 2D surface which is a triangle. The domain divided into triangles is called triangulation.
 
 Now it is time to give formal definition from [10].
@@ -315,11 +315,13 @@ No corner triangle is allowed to be hanging, that is lie on the edge of another 
 
 \subsubsection{Mesh generation}
 To generate the triangular mesh the built-in Delaunay algorithm was used [12]. Which is taking a set of 2D coordinates and determines the triangulations with the given points as triangle nodes. 
-This method has own advantages and disadvantages. Delaunay algorithm are optimal in the sence that the angles of all triangles are maximal, however practically when the mesh needs to respect the boundaries of the domain, it can lead to triangles with poor quality [10].
+This method has own advantages and disadvantages. Delaunay algorithm are optimal in the sense that the angles of all triangles are maximal, however practically when the mesh needs to respect the boundaries of the domain, it can lead to triangles with poor quality [10].
+
+
 
 \subsection{Piecewise polynomial spaces}
 In order to interpolate our unknown function on each element we need to decide what family of functions we are going to use for this interpolation. 
-Polynomials are the best candidates for this becuase they are mathematically simple to integrate and differentiate, they can be easily translated into code and the accuracy will be easily improved by increasing the order of the polynomials. And becuase in this project we are going to use first order (P1) and second order polynomials (P2) to interpolate our unknown function on each element of the mesh that is why we "introduce" the space of piecewise polynomials. 
+Polynomials are the best candidates for this because they are mathematically simple to integrate and differentiate, they can be easily translated into code and the accuracy will be easily improved by increasing the order of the polynomials. And because in this project we are going to use first order (P1) and second order polynomials (P2) to interpolate our unknown function on each element of the mesh that is why we "introduce" the space of piecewise polynomials. 
 
 \subsubsection{P1 Elements}
 To construct the piecewise linear function, we are letting $K$ be a triangle and in \ref{eq:P1 space} we define the space of linear functions on $K$ denotes $P_1(K)$.
@@ -329,7 +331,7 @@ To construct the piecewise linear function, we are letting $K$ be a triangle and
 \end{equation}
 Simply, $P_1(K)$ contains all functions of the form $v = c_0 + c_1x_1 + c_2x_2$ on $K$.
 
-We know from [10] that a function $v$ in $V_h$ is uniquely determined by its nodal values. So, we let the nodal values be our degrees of freedom construct the corresponding basis ${\phi_j}_{j=1}^n_p \subset V_h$ with the condition defined in \ref{eq:hat functions}, because these functions define the basis they are called $\mathcal{basis functions}$.
+We know from [10] that a function $v$ in $V_h$ is uniquely determined by its nodal values. So, we let the nodal values be our degrees of freedom construct the corresponding basis $\{\phi_j\}_{j=1}^{n_p} \subset V_h$ with the condition defined in \ref{eq:hat functions}, because these functions define the basis they are called $\mathcal{basis functions}$.
 \begin{equation}
     \phi_j(N_i) = \begin{cases}
         1, i = j \\
@@ -349,24 +351,115 @@ It is worth mentioning since the project explores the convergence of the Finite 
 
 
 \subsubsection{P2 Elements}
-- p2 elements are the continuous piecewise polynomials of degree 2, therefore their gradients will be linear
-- give better approximation $O(h^4)$ in other words will give us more precise approximation with less mesh refinement
+P1 elements are easy to implement and give good interpolations, but as it was discussed earlier the main advantage of the polynomials is their faster convergence and more precision with increasing of the degree. 
+
+So, instead of the polynomial space given in \ref{eq:P1 space} we are going to use the space of the second degree polynomials $P_2(K)$ defined in \ref{eq:P2 space}.
+\begin{equation}
+    P_2(K) = {v: v = c_0 + c_1x_1 + c_2x_2 + c_3x_1^2 + c_4x_1x_2 + c_5x_2^2, (x1, x2) \in K, c_0, c_1, c_2, c_3, c_4, c_5 \in \mathbb{R}}
+    \label{eq:P2 space}
+\end{equation}
+Since we have the quadratic polynomials that means that the gradients will be much smoother comparing to the constants of the P1. Also, in the real world problems we rarely deal with perfectly shaped domain, usually there are bends and complex shapes, therefore quadratic polynomials will handle these complexities more naturally.
+In addition to this, since we have higher accuracy due to higher degree, we will need less elements to get the same error, which will result in smaller mesh which would take computer less time to compute without the loss of accuracy.
+
+P2 elements give us the convergence rate of $O(h^4)$, which is double comparing to the P1 elements. 
 
 
 \subsection{Reference (Standard) element}
-When we divided our domain into triangulations, now we have to look at each small triangle separately, in other words we need to zoom in our domain, to give more precise information about our unknown function. But in practice we can deal with the complex triangulations that will have different sizes, shapes and orientations, so we need to come up with the "common factor" that we can relate to every small triangle in our mesh. That is why we are going to use reference triangle.
+Now, when know how to divide our domain into triangulations, and how to interpolate unknown function on each triangle using continuous piecewise polynomials, we will have a question: do we have to do this to each triangle individually?
+The answer is no. Because in practice we can deal with the complex triangulations that will have different sizes, shapes and orientations, so interpolate each one individually will take a lot of time and effort. 
+That is why we need to come up with the "common factor" that we can relate to every element of our mesh. That is why we are going to use reference triangle.
 
-By definition reference triangle is a triangle with vertices in: (1, 0), (0, 1) and (0, 0) [13]. [13] https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf
+By definition reference triangle is a triangle with vertices in: (1, 0), (0, 1) and (0, 0) [13]. In order to avoid confusion with the coordinates, we will say every triangle in $(x, y)$ is mapped to the reference plane $(\ksi, \eta)$, this mapping is illustrated
+
+Any triangle with corners $P_i(x_i, y_i)$, $i = 1, 2, 3$ can be transformed inte a rectangular, equilateral triangle with $x$ and $y$ defined in \ref{eq:coordinate transformation}, using the counterclockwise numbering.
+\begin{equation}
+    x &= x_1 + (x_2 - x_1)\ksi + (x_3 - x_1)\eta \\
+    y &= y_1 + (y_2 - y_1)\ksi + (y_3 - y_1)\eta
+    \label{eq:coordinate transformation}
+\end{equation}
+
+
+\subsubsection{Linear approximation} \label{sub:linear approximation}
+The aim is to approximate the unknown function by a linear form of \ref{eq:linear form}. 
+\begin{equation}
+    u(\ksi, \eta) = c_1 + c_2\ksi + c_3\eta
+    \label{eq:linear form}
+\end{equation}
+The triangle presented on the figure is also know as Linear Lagrange Triangle
+So from this we obtain the system \ref{eq:coefficients}.
+\begin{equation}
+    u_1 &= u(0, 0) &= c_1 \\
+    u_2 &= u(1, 0) &= c_1 + c_2 \\
+    u_3 &= u(0, 1) &= c_1 + c_3
+    \label{eq:coefficients}
+\end{equation}
+Which will give us the coefficients as a function of the values at the grid nodes by matrix inversion:
+\begin{equation}
+    c = Au \text{, where}\\
+    A = \begin{bmatrix}
+        1 & 0 & 0 \\
+        -1 & 1 & 0 \\
+        -1 & 0 & 1
+    \end{bmatrix}
+    \label{eq:matrix form}
+\end{equation}
+From matrix $A$ we calculate the linear basis functions for triangles like it is presented in \ref{eq:linear basis functions}
+\begin{equation}
+    N_1(\ksi, \eta) &= 1 - \ksi - \eta \\
+    N_2(\ksi, \eta) &= \ksi \\
+    N_3(\ksi, \eta) &= \eta
+    \label{eq:linear basis functions}
+\end{equation}
+Their shapes are given in the figure
 
 
 
+\subsubsection{Quadratic approximation}
+As it was mentioned before in P2 elements, we can approximate any function defined on the triangle by a quadratic function \ref{eq:P2 space}. So in the reference coordinates it will have the form \ref{eq:reference quadratic}.
+\begin{equation}
+    u(\ksi, \eta) = c_1 + c_2\ksi + c_3\eta + c_4\ksi^2 + c_5\ksi\eta + c_6\eta^2
+    \label{eq:reference quadratic}
+\end{equation}
+However, since the quadratic functions require more points to be defined properly we need some additional points the new reference triangle is presented on the figure also known as Quadratic Lagrange Triangle.
 
+Following the same procedure as in the \ref{sub:linear approximation} we compute the function $u$ at each grid point.
+\begin{equation}
+    u_1 &= c_1 \\
+    u_2 &= c_1 + c_2 + c_4 \\
+    u_3 &= c_1 + c_3 + c_6 \\
+    u_4 &= c_1 + \frac{1}{2}c_2 + \frac{1}{4}c_4 \\
+    u_5 &= c_1 + \frac{1}{2}c_2 + \frac{1}{2}c_3 + \frac{1}{4}c_4 + \frac{1}{4}c_5 + \ffrac{1}{4}c_6 \\
+    u_6 &= c_1 + \frac{1}{2}c_3 + \frac{1}{4}c_6
+\end{equation}
+Following the matrix inversion we can compute the coefficients presented in \ref{eq:coefficients P2}
+\begin{equation}
+    c = Au \text{, where}\\
+    A = \begin{bmatrix}
+        1 & 0 & 0 & 0 & 0 & 0 \\
+        -3 & -1 & 0 & 4 & 0 & 0 \\
+        -3 & 0 & -1 & 0 & 0 & 4 \\
+        2 & 2 & 0 & -4 & 0 & 0 \\
+        4 & 0 & 0 & -4 & 4 & -4 \\
+        2 & 0 & 2 & 0 & 0 & -4
+    \end{bmatrix}
+    \label{eq:coefficients P2}
+\end{equation}
+This allow us to obtain basis functions in \ref{eq:basis functions P2} and illustrated in figure
+\begin{equation}
+    N_1(\ksi, \eta) &= (1 - \ksi - \eta)(1 - 2\ksi - 2\eta) \\
+    N_2(\ksi, \eta) &= \ksi(2\ksi - 1) \\
+    N_3(\ksi, \eta) &= \eta(2\eta - 1) \\
+    N_4(\ksi, \eta) &= 4\ksi(1 - \ksi - \eta) \\
+    N_5(\ksi, \eta) &= 4\ksi\eta \\
+    N_6(\ksi, \eta) &= 4\eta(1 - \ksi - \eta)
+\end{equation}
+As it is seen from the figure the this approximation is more complex but allows us to get more detailed picture about our unknown function.
 
-\subsection{Finite element approximation}
-- the aim is to approximate the unknown function by a sum 
-$u(x) = \sum_{i=0}^N c_i*\psi_i(x)$,
-where $\psi_i$ are prescribed functions and $c_0,\dots, c_N$ are unknown coefficients to be determined.
+\subsection{Conclusion}
+From everything that was discussed previously we can build the general picture of the project. This can be described simply as we are given a differential equation, whose solution is unknown function.
+Since the solution can be any family of functions we restrict ourselves to piecewise polynomial functions. Therefore we can reduce the infinite-dimensional problem to finite-dimensional matrix eigenvalue problem, which we know how to solve from the course of linear algebra.
 
+In the next chapter we will go from discussing abstract concepts to eigenproblems that have the physical meaning.
 
 \section{Elliptic Eigenproblems}
 
@@ -470,7 +563,8 @@ the errors were converging quadratically which can be concluded by the graphs of
 [10] Larson The Finite Element Method: Theory, Implementation,and Applications
 [11] https://innovationatwork.ieee.org/the-advantages-of-fem/
 [12] https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/
-
+[13] https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf
+[14] https://www.geophysik.uni-muenchen.de/~igel/Lectures/NMG/08_finite_elements_basisfunctions.pdf
 \bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
 \bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
 \bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
