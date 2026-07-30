@@ -281,6 +281,7 @@ So, \ref{eq:sum out of inner product} transforms into \ref{eq:weak formulation i
     \lambda M\vec{c} = A\vec{c} 
     \label{eq:weak formulation in matrix form}
 \end{equation}
+
 Which is exactly the form of the generalised eigenvalue problem, where $A$ is so-called stiffness matrix and $M$ is a mass matrix (the properties and meaning of those matrices will be cleared later). 
 
 This whole process is called finite element discretisation. This process is what makes FEA so powerful because it allows us to breake down a complex continuous physical domain into a finite number of smaller, interconnected subregions (elements).
@@ -326,12 +327,17 @@ Polynomials are the best candidates for this because they are mathematically sim
 \subsubsection{P1 Elements}
 To construct the piecewise linear function, we are letting $K$ be a triangle and in \ref{eq:P1 space} we define the space of linear functions on $K$ denotes $P_1(K)$.
 \begin{equation}
-    P_1(K) = {v: v = c_0 + c_1x_1 + c_2x_2, (x1, x2) \in K, c_0, c_1, c_2 \in \mathbb{R}}
+\begin{aligned}
+    P_1(K) = \\
+    & \{v: v = c_0 + c_1x_1 + c_2x_2 \\
+    & \text{such that }(x_1, x_2) \in K, c_0, c_1, c_2 \in \mathbb{R}\}
     \label{eq:P1 space}
+\end{aligned}
 \end{equation}
+
 Simply, $P_1(K)$ contains all functions of the form $v = c_0 + c_1x_1 + c_2x_2$ on $K$.
 
-We know from [10] that a function $v$ in $V_h$ is uniquely determined by its nodal values. So, we let the nodal values be our degrees of freedom construct the corresponding basis $\{\phi_j\}_{j=1}^{n_p} \subset V_h$ with the condition defined in \ref{eq:hat functions}, because these functions define the basis they are called $\mathcal{basis functions}$.
+We know from [10] that a function $v$ in $V_h$ is uniquely determined by its nodal values. So, we let the nodal values be our degrees of freedom construct the corresponding basis $\{\phi_j\}_{j=1}^{n_p} \subset V_h$ with the condition defined in \ref{eq:hat functions}, because these functions define the basis they are called basis functions.
 \begin{equation}
     \phi_j(N_i) = \begin{cases}
         1, i = j \\
@@ -345,6 +351,7 @@ From linear algebra we know that we can write every function $v \in V_h$ using o
     v = \sum_{i=1}^{n_p} \alpha_i\phi_i\
     \label{eq:linear combination of basis functions}
 \end{equation}
+
 Where $\alpha_i = v(N_i), i = 1, 2, \dots, n_p$, are the nodal values of $v$.
 
 It is worth mentioning since the project explores the convergence of the Finite Element Approximation that P1 elements have the theoretical convergence $O(h^2)$. We are expecting to get this number in our computer implementation.
@@ -355,9 +362,14 @@ P1 elements are easy to implement and give good interpolations, but as it was di
 
 So, instead of the polynomial space given in \ref{eq:P1 space} we are going to use the space of the second degree polynomials $P_2(K)$ defined in \ref{eq:P2 space}.
 \begin{equation}
-    P_2(K) = {v: v = c_0 + c_1x_1 + c_2x_2 + c_3x_1^2 + c_4x_1x_2 + c_5x_2^2, (x1, x2) \in K, c_0, c_1, c_2, c_3, c_4, c_5 \in \mathbb{R}}
+\begin{aligned}
+    P_2(K) =\\
+    & \{v: v = c_0 + c_1x_1 + c_2x_2 + c_3x_1^2 + c_4x_1x_2 + c_5x_2^2 \\
+    & \text{such that }(x_1, x_2) \in K, c_0, c_1, c_2, c_3, c_4, c_5 \in \mathbb{R}\}
     \label{eq:P2 space}
+\end{aligned}
 \end{equation}
+
 Since we have the quadratic polynomials that means that the gradients will be much smoother comparing to the constants of the P1. Also, in the real world problems we rarely deal with perfectly shaped domain, usually there are bends and complex shapes, therefore quadratic polynomials will handle these complexities more naturally.
 In addition to this, since we have higher accuracy due to higher degree, we will need less elements to get the same error, which will result in smaller mesh which would take computer less time to compute without the loss of accuracy.
 
@@ -369,47 +381,58 @@ Now, when know how to divide our domain into triangulations, and how to interpol
 The answer is no. Because in practice we can deal with the complex triangulations that will have different sizes, shapes and orientations, so interpolate each one individually will take a lot of time and effort. 
 That is why we need to come up with the "common factor" that we can relate to every element of our mesh. That is why we are going to use reference triangle.
 
-By definition reference triangle is a triangle with vertices in: (1, 0), (0, 1) and (0, 0) [13]. In order to avoid confusion with the coordinates, we will say every triangle in $(x, y)$ is mapped to the reference plane $(\ksi, \eta)$, this mapping is illustrated
+By definition reference triangle is a triangle with vertices in: (1, 0), (0, 1) and (0, 0) [13]. In order to avoid confusion with the coordinates, we will say every triangle in $(x, y)$ is mapped to the reference plane $(\xi, \eta)$, this mapping is illustrated
 
 Any triangle with corners $P_i(x_i, y_i)$, $i = 1, 2, 3$ can be transformed inte a rectangular, equilateral triangle with $x$ and $y$ defined in \ref{eq:coordinate transformation}, using the counterclockwise numbering.
 \begin{equation}
-    x &= x_1 + (x_2 - x_1)\ksi + (x_3 - x_1)\eta \\
-    y &= y_1 + (y_2 - y_1)\ksi + (y_3 - y_1)\eta
+\begin{aligned}
+    x &= x_1 + (x_2 - x_1)\xi + (x_3 - x_1)\eta \\
+    y &= y_1 + (y_2 - y_1)\xi + (y_3 - y_1)\eta
     \label{eq:coordinate transformation}
+\end{aligned}
 \end{equation}
 
 
 \subsubsection{Linear approximation} \label{sub:linear approximation}
 The aim is to approximate the unknown function by a linear form of \ref{eq:linear form}. 
 \begin{equation}
-    u(\ksi, \eta) = c_1 + c_2\ksi + c_3\eta
+    u(\xi, \eta) = c_1 + c_2\xi + c_3\eta
     \label{eq:linear form}
 \end{equation}
 The triangle presented on the figure is also know as Linear Lagrange Triangle
 So from this we obtain the system \ref{eq:coefficients}.
 \begin{equation}
-    u_1 &= u(0, 0) &= c_1 \\
-    u_2 &= u(1, 0) &= c_1 + c_2 \\
-    u_3 &= u(0, 1) &= c_1 + c_3
+\begin{aligned}
+    u_1 &= u(0, 0) = c_1 \\
+    u_2 &= u(1, 0) = c_1 + c_2 \\
+    u_3 &= u(0, 1) = c_1 + c_3
     \label{eq:coefficients}
+\end{aligned}
 \end{equation}
+
 Which will give us the coefficients as a function of the values at the grid nodes by matrix inversion:
 \begin{equation}
-    c = Au \text{, where}\\
-    A = \begin{bmatrix}
+\begin{aligned}
+    c &= Au \text{, where}\\
+    A &= \begin{bmatrix}
         1 & 0 & 0 \\
         -1 & 1 & 0 \\
         -1 & 0 & 1
     \end{bmatrix}
     \label{eq:matrix form}
+\end{aligned}
 \end{equation}
+
 From matrix $A$ we calculate the linear basis functions for triangles like it is presented in \ref{eq:linear basis functions}
 \begin{equation}
-    N_1(\ksi, \eta) &= 1 - \ksi - \eta \\
-    N_2(\ksi, \eta) &= \ksi \\
-    N_3(\ksi, \eta) &= \eta
+\begin{aligned}
+    N_1(\xi, \eta) &= 1 - \xi - \eta \\
+    N_2(\xi, \eta) &= \xi \\
+    N_3(\xi, \eta) &= \eta
     \label{eq:linear basis functions}
+\end{aligned}
 \end{equation}
+
 Their shapes are given in the figure
 
 
@@ -417,24 +440,29 @@ Their shapes are given in the figure
 \subsubsection{Quadratic approximation}
 As it was mentioned before in P2 elements, we can approximate any function defined on the triangle by a quadratic function \ref{eq:P2 space}. So in the reference coordinates it will have the form \ref{eq:reference quadratic}.
 \begin{equation}
-    u(\ksi, \eta) = c_1 + c_2\ksi + c_3\eta + c_4\ksi^2 + c_5\ksi\eta + c_6\eta^2
+    u(\xi, \eta) = c_1 + c_2\xi + c_3\eta + c_4\xi^2 + c_5\xi\eta + c_6\eta^2
     \label{eq:reference quadratic}
 \end{equation}
+
 However, since the quadratic functions require more points to be defined properly we need some additional points the new reference triangle is presented on the figure also known as Quadratic Lagrange Triangle.
 
 Following the same procedure as in the \ref{sub:linear approximation} we compute the function $u$ at each grid point.
 \begin{equation}
+\begin{aligned}
     u_1 &= c_1 \\
     u_2 &= c_1 + c_2 + c_4 \\
     u_3 &= c_1 + c_3 + c_6 \\
     u_4 &= c_1 + \frac{1}{2}c_2 + \frac{1}{4}c_4 \\
     u_5 &= c_1 + \frac{1}{2}c_2 + \frac{1}{2}c_3 + \frac{1}{4}c_4 + \frac{1}{4}c_5 + \ffrac{1}{4}c_6 \\
     u_6 &= c_1 + \frac{1}{2}c_3 + \frac{1}{4}c_6
+\end{aligned}
 \end{equation}
+
 Following the matrix inversion we can compute the coefficients presented in \ref{eq:coefficients P2}
 \begin{equation}
-    c = Au \text{, where}\\
-    A = \begin{bmatrix}
+\begin{aligned}
+    c &= Au \text{, where}\\
+    A &= \begin{bmatrix}
         1 & 0 & 0 & 0 & 0 & 0 \\
         -3 & -1 & 0 & 4 & 0 & 0 \\
         -3 & 0 & -1 & 0 & 0 & 4 \\
@@ -443,16 +471,22 @@ Following the matrix inversion we can compute the coefficients presented in \ref
         2 & 0 & 2 & 0 & 0 & -4
     \end{bmatrix}
     \label{eq:coefficients P2}
+\end{aligned}
 \end{equation}
+
 This allow us to obtain basis functions in \ref{eq:basis functions P2} and illustrated in figure
 \begin{equation}
-    N_1(\ksi, \eta) &= (1 - \ksi - \eta)(1 - 2\ksi - 2\eta) \\
-    N_2(\ksi, \eta) &= \ksi(2\ksi - 1) \\
-    N_3(\ksi, \eta) &= \eta(2\eta - 1) \\
-    N_4(\ksi, \eta) &= 4\ksi(1 - \ksi - \eta) \\
-    N_5(\ksi, \eta) &= 4\ksi\eta \\
-    N_6(\ksi, \eta) &= 4\eta(1 - \ksi - \eta)
+\begin{aligned}
+    N_1(\xi, \eta) &= (1 - \xi - \eta)(1 - 2\xi - 2\eta) \\
+    N_2(\xi, \eta) &= \xi(2\xi - 1) \\
+    N_3(\xi, \eta) &= \eta(2\eta - 1) \\
+    N_4(\xi, \eta) &= 4\xi(1 - \xi - \eta) \\
+    N_5(\xi, \eta) &= 4\xi\eta \\
+    N_6(\xi, \eta) &= 4\eta(1 - \xi - \eta)
+    \label{eq:basis functions P2}
+\end{aligned}
 \end{equation}
+
 As it is seen from the figure the this approximation is more complex but allows us to get more detailed picture about our unknown function.
 
 \subsection{Conclusion}
