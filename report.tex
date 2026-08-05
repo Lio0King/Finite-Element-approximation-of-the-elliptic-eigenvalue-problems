@@ -537,12 +537,33 @@ Therefore, the negative sign forces confinement, oscillation and equilibrium.
     \text{Schr\"{o}dinger's Eigenproblem}
 }
 
+\text{Schr\"{o}dinger's} equation is one of the most important equations of the 20th century. It is the quantum version of the Newton's law $F = ma$, it tells us how waves of probability change and behave for simple particles over time, however in this project we will look at the Time-Independent \text{Schr\"{o}dinger's} Equation \ref{eq:Schrodinger equation}.
+\begin{equation}
+    \Bigg[-\frac{\hbar}{2m}\nabla^2 + V(\vec{r})\Bigg]\psi({\vec{r}}) = E\psi(\vec{r})
+    \label{eq:Schrodinger equation}
+\end{equation}
+where $\hbar$ - reduced Planck's constant; $\psi$ - wave function, it holds the information about a quantum particle's state; $m$ - the mass of the studied particle; $V$ - potential energy of the system.
+
+In fact the left part of the equation is known as Hamiltonian operator \ref{eq:Hamiltonian operator}.
+\begin{equation}
+    \hat{H} = \Bigg[-\frac{\hbar}{2m}\nabla^2 + V(\vec{r})\Bigg]
+    \label{eq:Hamiltonian operator}
+\end{equation}
+
+Therefore the \ref{eq:Schrodinger equation} can be rewritten as \ref{eq:eigenproblem Schrodinger}.
+\begin{equation}
+    \hat{H}\psi = E\psi
+    \label{eq:eigenproblem Schrodinger}
+\end{equation}
+
+This problem is very crucial for physics however it is not different from the Laplace eigenproblem, since if the potential energy $V = 0$, we will have the simple Laplace equation, this case is known as infinite potential square well, which is good theoretical concept, however cannot be applied to real problems.
+
+Solving this problem will give us the wave function, whose square $|\psi(x)|^2$ represents the probability density of finding a quantum particle at a specific position in space. We have to do that because according to the Bohr's Uncertanty Principle we cannot determine the particle's position and momentum at the same time.
+
+
 \section{Goals and Objectives}
-- research about the FEM
-- implement fem on practice for 1D and then 2D
-- analyse the results
-- interpret the results
-- write a report
+
+So the idea behind this project is to research about solving 1D and 2D partial differential equations using Finite Element Method and implement 2D in practice. Another goal is to analyse the obtained plots of eigenfunctions and results, calculate their convergence rates and compare them to the known data. 
 
 
 \section{Implementation}
@@ -619,27 +640,21 @@ the errors were converging quadratically which can be concluded by the graphs of
 
 
 \begin{thebibliography}{00}
-[2] https://www.sciencedirect.com/topics/engineering/generalized-eigenvalue
-[1] https://arxiv.org/pdf/1903.11240
+\bibitem{b1} Arxiv.org, 2023. https://arxiv.org/pdf/1903.11240 (accessed Jul. 15, 2026)
+\bibitem{b2} W. Ding and Y. Wei, “Generalized Tensor Eigenvalue Problems,” Theory and Computation of Tensors, pp. 11-36, 2016, doi: 10.1016/b978-0-12-803953-3.50002-2
+\bibitem{b3}
 [3] https://www.researchgate.net/publication/235012188_An_Algorithm_for_the_Generalized_Matrix_Eigenvalue_Problem_Ax_Lambda_Bx
-[4] https://www.researchgate.net/post/What_is_the_difference_between_strong_form_and_weak_form
-[5] https://www.geeksforgeeks.org/engineering-mathematics/bilinear-form/
-[6] https://www.scribd.com/document/931572146/Bilinear-Form-Linear-Algebra-Notes
-[7] https://mathworld.wolfram.com/Lax-MilgramTheorem.html
-[8] https://math.stackexchange.com/questions/4668104/determining-the-bilinear-form-a-is-bounded
-[9] https://www.scribd.com/document/314330469/Compare-Ritz-to-Galerkin
-[10] Larson The Finite Element Method: Theory, Implementation,and Applications
-[11] https://innovationatwork.ieee.org/the-advantages-of-fem/
-[12] https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/
-[13] https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf
+\bibitem{b4} “What is the difference between strong form and weak form? | ResearchGate,” ResearchGate, 2016. https://www.researchgate.net/post/What_is_the_difference_between_strong_form_and_weak_form (accessed Jul. 18, 2026)
+\bibitem{b5} GeeksforGeeks, “Bilinear Form,” GeeksforGeeks, Sept. 11, 2024. https://www.geeksforgeeks.org/engineering-mathematics/bilinear-form/ (accessed Jul. 20, 2026)
+\bibitem{b6} manavofficial577, “Bilinear Form Linear Algebra Notes,” Scribd, 2026. https://www.scribd.com/document/931572146/Bilinear-Form-Linear-Algebra-Notes (accessed Jul. 20, 2026)
+\bibitem{b7} “Lax-Milgram Theorem,” WolframResearch, 2026. https://mathworld.wolfram.com/Lax-MilgramTheorem.html (accessed Jul. 20, 2026)
+\bibitem{b8} D. bounded, “Mathematics Stack Exchange,” Mathematics Stack Exchange, Mar. 28, 2023. https://math.stackexchange.com/questions/4668104/determining-the-bilinear-form-a-is-bounded (accessed Jul. 21, 2026)
+\bibitem{b9} S. Shaik, “Compare Ritz to Galerkin,” Scribd, 2026. https://www.scribd.com/document/314330469/Compare-Ritz-to-Galerkin (accessed Jul. 25, 2026)
+\bibitem{b10} M. G. Larson and Fredrik Bengzon, The Finite Element Method: Theory, Implementation, and Applications. Springer Science & Business Media, 2013
+\bibitem{b11} IEEE, “The Advantages of the Finite Element Method - IEEE Innovation at Work,” May 2019. Accessed: Jul. 29, 2026. [Online]. Available: https://innovationatwork.ieee.org/the-advantages-of-fem/
+\bibitem{b12} GeeksforGeeks, “Triangulations Using Matplotlib,” GeeksforGeeks, Feb. 02, 2023. https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/ (accessed Aug. 01, 2026).
+\bibitem{b13} J. Burkardt, “Computational Geometry Lab: FEM BASIS FUNCTIONS FOR A TRIANGLE,” 2018. Accessed: Aug. 01, 2026. [Online]. Available: https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf
 [14] https://www.geophysik.uni-muenchen.de/~igel/Lectures/NMG/08_finite_elements_basisfunctions.pdf
-\bibitem{b1} G. Eason, B. Noble, and I. N. Sneddon, ``On certain integrals of Lipschitz-Hankel type involving products of Bessel functions,'' Phil. Trans. Roy. Soc. London, vol. A247, pp. 529--551, April 1955.
-\bibitem{b2} J. Clerk Maxwell, A Treatise on Electricity and Magnetism, 3rd ed., vol. 2. Oxford: Clarendon, 1892, pp.68--73.
-\bibitem{b3} I. S. Jacobs and C. P. Bean, ``Fine particles, thin films and exchange anisotropy,'' in Magnetism, vol. III, G. T. Rado and H. Suhl, Eds. New York: Academic, 1963, pp. 271--350.
-\bibitem{b4} K. Elissa, ``Title of paper if known,'' unpublished.
-\bibitem{b5} R. Nicole, ``Title of paper with only first word capitalized,'' J. Name Stand. Abbrev., in press.
-\bibitem{b6} Y. Yorozu, M. Hirano, K. Oka, and Y. Tagawa, ``Electron spectroscopy studies on magneto-optical media and plastic substrate interface,'' IEEE Transl. J. Magn. Japan, vol. 2, pp. 740--741, August 1987 [Digests 9th Annual Conf. Magnetics Japan, p. 301, 1982].
-\bibitem{b7} M. Young, The Technical Writer's Handbook. Mill Valley, CA: University Science, 1989.
 \end{thebibliography}
 \vspace{12pt}
 
