@@ -9,7 +9,7 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
-\usepackage[toc,page]{appendix}
+\usepackage{url}
 
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -26,15 +26,14 @@
 \section{Introduction}
 In modern science to solve complex problems various simulations based on mathematical models are used.
 By doing so, researchers are able to quickly test hypotheses, change parameters and solve equations that are too complex or impossible to physically recreate. 
-One of these mathematical tools is Finite Element Method (FEM) that is used to solve differntial equations.
+One of these mathematical tools is Finite Element Method (FEM) that is used to solve differential equations.
 
 Many physical systems are governed by partial differential equations whose analytical solutions are either extremely difficult or impossible to obtain, that is the reason why numerical analysis comes in.
 It allows to design and implement an algorithms to find approximate but highly accurate numeric solutions. 
 
-So, to solve the elliptic partial differential problems we will use the numerical method which finds the solutions accurately, however still has the error, 
-so in this project the finite element approximation will be explored and will be checked how accurately it gives the solution and how quickly the solution goes to the desirable value (convergence analysis) by comparing with the known previously obtained results.
+The finite element approximation has become one of the most widely used techniques for solving eigenvalue problems with elliptic boundary value. Its mathematical foundations have been extensively developed in classical texts such as Larson $\&$ Bengzon and Brenner $\&$ Scott. Numerous implementations have demonstrated the this numerical method provides accurate approximations whose errors decrease predictably under mesh refinement.
 
-In addition 2 important eigenproblems will be explored: Laplace and the Time-Independent \text{Schr\"{o}dinger}.
+Hence, this report develops mathematical foundations of the finite element approximation of elliptic eigenvalue problems before implementing the method in Python for both Laplace and time-independent \text{Schr\"{o}dinger} equations. Numerical experimentsnare performed using P1 and P2 finite elements and the convergence of eigenvalues and eigenfunctions is compared with theoretical predictions.
 
 
 
@@ -44,13 +43,13 @@ In this section there would be given a brief introduction to the mathematical kn
 \subsection{Elliptic partial differential equations}
 One of the branches of differential equations is elliptic differential equation, which has the general form:
 \begin{equation}
-A\cdot u_{xx} + B\cdot u_{xy} + C\cdot u_{yy} + D\cdot u_{x} + E\cdot u_{y} + F\cdot u = G
-\label{eq:elliptic PDE}
+    A\cdot u_{xx} + B\cdot u_{xy} + C\cdot u_{yy} + D\cdot u_{x} + E\cdot u_{y} + F\cdot u = G
+    \label{eq:elliptic PDE}
 \end{equation}
 
 The equation \ref{eq:elliptic PDE} is classified as elliptic if the discriminant is strictly negative:
 \begin{equation}
-B^2 - 4*A*C < 0
+    B^2 - 4AC < 0
 \end{equation}
 
 Elliptic equations differ from hyperbolic and parabolic equations because they describe the steady state, time-independent phenomena. 
@@ -74,7 +73,7 @@ Another variation of the eigenvalue problem is the generalised eigenvalue proble
 
 - the vector form:
 \begin{equation}
-A\vec{x_{i}} = \lambda_{i} \cdot B \cdot \vec{x_{i}}
+A\vec{x_{i}} = \lambda_{i}B\vec{x_{i}}
 \end{equation}
 - the matrix form:
 \begin{equation}
@@ -90,21 +89,21 @@ In addition, because both (in the Laplace case) matrices are symmetric, the solv
 
 \subsection{Weak formulation}
 Weak formulation is an approach of multiplying the differential equation by an arbitrary test function that will disappear at the end. 
-More precisely it is an integral representation that relaxes the strict smoothness required for the $strong form$, therefore it requires the equation to be satisfied in an average or integral sense [4].
+More precisely it is an integral representation that relaxes the strict smoothness required for the strong form, therefore it requires the equation to be satisfied in an average or integral sense [4].
 
 The way from the strong form to weak requires following steps:
 
 Firstly, write the strong form (we will take Poisson equation on the interval I with Dirichlet boundary condition as an example):
 \begin{equation}
     \begin{cases}
-        -u''(x) = f(x), where x \in I = [0, L] \\
+        -u''(x) = f(x), \quad where  x \in I = [0, L] \\
         u(0) = u(L) = 0
         \label{eq:Poisson}
     \end{cases}
 \end{equation}
 Then, multiply by a test function (rewrite as variational formulation):
 \begin{equation}
--u''(x) * v(x) = f(x) * v(x)
+-u''(x)v(x) = f(x)v(x)
 \end{equation}
 
 Where $v(x)$ is a continuous test function which is assumed to vanish at end points.
@@ -127,7 +126,7 @@ Since $v(0) = v(L) = 0$ by Dirichlet BCs:
     \label{eq:weak form}
 \end{equation}
 
-The form obtained in \ref{eq:weak form} is called a weak form in 1D. For 2D and higher dimentions integration by parts follows the divergence theorem is used, in particular the Green's Theorem presented in \ref{eq:Green theorem}:
+The form obtained in \ref{eq:weak form} is called a weak form in 1D. For 2D and higher dimensions integration by parts follows the divergence theorem is used, in particular the Green's Theorem presented in \ref{eq:Green theorem}:
 \begin{equation}
     \int_{\Omega}-\Delta{u}v \, dx = \int_{\Omega}\nabla{u} \dot \nabla{v} \, dx - \int_{\partial{\Omega}} n \dot \nabla{u}v \, ds
     \label{eq:Green theorem}
@@ -152,7 +151,7 @@ Linearity in the first argument:
 Therefore, the left hand side of weak formulation of the Poisson equation \ref{eq:weak form} can be transformed into the abstract variational form - find $u \in V$ such that it will satisfy the \ref{eq:bilinear Poisson}.
 \begin{equation}
 \begin{aligned}
-    B(u, v) &= L(v) \, \forall v \in V, where \\
+    B(u, v) &= L(v) \quad \forall v \in V \text{, where} \\
     B(u, v) &= \int_{\Omega}\nabla{u} \dot \nabla{v} \, dx \\
     L(v) &= \int_{\Omega}fv \, dx
     \label{eq:bilinear Poisson}
@@ -167,11 +166,11 @@ That is why, in numerical methods scientists do not use functions from $C^{n}(\O
 That is where the Sobolev and Hilbert spaces come in.
 
 Finite Element Method (FEM) uses piecewise-defined basis functions (this topic would be discussed later). Within each element the function might be perfectly smooth, but across element boundaries, the derivative is discontinuous. 
-Therefore, we need to use the space that will allow us to have discontinuous derivatives, which is Sobolev space, however to be able to introduce the Sobolev space fully we need first to introduce the Lebesque function space. 
+Therefore, we need to use the space that will allow us to have discontinuous derivatives, which is Sobolev space, however to be able to introduce the Sobolev space fully we need first to introduce the Lebesgue function space. 
 
-Lebesque function space is a space of "p-th power integrable" functions which are defined by \ref{eq:Lebesque space}. 
+Lebesgue function space is a space of "p-th power integrable" functions which are defined by \ref{eq:Lebesque space}. 
 \begin{equation}
-    f \in L^p if \int |f|^p < \infty
+    f \in L^p \quad \text{if} \int |f|^p < \infty
     \label{eq:Lebesque space}
 \end{equation}
 And their norms or lengths are defined in \ref{eq:Lebesque norm}:
@@ -185,7 +184,7 @@ When $p=2$, $L^{2}(\Omega)$ space possesses an inner product, allowing us to def
 The Sobolev space, which is typically denoted as $W^{k, p}(\Omega)$, consists of all functions in $L^{p}(\Omega)$ whose weak (or distributional) derivatives up to order $k$ also belong to $L^{p}(\Omega)$. 
 We are interested in Sobolev spaces because of its special case $H^{k}(\Omega)$ also known as Hilbert space, which uses the $L^2$ norm and its norm is presented in \ref{eq:H1 norm}. 
 \begin{equation}
-    ||u||_{H^1} = \Bigg(\int_\Omega |u|^2 \, dx + \int_\Omega |\nabla u|^2 \, dx \Bigg)^\frac{1}{2}
+    ||u||_{H^1} = \sqrt{\Bigg(\int_\Omega |u|^2 \, dx + \int_\Omega |\nabla u|^2 \, dx \Bigg)}
     \label{eq:H1 norm}
 \end{equation}
 
@@ -200,13 +199,13 @@ Two of the most important questions in mathematics are the questions of existenc
 
 According to Lax-Milgram theorem: for every bounded linear functional $f$ on $H$, there exists a unique $x_{f} \in H$ such that \ref{eq:Milgram} is true. 
 \begin{equation}
-    f(x) = \phi(x, x_{f}) \forall x \in H
+    f(x) = \phi(x, x_{f}) \quad \forall x \in H
     \label{eq:Milgram}
 \end{equation}
 
 Where $\phi(x, x_f)$ is a bounded coercive bilinear form of a Hilbert space [7].
 
-It is worth mentioning that Lax-Milgram theorem follows as a corollary to the Stampacchia theorems that states: any function $f \in H$ necessearily corresponds to a unique function $u \in H$ for which the inequality \ref{eq:Stampacchia inequality} is satisfied for all functions $v \in H$.
+It is worth mentioning that Lax-Milgram theorem follows as a corollary to the Stampacchia theorems that states: any function $f \in H$ necessarily corresponds to a unique function $u \in H$ for which the inequality \ref{eq:Stampacchia inequality} is satisfied for all functions $v \in H$.
 \begin{equation}
     \phi(u, v - u) \geq \langle f, v - u \rangle_H
     \label{eq:Stampacchia inequality}
@@ -250,7 +249,7 @@ Recalling the definition of the inner product $\langle u, v \rangle = \int_{a}^{
     \label{eq:inner product 2D weak form}
 \end{equation}
 
-Let $w_{1}, \dots , w_{n}$ be $n$ arbitrary trial functions. Therefore, because we project our infinite-dimentional problem onto finite-dimensional subspace we can express our unknown function $w$ as the linear combination of our trial functions which is shown in \ref{eq:linear combination of trial functions}.
+Let $w_{1}, \dots , w_{n}$ be $n$ arbitrary trial functions. Therefore, because we project our infinite-dimensional problem onto finite-dimensional subspace we can express our unknown function $w$ as the linear combination of our trial functions which is shown in \ref{eq:linear combination of trial functions}.
 \begin{equation}
     w = \sum^n_{i=1}c_i w_i
     \label{eq:linear combination of trial functions}
@@ -275,8 +274,8 @@ Following the properties of the inner product we can rewrite \ref{eq:phi_i, phi_
 This allows us to define \ref{eq:stiffness and mass matrices}.
 \begin{equation}
 \begin{aligned}
-    A = (a_ji) &= \langle w_i, \phi_j \rangle \\
-    M = &= \langle \nabla{w_i} \dot \nabla{\phi_j} \rangle \\
+    A &= \langle w_i, \phi_j \rangle \\
+    M &= \langle \nabla{w_i} \dot \nabla{\phi_j} \rangle \\
     \vec{c} &= (c_i)^T
     \label{eq:stiffness and mass matrices}
 \end{aligned}
@@ -290,10 +289,10 @@ So, \ref{eq:sum out of inner product} transforms into \ref{eq:weak formulation i
 
 Which is exactly the form of the generalised eigenvalue problem, where $A$ is so-called stiffness matrix and $M$ is a mass matrix (the properties and meaning of those matrices will be cleared later). 
 
-This whole process is called finite element discretisation. This process is what makes FEA so powerful because it allows us to breake down a complex continuous physical domain into a finite number of smaller, interconnected subregions (elements).
+This whole process is called finite element discretisation. This is what makes FEA so powerful because it allows us to break down a complex continuous physical domain into a finite number of smaller, interconnected subregions (elements).
 This transforms complex governing differential equations into a manageable system of algebraic equations that can be solved numerically.
 
-The next chapter will describe what are the basis functions that we use to break the problem from infinite-dimentions to finite, how they are defined and how to use them to solve elliptic PDEs.
+The next chapter will describe what are the basis functions that we use to break the problem from infinite dimensions to finite, how they are defined and how to use them to solve elliptic PDEs.
 
 
 
@@ -458,7 +457,7 @@ Following the same procedure as in the \ref{sub:linear approximation} we compute
     u_2 &= c_1 + c_2 + c_4 \\
     u_3 &= c_1 + c_3 + c_6 \\
     u_4 &= c_1 + \frac{1}{2}c_2 + \frac{1}{4}c_4 \\
-    u_5 &= c_1 + \frac{1}{2}c_2 + \frac{1}{2}c_3 + \frac{1}{4}c_4 + \frac{1}{4}c_5 + \ffrac{1}{4}c_6 \\
+    u_5 &= c_1 + \frac{1}{2}c_2 + \frac{1}{2}c_3 + \frac{1}{4}c_4 + \frac{1}{4}c_5 + \frac{1}{4}c_6 \\
     u_6 &= c_1 + \frac{1}{2}c_3 + \frac{1}{4}c_6
 \end{aligned}
 \end{equation}
@@ -513,24 +512,24 @@ The Laplace eigenproblem is the partial differential equation on the form \ref{e
 \begin{equation}
 \begin{aligned}
 \begin{cases}
-    -\Delta u(x) &= \lambda u(x) \text{ when } x \in \Omega \\
-    u(x) &= 0 \text{ when } x \in \partial\Omega \text{ (Dirichlet BC)}
+    -\Delta u(x) &= \lambda u(x), \quad x \in \Omega \\
+    u(x) &= 0, \quad x \in \partial\Omega \text{ (Dirichlet BC)}
     \label{eq:Laplace eigenproblem}
 \end{cases}
 \end{aligned}
 \end{equation}
 
-Here, $\Delta$ is the Laplcian operator that expands in \ref{eq:Laplacian operator}, $\lambda$ represents eigenvalues and $u$ is the unknown eigenfunction.
+Here, $\Delta$ is the Laplacian operator that expands in \ref{eq:Laplacian operator}, $\lambda$ represents eigenvalues and $u$ is the unknown eigenfunction.
 \begin{equation}
     \Delta = \Bigg(\frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2}\Bigg)
     \label{eq:Laplacian operator}
 \end{equation}
 
 This problem has a physical meaning - the feedback mechanism of the physical system. It states that the spatial acceleration (curvature) of a state is directly proportional and opposite to the state itself.
-Hence, in the heat/diffusion equation eigenvalues will represent the rate of fundamental thermal decay and eigenfucntion shows the elemental spatial distributions of heat.
+Hence, in the heat/diffusion equation eigenvalues will represent the rate of fundamental thermal decay and eigenfunction shows the elemental spatial distributions of heat.
 The smallest eigenvalue ($\lambda_1)$ dictates the most resilient thermal profile that takes the longest time to cool down to ambient temperature.
 
-Very important thing that is worth mentioning is the meaning of the negative sign, which ensures stability. In the equation $\Delta u = + \lambda u$, the system would yiled exponential growth, representing physical instability, explosion or infinite dissipation.
+Very important thing that is worth mentioning is the meaning of the negative sign, which ensures stability. In the equation $\Delta u = + \lambda u$, the system would yield exponential growth, representing physical instability, explosion or infinite dissipation.
 Therefore, the negative sign forces confinement, oscillation and equilibrium.
 
 \subsection{
@@ -558,17 +557,22 @@ Therefore the \ref{eq:Schrodinger equation} can be rewritten as \ref{eq:eigenpro
 
 This problem is very crucial for physics however it is not different from the Laplace eigenproblem, since if the potential energy $V = 0$, we will have the simple Laplace equation, this case is known as infinite potential square well, which is good theoretical concept, however cannot be applied to real problems.
 
-Solving this problem will give us the wave function, whose square $|\psi(x)|^2$ represents the probability density of finding a quantum particle at a specific position in space. We have to do that because according to the Bohr's Uncertanty Principle we cannot determine the particle's position and momentum at the same time.
+Solving this problem will give us the wave function, whose square $|\psi(x)|^2$ represents the probability density of finding a quantum particle at a specific position in space. We have to do that because according to the Bohr's Uncertainty Principle we cannot determine the particle's position and momentum at the same time.
+
+
 
 
 \section{Goals and Objectives}
 
-So the idea behind this project is to research about solving 1D and 2D partial differential equations using Finite Element Method and implement 2D in practice. Another goal is to analyse the obtained plots of eigenfunctions and results, calculate their convergence rates and compare them to the known data. 
+The idea behind this project is to research about solving 1D and 2D partial differential equations using Finite Element Method and implement 2D in practice. Another goal is to analyse the obtained plots of eigenfunctions and results, calculate their convergence rates and compare them to the known data. 
+
+
 
 
 \section{Implementation}
-- to complete this project, the VS code was used to write and run the code in python
-- for advanced visualisations Paraview was also used
+In order to complete this project, the Visual Studio code was used to write and run the code in Python and Jupiter Notebooks. In addition to this, for advanced visualisations Paraview was used.
+
+In order to simplify the work various libraries were used, like NumPy, Math and SciPy for different mathematical operations; Pandas for presenting results in good-looking tables; and MatPlotLib and PyVista to visualise plots in 2D and 3D respectively.
 
 
 \subsection{Mesh generation}
@@ -619,9 +623,7 @@ the errors were converging quadratically which can be concluded by the graphs of
 - degenerate eigenspaces
 
 
-\section{
-    \text{Numerical results for the Schr\"{o}dinger's Eigenproblem}
-}
+\section{Numerical results for the Schr\"{o}dinger's Eigenproblem}
 - constant potential
 - potential matrix
 - harmonic oscillator and coulomb
@@ -650,11 +652,13 @@ the errors were converging quadratically which can be concluded by the graphs of
 \bibitem{b7} “Lax-Milgram Theorem,” WolframResearch, 2026. https://mathworld.wolfram.com/Lax-MilgramTheorem.html (accessed Jul. 20, 2026)
 \bibitem{b8} D. bounded, “Mathematics Stack Exchange,” Mathematics Stack Exchange, Mar. 28, 2023. https://math.stackexchange.com/questions/4668104/determining-the-bilinear-form-a-is-bounded (accessed Jul. 21, 2026)
 \bibitem{b9} S. Shaik, “Compare Ritz to Galerkin,” Scribd, 2026. https://www.scribd.com/document/314330469/Compare-Ritz-to-Galerkin (accessed Jul. 25, 2026)
-\bibitem{b10} M. G. Larson and Fredrik Bengzon, The Finite Element Method: Theory, Implementation, and Applications. Springer Science & Business Media, 2013
+\bibitem{b10} M. G. Larson and Fredrik Bengzon, The Finite Element Method: Theory, Implementation, and Applications. Springer Science $\&$ Business Media, 2013
 \bibitem{b11} IEEE, “The Advantages of the Finite Element Method - IEEE Innovation at Work,” May 2019. Accessed: Jul. 29, 2026. [Online]. Available: https://innovationatwork.ieee.org/the-advantages-of-fem/
 \bibitem{b12} GeeksforGeeks, “Triangulations Using Matplotlib,” GeeksforGeeks, Feb. 02, 2023. https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/ (accessed Aug. 01, 2026).
 \bibitem{b13} J. Burkardt, “Computational Geometry Lab: FEM BASIS FUNCTIONS FOR A TRIANGLE,” 2018. Accessed: Aug. 01, 2026. [Online]. Available: https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf
+
 [14] https://www.geophysik.uni-muenchen.de/~igel/Lectures/NMG/08_finite_elements_basisfunctions.pdf
+\bibitem{b14} 
 \end{thebibliography}
 \vspace{12pt}
 
