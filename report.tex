@@ -61,7 +61,7 @@ In addition to this, changes at any point of the domain influences the solution,
 Mathematically, an eigenvalue problem is an equation in which a linear transformation applied to a specific vector - eigenvector, results in the exact same vector scaled by a constant multiplier - eigenvalue. 
 The basic eigenvalue problem for a linear transformation A acting on a nonzero vector x is defined as:
 \begin{equation}
-A\vec{x} = \lambda\vec{x}
+    A\vec{x} = \lambda\vec{x}
 \end{equation}
 where $A$ is an $n \times n$ matrix or linear operator which is known; $x$ is an eigenvector - a nonzero column vector that represents the main direction of the system, which need to be found; $\lambda$ is an eigenvalue - a scalar that needs to be found.
 
@@ -73,15 +73,15 @@ Another variation of the eigenvalue problem is the generalised eigenvalue proble
 
 - the vector form:
 \begin{equation}
-A\vec{x_{i}} = \lambda_{i}B\vec{x_{i}}
+    A\vec{x_{i}} = \lambda_{i}B\vec{x_{i}}
 \end{equation}
 - the matrix form:
 \begin{equation}
-AX = BXD
+    AX = BXD
 \end{equation}
 Where $X$ is the column matrix of the eigenvectors; $D$ is a diagonal matrix of eigenvalues; $B$ acts as a weighting (mass) matrix or a matrix tensor that defines a new inner product for the vector space. 
 
-In other words, it changes the geometry of the problem by measuring vectors not in the standard Euclidean space, but relative to the properties of $B$ itself [1]. It usually represents a specific geometric or physical constraint [2]. 
+In other words, it changes the geometry of the problem by measuring vectors not in the standard Euclidean space, but relative to the properties of $B$ itself \cite{b1}. It usually represents a specific geometric or physical constraint \cite{b2}. 
 
 In this project the generalised eigenvalue problem was chosen because it is better when comparing systems with dual constraints (physical forces and their underlying mass). 
 In addition, because both (in the Laplace case) matrices are symmetric, the solvers preserve these structural properties, guaranteeing real eigenvalues. Also, solving generalised problem avoids explicitly forming $B^{-1}A$, preserving symmetry and improving numerical accuracy, which would be useful for both Laplace and \text{Schr\"{o}dinger} problems.
@@ -89,7 +89,7 @@ In addition, because both (in the Laplace case) matrices are symmetric, the solv
 
 \subsection{Weak formulation}
 Weak formulation is an approach of multiplying the differential equation by an arbitrary test function that will disappear at the end. 
-More precisely it is an integral representation that relaxes the strict smoothness required for the strong form, therefore it requires the equation to be satisfied in an average or integral sense [4].
+More precisely it is an integral representation that relaxes the strict smoothness required for the strong form, therefore it requires the equation to be satisfied in an average or integral sense \cite{b4}.
 
 The way from the strong form to weak requires following steps:
 
@@ -137,7 +137,7 @@ We are going from strong form to the weak one because weak form allows us to sol
 
 \subsection{Bilinear forms}
 In partial differential equations, a bilinear form is a mapping function $B: V \times V \rightarrow \mathbb{R}$ that takes two functions from a vector space and returns a scalar. 
-In the weak formulation of a PDE, it represents the differential operator and boundary conditions. It is also linear in both arguments independently [6]. This is illustrated in \ref{eq:bilinear form}.
+In the weak formulation of a PDE, it represents the differential operator and boundary conditions. It is also linear in both arguments independently \cite{b6}. This is illustrated in \ref{eq:bilinear form}.
 
 Linearity in the first argument:
 \begin{equation}
@@ -203,7 +203,7 @@ According to Lax-Milgram theorem: for every bounded linear functional $f$ on $H$
     \label{eq:Milgram}
 \end{equation}
 
-Where $\phi(x, x_f)$ is a bounded coercive bilinear form of a Hilbert space [7].
+Where $\phi(x, x_f)$ is a bounded coercive bilinear form of a Hilbert space \cite{b7}.
 
 It is worth mentioning that Lax-Milgram theorem follows as a corollary to the Stampacchia theorems that states: any function $f \in H$ necessarily corresponds to a unique function $u \in H$ for which the inequality \ref{eq:Stampacchia inequality} is satisfied for all functions $v \in H$.
 \begin{equation}
@@ -218,7 +218,7 @@ Where $\langle f, v - u \rangle_H$ is an inner product, which in Hilbert spaces 
 
 So using \ref{eq:bilinear Poisson} we will have that $a(u, v)$ is a bilinear form and $L(v)$ is a linear functional. 
 
-Firstly, we need to say that $a(u, v)$ is bounded, in other words $|a(u, v)| \leq M{||u||}||v||$ (the proof can be found in [8]).
+Firstly, we need to say that $a(u, v)$ is bounded, in other words $|a(u, v)| \leq M{||u||}||v||$ (the proof can be found in \cite{b8}).
 
 Then we show that our bilinear form is coercive (or elliptical) which is $a(v, v) \geq \alpha ||v||_{H^1}^2$ for some $\alpha > 0$ (the proof can be found in \ref{sec:proof of coercivity}).
 
@@ -229,11 +229,11 @@ Therefore, by the Lax-Milgram Theorem these properties guaranty that a unique ex
 
 \subsection{The Rayleigh-Ritz/Galerkin approximation}
 The idea explored in this section is the core of the Finite Element Approximation (FEA). The solution of PDEs belongs to infinite-dimensional space, so our goal is to go from the infinite-dimensional space to finite-dimensional subspace. 
-To do so we can use one of two methods: Rayleigh-Ritz approximation or Galerkin approximation which will give the equivalent solution of the variational problem [9].
+To do so we can use one of two methods: Rayleigh-Ritz approximation or Galerkin approximation which will give the equivalent solution of the variational problem \cite{b9}.
 
 We will now derive the Rayleigh-Ritz approximation for the Laplace eigenvalue problem. We will look at the arbitrary problem $\lambda w = -\Delta w$, whose weak form can be expressed as in \ref{eq:2D weak}.
 \begin{equation}
-    \lambda \int_{\Omega}wv \, dx = \int_{\Omega}\nabla{w} \dot \nabla{v} \, dx
+    \lambda \int_{\Omega}wv \, dx = - \int_{\Omega}\nabla{w} \dot \nabla{v} \, dx
     \label{eq:2D weak}
 \end{equation}
 
@@ -274,8 +274,8 @@ Following the properties of the inner product we can rewrite \ref{eq:phi_i, phi_
 This allows us to define \ref{eq:stiffness and mass matrices}.
 \begin{equation}
 \begin{aligned}
-    A &= \langle w_i, \phi_j \rangle \\
-    M &= \langle \nabla{w_i} \dot \nabla{\phi_j} \rangle \\
+    A &= \langle \nabla{w_i} \dot \nabla{\phi_j} \rangle \\
+    M &= \langle w_i, \phi_j \rangle \\
     \vec{c} &= (c_i)^T
     \label{eq:stiffness and mass matrices}
 \end{aligned}
@@ -300,9 +300,9 @@ The next chapter will describe what are the basis functions that we use to break
 
 Finite Element Method is a tool for numerical solution of two-point boundary value problem. The basic idea is to divide the domain into elements (in our case triangles) and look for a polynomial approximations to the unknown functions on each triangle, 
 in other words we approximate locally - while the exact physical behavior of a structure is continuous, the solution within each individual element is approximated using simple mathematical functions, typically linear or quadratic polynomials. 
-After that we rewrite the boundary value problem as a variational equation, and then seek a solution approximation to this equation from the space of continuous piecewise linears [10].
+After that we rewrite the boundary value problem as a variational equation, and then seek a solution approximation to this equation from the space of continuous piecewise linears \cite{b10}.
 
-This method has few very important advantages. First of all, it can easily deal with complex geometries and higher order approximations of the solutions. Also, it works for many types of physics like structural loads, heat transfer, and fluid flow. Moreover, it can be easily visualised, which helps with finding the vulnerabilities in design[11].
+This method has few very important advantages. First of all, it can easily deal with complex geometries and higher order approximations of the solutions. Also, it works for many types of physics like structural loads, heat transfer, and fluid flow. Moreover, it can be easily visualised, which helps with finding the vulnerabilities in design \cite{b11}.
 
 In this project we will use 2D Finite Element Approximation to find solutions of the Laplace eigenproblem and the Time-Independent \text{Schr\"{o}dinger} eigenproblem on the unit square domain.
 
@@ -314,14 +314,14 @@ In order to divide our domain into smaller pieces we first need to introduce the
 If we want to divide the interval in 1D we will use intervals, that can be either equal to each other or be different length. 
 In 2D idea is the same, but instead of small line intervals we need to add one more point to be able to move from 1D line to 2D surface which is a triangle. The domain divided into triangles is called triangulation.
 
-We next will give the formal definition from [10].
+We next will give the formal definition from \cite{b10}.
 
 Let $\Omega \subset \mathbb{R}^2$ be a bounded two-dimensional domain with smooth or polygonal boundary $\partial\Omega$. A triangulation, or a mesh $\mathfrak{K}$ of $\Omega$ is a set $\{K\}$ of triangles $K$, such that $\Omega = \bigcup_{K \in \mathfrak{K}}K$, and such that the intersection of two triangles is either an edge, a corner, or empty. 
-No corner triangle is allowed to be hanging, that is lie on the edge of another triangle. The corners of the triangles are called the nodes [10].
+No corner triangle is allowed to be hanging, that is lie on the edge of another triangle. The corners of the triangles are called the nodes \cite{b10}.
 
 \subsubsection{Mesh generation}
-To generate the triangular mesh the built-in Delaunay algorithm was used [12]. Which is taking a set of 2D coordinates and determines the triangulations with the given points as triangle nodes. 
-This method has own advantages and disadvantages. Delaunay algorithm are optimal in the sense that the angles of all triangles are maximal, however practically when the mesh needs to respect the boundaries of the domain, it can lead to triangles with poor quality [10].
+To generate the triangular mesh the built-in Delaunay algorithm was used \cite{b12}. Which is taking a set of 2D coordinates and determines the triangulations with the given points as triangle nodes. 
+This method has own advantages and disadvantages. Delaunay algorithm are optimal in the sense that the angles of all triangles are maximal, however practically when the mesh needs to respect the boundaries of the domain, it can lead to triangles with poor quality \cite{b10}.
 
 
 
@@ -342,14 +342,14 @@ To construct the piecewise linear function, we are letting $K$ be a triangle and
 
 Simply, $P_1(K)$ contains all functions of the form $v = c_0 + c_1x_1 + c_2x_2$ on $K$.
 
-We know from [10] that a function $v$ in $V_h$ is uniquely determined by its nodal values. So, we let the nodal values be our degrees of freedom construct the corresponding basis $\{\phi_j\}_{j=1}^{n_p} \subset V_h$ with the condition defined in \ref{eq:hat functions}, because these functions define the basis they are called basis functions.
+We know from \cite{b10} that a function $v$ in $V_h$ is uniquely determined by its nodal values. So, we let the nodal values be our degrees of freedom construct the corresponding basis $\{\phi_j\}_{j=1}^{n_p} \subset V_h$ with the condition defined in \ref{eq:hat functions}, because these functions define the basis they are called basis functions.
 \begin{equation}
     \phi_j(N_i) = \begin{cases}
         1, i = j \\
         0, i \neq j \end{cases} i, j = 1, 2, \dots, n_p
     \label{eq:hat functions}
 \end{equation}
-The picture from [10] illustrates a typical basis function $\phi_j$ which because of their shape sometimes are called hat functions.
+The picture from \cite{b10} illustrates a typical basis function $\phi_j$ which because of their shape sometimes are called hat functions.
 
 From linear algebra we know that we can write every function $v \in V_h$ using our basis functions. This is shown in \ref{eq:linear combination of basis functions}.
 \begin{equation}
@@ -385,7 +385,7 @@ Now, when know how to divide our domain into triangulations, and how to interpol
 In practice this approach would be computationally inefficient because we can deal with the complex triangulations that will have different sizes, shapes and orientations, so interpolate each one individually will take a lot of time and effort. 
 That is why we need to come up with the "common factor" that we can relate to every element of our mesh. That is why we are going to use reference triangle.
 
-By definition reference triangle is a triangle with vertices in: (1, 0), (0, 1) and (0, 0) [13]. In order to avoid confusion with the coordinates, we will say every triangle in $(x, y)$ is mapped to the reference plane $(\xi, \eta)$, this mapping is illustrated
+By definition reference triangle is a triangle with vertices in: (1, 0), (0, 1) and (0, 0) \cite{b13}. In order to avoid confusion with the coordinates, we will say every triangle in $(x, y)$ is mapped to the reference plane $(\xi, \eta)$, this mapping is illustrated
 
 Any triangle with corners $P_i(x_i, y_i)$, $i = 1, 2, 3$ can be transformed inte a rectangular, equilateral triangle with $x$ and $y$ defined in \ref{eq:coordinate transformation}, using the counterclockwise numbering.
 \begin{equation}
@@ -538,14 +538,14 @@ Therefore, the negative sign forces confinement, oscillation and equilibrium.
 
 \text{Schr\"{o}dinger's} equation is one of the most important equations of the 20th century. It is the quantum version of the Newton's law $F = ma$, it tells us how waves of probability change and behave for simple particles over time, however in this project we will look at the Time-Independent \text{Schr\"{o}dinger's} Equation \ref{eq:Schrodinger equation}.
 \begin{equation}
-    \Bigg[-\frac{\hbar}{2m}\nabla^2 + V(\vec{r})\Bigg]\psi({\vec{r}}) = E\psi(\vec{r})
+    \Bigg[-\frac{\hbar}^2{2m}\nabla^2 + V(\vec{r})\Bigg]\psi({\vec{r}}) = E\psi(\vec{r})
     \label{eq:Schrodinger equation}
 \end{equation}
 where $\hbar$ - reduced Planck's constant; $\psi$ - wave function, it holds the information about a quantum particle's state; $m$ - the mass of the studied particle; $V$ - potential energy of the system.
 
 In fact the left part of the equation is known as Hamiltonian operator \ref{eq:Hamiltonian operator}.
 \begin{equation}
-    \hat{H} = \Bigg[-\frac{\hbar}{2m}\nabla^2 + V(\vec{r})\Bigg]
+    \hat{H} = \Bigg[-\frac{\hbar}^2{2m}\nabla^2 + V(\vec{r})\Bigg]
     \label{eq:Hamiltonian operator}
 \end{equation}
 
@@ -557,14 +557,14 @@ Therefore the \ref{eq:Schrodinger equation} can be rewritten as \ref{eq:eigenpro
 
 This problem is very crucial for physics however it is not different from the Laplace eigenproblem, since if the potential energy $V = 0$, we will have the simple Laplace equation, this case is known as infinite potential square well, which is good theoretical concept, however cannot be applied to real problems.
 
-Solving this problem will give us the wave function, whose square $|\psi(x)|^2$ represents the probability density of finding a quantum particle at a specific position in space. We have to do that because according to the Bohr's Uncertainty Principle we cannot determine the particle's position and momentum at the same time.
+Solving this problem will give us the wave function, whose square $|\psi(x)|^2$ represents the probability density of finding a quantum particle at a specific position in space. We have to do that because according to the Heisenberg's Uncertainty Principle we cannot determine the particle's position and momentum at the same time.
 
 
 
 
 \section{Goals and Objectives}
 
-The idea behind this project is to research about solving 1D and 2D partial differential equations using Finite Element Method and implement 2D in practice. Another goal is to analyse the obtained plots of eigenfunctions and results, calculate their convergence rates and compare them to the known data. 
+The idea behind this project is to research about solving 1D and 2D partial differential equations using Finite Element Method and implement 2D solutions in practice. Another goal is compare and analyse the convergence rates of P1 and P2 elements and compare them to the known data.
 
 
 
@@ -576,19 +576,80 @@ In order to simplify the work various libraries were used, like NumPy, Math and 
 
 
 \subsection{Mesh generation}
-- the mesh was generated on the unit square and in the final version a person will be able to choose the number of points per edge of the unit square
-- after generating the square with nodes the square, which is our domain, was divided into the triangulations using the Delaunay method.
-- to avoid breaking of the code all the nodes were sorted in ascending order
+To generate mesh we will use the square with coordinates $[0, 1] \times [0, 1]$. On this square domain we will build triangulations using the Delaunay algorithm from \cite{b10}. In our example we will hard code the number of points per axis, but it is possible to let the user choose the number of points. The mesh with 6 points per axis will look like this (insert the picture).
+In order to avoid breaking the code all the triangulations were sorted in the ascending order.
 
 
 \subsection{Local element matrices}
-- local matrices include:
-the local stiffness matrix A, which measures the alignment of the gradients of two basis functions  i.e. how much the element resist deformation (spring force) 
-the local mass matrix M, which measures how much basis functions occupy the same region of space (overlap) i.e. how much the triangle resist acceleration
+On every triangle we will compute their own stiffness, mass and potential matrices (in Schr\"{o}dinger case) which are usually called local matrices.
 
+The local stiffness matrix $A$ measures the alignment of the gradients of two basis functions or simplier how much the element resist deformation (spring force). 
+
+The local mass matrix $M$ measures how much basis functions occupy the same region of space (overlap), in other words how much the triangle resists acceleration.
+
+The local potential matrix $V$ measures the potential energy contribution between basis functions \cite{b15}.
+
+Following \cite{b10} we know that each entry of stiffness matrix and mass matrix are calculated by \ref{eq:stiffness matrix} and \ref{eq:mass matrix} respectively.
+\begin{equation}
+    A = \int_\Omega \nabla u \nabla v \, dx
+    \label{eq:stiffness matrix}
+\end{equation}
+
+\begin{equation}
+    M = 
+    \label{eq:mass matrix}
+\end{equation}
+
+With potential energy matrix $V$ the situation is a bit more conplex because potential energy in Schr\"{o}dinger Equation can be defined with various equations. But nevertheless we know that potential matrix $V$ is calcualated using \ref{eq:potential matrix}.
+\begin{equation}
+    V = 
+    \label{eq:potential matrix}
+\end{equation}
+
+However, becuase of singularity in those integrals we will have to use Gaussian quadrature for numerical integration. 
+To start with we will use our reference mapping $(x, y) \mapsto (\xi, \eta)$. To do so we recall the change of variables.
+\begin{equation}
+    \int_K f(x, y) \, dxdy = \int_{\vec{K}}f(\xi, \eta) det(J(\xi, \eta)) \, d\xi d\eta
+    \label{eq:from physical to reference}
+\end{equation}
+where $det(J(\xi, \eta))$ is the determinant of the Jacobian matrix defined in \ref{eq:jacobian matrix}.
+\begin{equation}
+    J = \begin{bmatrix}
+        \frac{\partial x}{\partial \xi} & \frac{\partial y}{\partial \xi} \\
+        \frac{\partial x}{\partial \eta} & \frac{\partial y}{\partial \eta} 
+    \end{bmatrix}
+    \label{eq:jacobian matrix}
+\end{equation}
+
+However, for the linear Lagrange finite element, that we are using, the Jacobian matrix is given by \ref{eq:Lagrange jacobian} \cite{b10}.
+\begin{equation}
+    J = \begin{bmatrix}
+        x_2 - x_1 & y_2 - y_1 \\
+        x_3 - x_1 & y_3 - y_1
+    \end{bmatrix}
+    \label{eq:Lagrange jacobian}
+\end{equation}
+
+Therefore, the determinant of $J$ is
+\begin{equation}
+    det(J) = 2|K|
+\end{equation}
+
+Now approxiamting the integral over $\vec{K}$ from \ref{eq:from physical to reference} by a quadrature formuala we get \ref{eq:quadrature reference}.
+\begin{equation}
+    \int_{\vec{K}}f(\xi, \eta) det(J(\xi, \eta)) \, d\xi d\eta \approx \sum_{q=1}^{n_q} \frac{w_q}{2} f(\xi_q, \eta_q) det(J(\xi_q, \eta_q))
+    \label{eq:quadrature reference}
+\end{equation}
+where $N_q$ is the number of quadrature points, $w_q$ the quadrature weigths, and $(\xi_q, \eta_q)$ the quadrature points.
+
+Since for the Laplace problem we will have the polynomials up to degree 4 we will use the6 point Hammer-Marlowe-Stroud quadrature rules \cite{b16}. This rule has more quadrature points then required for solving this type of integral, however it gives more precision with minor speed sacrifices.
+
+However, for Schr\"{o}dinger equation we can face higher order polynomials which requares us to use a 12 point David Dunavant's quadrature rule \cite{b17} with Burkardt's implementation from \cite{b18}.
 
 \subsection{Global assembly}
-global assembly went through a straightforward algorithm. Each vertex of the triangle has its own global coordinates, so the idea is to put the local matrix in the similar position in global as it has in the domain.
+Once we obtained the local matrices that represent certain physical properties on every small element of the mesh we can build the picture back piece by piece.
+
+To do so, we need to follow the straightforward algorithm called assembly \cite{b19}. Each vertex of the triangle has its own global coordinates, so the idea is to put the local matrix in the similar position in global as it belongs in the domain (the more detailed algorithm can be found in \cite{b19} or \cite{b20}).
 
 
 \subsection{Dirichlet boundary conditions}
@@ -644,8 +705,7 @@ the errors were converging quadratically which can be concluded by the graphs of
 \begin{thebibliography}{00}
 \bibitem{b1} Arxiv.org, 2023. https://arxiv.org/pdf/1903.11240 (accessed Jul. 15, 2026)
 \bibitem{b2} W. Ding and Y. Wei, “Generalized Tensor Eigenvalue Problems,” Theory and Computation of Tensors, pp. 11-36, 2016, doi: 10.1016/b978-0-12-803953-3.50002-2
-\bibitem{b3}
-[3] https://www.researchgate.net/publication/235012188_An_Algorithm_for_the_Generalized_Matrix_Eigenvalue_Problem_Ax_Lambda_Bx
+\bibitem{b3} https://www.researchgate.net/publication/235012188_An_Algorithm_for_the_Generalized_Matrix_Eigenvalue_Problem_Ax_Lambda_Bx
 \bibitem{b4} “What is the difference between strong form and weak form? | ResearchGate,” ResearchGate, 2016. https://www.researchgate.net/post/What_is_the_difference_between_strong_form_and_weak_form (accessed Jul. 18, 2026)
 \bibitem{b5} GeeksforGeeks, “Bilinear Form,” GeeksforGeeks, Sept. 11, 2024. https://www.geeksforgeeks.org/engineering-mathematics/bilinear-form/ (accessed Jul. 20, 2026)
 \bibitem{b6} manavofficial577, “Bilinear Form Linear Algebra Notes,” Scribd, 2026. https://www.scribd.com/document/931572146/Bilinear-Form-Linear-Algebra-Notes (accessed Jul. 20, 2026)
@@ -656,9 +716,14 @@ the errors were converging quadratically which can be concluded by the graphs of
 \bibitem{b11} IEEE, “The Advantages of the Finite Element Method - IEEE Innovation at Work,” May 2019. Accessed: Jul. 29, 2026. [Online]. Available: https://innovationatwork.ieee.org/the-advantages-of-fem/
 \bibitem{b12} GeeksforGeeks, “Triangulations Using Matplotlib,” GeeksforGeeks, Feb. 02, 2023. https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/ (accessed Aug. 01, 2026).
 \bibitem{b13} J. Burkardt, “Computational Geometry Lab: FEM BASIS FUNCTIONS FOR A TRIANGLE,” 2018. Accessed: Aug. 01, 2026. [Online]. Available: https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf
+\bibitem{b14} https://www.geophysik.uni-muenchen.de/~igel/Lectures/NMG/08_finite_elements_basisfunctions.pdf
+\bibitem{b15} D. Xu, J. Stare, and A. L. Cooksy, “Solving the vibrational Schrödinger equation on an arbitrary multidimensional potential energy surface by the finite element method,” Computer Physics Communications, vol. 180, no. 11, pp. 2079-2094, June 2009, doi: 10.1016/j.cpc.2009.06.010.
+\bibitem{b16} Hammer, Preston C., Marlowe, O. J., and Stroud, A. H. Numerical integration over simplexes and cones, Mathematical Tables and Other Aids to Computation 10(55), 130-137, 1956. [DOI: 10.2307/2002483]
+\bibitem{b17} D. A. Dunavant, “High degree efficient symmetrical Gaussian quadrature rules for the triangle,” International Journal for Numerical Methods in Engineering, vol. 21, no. 6, pp. 1129-1148, June 1985, doi: 10.1002/nme.1620210612.
+\bibitem{b18} Sc.edu, 2026. https://people.math.sc.edu/Burkardt/cpp_src/triangle_dunavant_rule/triangle_dunavant_rule.cpp (accessed Aug. 10, 2026).
+\bibitem{b19} “Assembly — FEM Tutorial 0.1.0 documentation,” Uni-erlangen.de, 2017. https://ww8central.ww.uni-erlangen.de/courses/fem101/fem/assembly.html (accessed Jun. 18, 2026).
+\bibitem{b20} https://quickfem.com/wp-content/uploads/IFEM.Ch25.pdf
 
-[14] https://www.geophysik.uni-muenchen.de/~igel/Lectures/NMG/08_finite_elements_basisfunctions.pdf
-\bibitem{b14} 
 \end{thebibliography}
 \vspace{12pt}
 
