@@ -200,10 +200,15 @@ But why did we need all these spaces? The answer is that for the FEM if our func
 \subsection{Existence of the solution}
 Two of the most important questions in mathematics are the questions of existence and uniqueness. So what we want to ask while solving the PDE using FEM is why do we have a solution and is this solution unique. The answer for these questions is the Lax-Milgram theorem.
 
-According to Lax-Milgram theorem: for every bounded linear functional $f$ on $H$, there exists a unique $x_{f} \in H$ such that \ref{eq:Milgram} is true \cite{b10}. 
+According to Lax-Milgram theorem: for every bounded linear functional $f$ on $H$, there exists a unique $x_{f} \in H$ such that \ref{eq:Milgram1} is true \cite{b10}.
 \begin{equation}
     f(x) = \phi(x, x_{f}) \quad \forall x \in H
     \label{eq:Milgram}
+\end{equation}
+
+But for the project it would be better to give more specific definition - let $V$ be a Hilbert space, $a: V \times V \rightarrow \mathbb{R}$ be continuous and coercive, and $L: V \rightarrow \mathbb{R}$ be a bounded linear functional. Then there exist a unique $u \in V$ such that \ref{eq:Milgram2} is true.
+\begin{equation}
+    a(u, v) = L(v) \quad \forall v \in V
 \end{equation}
 
 Where $\phi(x, x_f)$ is a bounded coercive bilinear form of a Hilbert space \cite{b7}.
@@ -240,7 +245,12 @@ We will now derive the Rayleigh-Ritz approximation for the Laplace eigenvalue pr
     \label{eq:2D weak}
 \end{equation}
 
-By definition of the weak form, the equation must hold for any arbitrary function $v$, therefore if it holds for every basis function defined by $\phi_j$ that spans the subspace, then it holds for any linear combination of them. So, we can rewrite \ref{eq:2D weak} as it is shown in \ref{eq:arbitrary 2D weak form}.
+By definition of the weak form, the equation must hold for any arbitrary function $v$ and it is in our power to put constraints on this test function. One of the main ones will be that our test space becomes discrete \ref{eq:discrete test space}.
+\begin{equation}
+    v_h \in V_h \quad \text{where } V_h = span{\phi_1, \dots, \phi_n} \subset V
+\end{equation}
+
+Therefore if it holds for every basis function defined by $\phi_j$ that spans the subspace, then it holds for any linear combination of them. So, we can rewrite \ref{eq:2D weak} as it is shown in \ref{eq:arbitrary 2D weak form}.
 \begin{equation}
     \lambda \int_{\Omega}w\phi_j \, dx = \int_{\Omega}\nabla{w} \dot \nabla{\phi_j} \, dx
     \label{eq:arbitrary 2D weak form}
@@ -254,31 +264,31 @@ Recalling the definition of the inner product $\langle u, v \rangle = \int_{a}^{
 
 Let $w_{1}, \dots , w_{n}$ be $n$ arbitrary trial functions. Therefore, because we project our infinite-dimensional problem onto finite-dimensional subspace we can express our unknown function $w$ as the linear combination of our trial functions which is shown in \ref{eq:linear combination of trial functions}.
 \begin{equation}
-    w = \sum^n_{i=1}c_i w_i
+    w_h = \sum^n_{i=1}c_i \phi_i
     \label{eq:linear combination of trial functions}
 \end{equation}
 
 Substituting \ref{eq:linear combination of trial functions} into the \ref{eq:inner product 2D weak form} gives us \ref{eq:phi_i, phi_j weak form}.
 \begin{equation}
-    \lambda \langle \sum^n_{i=1}c_i w_i, \phi_j \rangle = \langle \nabla \Bigg(\sum^n_{i=1}c_i w_i\Bigg) \dot \nabla{\phi_j} \rangle
+    \lambda \langle \sum^n_{i=1}c_i \phi_i, \phi_j \rangle = \langle \nabla \Bigg(\sum^n_{i=1}c_i \phi_i\Bigg) \dot \nabla{\phi_j} \rangle
     \label{eq:phi_i, phi_j weak form}
 \end{equation}
 
-Because our $w$ is a closed subspace, it inherits the same boundedness and coercivity constants, so if we reapply Max-Milgram theorem, we will prove that the discrete FEM has a unique solution.
+Because our $V_h$ is a finite-dimensional subspace of $V$, it is a closed subspace, it inherits the same boundedness and coercivity constants, so if we reapply Max-Milgram theorem, we will prove that the discrete FEM has a unique solution.
 
 Now we know that solution exists and is unique, but how do we find it?
 
 Following the properties of the inner product we can rewrite \ref{eq:phi_i, phi_j weak form} as \ref{eq:sum out of inner product}.
 \begin{equation}
-    \lambda \sum^n_{i=1}c_i\langle w_i, \phi_j \rangle = \sum^n_{i=1}c_i \langle \nabla{w_i} \dot \nabla{\phi_j} \rangle
+    \lambda \sum^n_{i=1}c_i\langle \phi_i, \phi_j \rangle = \sum^n_{i=1}c_i \langle \nabla{\phi_i} \dot \nabla{\phi_j} \rangle
     \label{eq:sum out of inner product}
 \end{equation}
 
 This allows us to define \ref{eq:stiffness and mass matrices}.
 \begin{equation}
 \begin{aligned}
-    A &= \langle \nabla{w_i} \dot \nabla{\phi_j} \rangle \\
-    M &= \langle w_i, \phi_j \rangle \\
+    A &= \langle \nabla{\phi_i} \dot \nabla{\phi_j} \rangle \\
+    M &= \langle \phi_i, \phi_j \rangle \\
     \vec{c} &= (c_i)^T
     \label{eq:stiffness and mass matrices}
 \end{aligned}
