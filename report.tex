@@ -311,9 +311,9 @@ The next chapter will describe what are the basis functions that we use to break
 
 \section{Finite Element Method (FEM)}
 
-Finite Element Method is a tool for numerical solution of two-point boundary value problem. The basic idea is to divide the domain into elements (in our case triangles) and look for a polynomial approximations to the unknown functions on each triangle, 
-in other words we approximate locally - while the exact physical behavior of a structure is continuous, the solution within each individual element is approximated using simple mathematical functions, typically linear or quadratic polynomials. 
-After that we rewrite the boundary value problem as a variational equation, and then seek a solution approximation to this equation from the space of continuous piecewise linears \cite{b10}.
+Finite Element Method is a numerical method for approximating solutions of differential equations, particularly two-point boundary value problem and eigenvalue problem. The basic idea is to divide the domain into elements (in our case triangles) and look for a polynomial approximations to the unknown functions on each triangle, 
+in other words we approximate locally - while the exact solution is continuous, the solution within each individual element is approximated using simple mathematical functions, typically linear or quadratic polynomials. 
+After that we rewrite the boundary value problem as a variational equation, and then seek a solution approximation to this equation from the space of continuous piecewise functions \cite{b10}.
 
 This method has few very important advantages. First of all, it can easily deal with complex geometries and higher order approximations of the solutions. Also, it works for many types of physics like structural loads, heat transfer, and fluid flow. Moreover, it can be easily visualised, which helps with finding the vulnerabilities in design \cite{b11}.
 
@@ -329,8 +329,8 @@ In 2D idea is the same, but instead of small line intervals we need to add one m
 
 We next will give the formal definition from \cite{b10}.
 
-Let $\Omega \subset \mathbb{R}^2$ be a bounded two-dimensional domain with smooth or polygonal boundary $\partial\Omega$. A triangulation, or a mesh $\mathfrak{K}$ of $\Omega$ is a set $\{K\}$ of triangles $K$, such that $\Omega = \bigcup_{K \in \mathfrak{K}}K$, and such that the intersection of two triangles is either an edge, a corner, or empty. 
-No corner triangle is allowed to be hanging, that is lie on the edge of another triangle. The corners of the triangles are called the nodes \cite{b10}.
+Let $\Omega \subset \mathbb{R}^2$ be a bounded polygonal domain with boundary $\partial\Omega$. A triangulation, or a mesh $\mathfrak{K}$ of $\Omega$ is a set $\{K\}$ of triangles $K$, such that $\Omega = \bigcup_{K \in \mathfrak{K}}K$, and such that the intersection of two triangles is either an edge, a corner, or empty. 
+No node is allowed to be hanging, that is lie on the edge of another triangle. The corners of the triangles are called the nodes \cite{b10}.
 
 \subsubsection{Mesh generation}
 To generate the triangular mesh the built-in Delaunay algorithm was used \cite{b12}. Which is taking a set of 2D coordinates and determines the triangulations with the given points as triangle nodes. 
