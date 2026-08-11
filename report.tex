@@ -9,7 +9,7 @@
 \usepackage{graphicx}
 \usepackage{textcomp}
 \usepackage{xcolor}
-\usepackage{url}
+\usepackage{hyperref}
 
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -26,14 +26,14 @@
 \section{Introduction}
 In modern science to solve complex problems various simulations based on mathematical models are used.
 By doing so, researchers are able to quickly test hypotheses, change parameters and solve equations that are too complex or impossible to physically recreate. 
-One of these mathematical tools is Finite Element Method (FEM) that is used to solve differential equations.
+One such numerical method is Finite Element Method (FEM) that is widely used to obtain approximate solutions of differential equations.
 
 Many physical systems are governed by partial differential equations whose analytical solutions are either extremely difficult or impossible to obtain, that is the reason why numerical analysis comes in.
-It allows to design and implement an algorithms to find approximate but highly accurate numeric solutions. 
+It allows us to design and implement an algorithms to find approximate but highly accurate numeric solutions. 
 
-The finite element approximation has become one of the most widely used techniques for solving eigenvalue problems with elliptic boundary value. Its mathematical foundations have been extensively developed in classical texts such as Larson $\&$ Bengzon and Brenner $\&$ Scott. Numerous implementations have demonstrated the this numerical method provides accurate approximations whose errors decrease predictably under mesh refinement.
+The finite element approximation has become one of the most widely used techniques for solving eigenvalue problems with elliptic boundary-value and eigenvalue problems. Its mathematical foundations have been extensively developed in classical texts such as Larson $\&$ Bengzon and Brenner $\&$ Scott. Numerous implementations have demonstrated that this numerical method provides accurate approximations whose errors decrease predictably under mesh refinement.
 
-Hence, this report develops mathematical foundations of the finite element approximation of elliptic eigenvalue problems before implementing the method in Python for both Laplace and time-independent \text{Schr\"{o}dinger} equations. Numerical experimentsnare performed using P1 and P2 finite elements and the convergence of eigenvalues and eigenfunctions is compared with theoretical predictions.
+Hence, this report develops mathematical foundations of the finite element approximation of elliptic eigenvalue problems before implementing the method in Python for both Laplace and time-independent \text{Schr\"{o}dinger} equations. Numerical experiments are performed using P1 and P2 finite elements and the convergence of eigenvalues and eigenfunctions is compared with theoretical predictions.
 
 
 
@@ -52,7 +52,7 @@ The equation \ref{eq:elliptic PDE} is classified as elliptic if the discriminant
     B^2 - 4AC < 0
 \end{equation}
 
-Elliptic equations differ from hyperbolic and parabolic equations because they describe the steady state, time-independent phenomena. 
+Elliptic equations commonly arise in steady-state or equilibrium problems. Unlike hyperbolic and parabolic equations they describe the propagation of an initial condition in time. 
 Moreover, their solutions depend only on spatial variables and require boundary conditions rather than initial conditions, the most common are Dirichlet (specifying the value on the boundary) and Neumann (specifying the derivative or the flux at the boundary). 
 In addition to this, changes at any point of the domain influences the solution, reflecting the global nature of elliptic problems.
 
@@ -63,7 +63,7 @@ The basic eigenvalue problem for a linear transformation A acting on a nonzero v
 \begin{equation}
     A\vec{x} = \lambda\vec{x}
 \end{equation}
-where $A$ is an $n \times n$ matrix or linear operator which is known; $x$ is an eigenvector - a nonzero column vector that represents the main direction of the system, which need to be found; $\lambda$ is an eigenvalue - a scalar that needs to be found.
+where $A$ is an $n \times n$ matrix or linear operator which is known; $x$ is an eigenvector - a nonzero column vector whose direction is unchanged by the linear transformation, which need to be found; $\lambda$ is an eigenvalue - a scalar that needs to be found.
 
 The main idea is that when the transformation A operates on x, the eigenvector does not change its direction, it only stretches, compresses, or flips.
 
@@ -79,11 +79,10 @@ Another variation of the eigenvalue problem is the generalised eigenvalue proble
 \begin{equation}
     AX = BXD
 \end{equation}
-Where $X$ is the column matrix of the eigenvectors; $D$ is a diagonal matrix of eigenvalues; $B$ acts as a weighting (mass) matrix or a matrix tensor that defines a new inner product for the vector space. 
+Where $X$ is the column matrix of the eigenvectors; $D$ is a diagonal matrix of eigenvalues; $B$ acts as a weighting (mass) matrix that defines a new inner product for the vector space. 
 
 In other words, it changes the geometry of the problem by measuring vectors not in the standard Euclidean space, but relative to the properties of $B$ itself \cite{b1}. It usually represents a specific geometric or physical constraint \cite{b2}. 
 
-In this project the generalised eigenvalue problem was chosen because it is better when comparing systems with dual constraints (physical forces and their underlying mass). 
 In addition, because both (in the Laplace case) matrices are symmetric, the solvers preserve these structural properties, guaranteeing real eigenvalues. Also, solving generalised problem avoids explicitly forming $B^{-1}A$, preserving symmetry and improving numerical accuracy, which would be useful for both Laplace and \text{Schr\"{o}dinger} problems.
 
 
@@ -101,7 +100,7 @@ Firstly, write the strong form (we will take Poisson equation on the interval I 
         \label{eq:Poisson}
     \end{cases}
 \end{equation}
-Then, multiply by a test function (rewrite as variational formulation):
+Then, multiply \ref{eq:Poisson} by an arbitrary test function $v$ (rewrite as variational formulation):
 \begin{equation}
 -u''(x)v(x) = f(x)v(x)
 \end{equation}
@@ -126,7 +125,7 @@ Since $v(0) = v(L) = 0$ by Dirichlet BCs:
     \label{eq:weak form}
 \end{equation}
 
-The form obtained in \ref{eq:weak form} is called a weak form in 1D. For 2D and higher dimensions integration by parts follows the divergence theorem is used, in particular the Green's Theorem presented in \ref{eq:Green theorem}:
+The form obtained in \ref{eq:weak form} is called a weak form in 1D. For 2D and higher dimensions integration by parts follows the divergence theorem is used, in particular the Green's First Identity presented in \ref{eq:Green theorem}:
 \begin{equation}
     \int_{\Omega}-\Delta{u}v \, dx = \int_{\Omega}\nabla{u} \dot \nabla{v} \, dx - \int_{\partial{\Omega}} n \dot \nabla{u}v \, ds
     \label{eq:Green theorem}
@@ -148,7 +147,8 @@ Linearity in the first argument:
     \label{eq:bilinear form}
 \end{aligned}
 \end{equation}
-Therefore, the left hand side of weak formulation of the Poisson equation \ref{eq:weak form} can be transformed into the abstract variational form - find $u \in V$ such that it will satisfy the \ref{eq:bilinear Poisson}.
+
+Therefore, the weak formulation of the Poisson equation \ref{eq:weak form} can be written in abstract variational form - find $u \in V$ such that it will satisfy the \ref{eq:bilinear Poisson}.
 \begin{equation}
 \begin{aligned}
     B(u, v) &= L(v) \quad \forall v \in V \text{, where} \\
@@ -170,8 +170,11 @@ Therefore, we need to use the space that will allow us to have discontinuous der
 
 Lebesgue function space is a space of "p-th power integrable" functions which are defined by \ref{eq:Lebesque space}. 
 \begin{equation}
-    f \in L^p \quad \text{if} \int |f|^p < \infty
+\begin{aligned}
+    f \in L^p \quad \text{if} \int |f|^p < \infty \text{or}\\
+    \int_\Omega |f(x)|^p \, dx < \infty
     \label{eq:Lebesque space}
+\end{aligned}
 \end{equation}
 And their norms or lengths are defined in \ref{eq:Lebesque norm}:
 \begin{equation}
@@ -182,7 +185,7 @@ And their norms or lengths are defined in \ref{eq:Lebesque norm}:
 When $p=2$, $L^{2}(\Omega)$ space possesses an inner product, allowing us to define angles, distances and perform orthogonal projections.
 
 The Sobolev space, which is typically denoted as $W^{k, p}(\Omega)$, consists of all functions in $L^{p}(\Omega)$ whose weak (or distributional) derivatives up to order $k$ also belong to $L^{p}(\Omega)$. 
-We are interested in Sobolev spaces because of its special case $H^{k}(\Omega)$ also known as Hilbert space, which uses the $L^2$ norm and its norm is presented in \ref{eq:H1 norm}. 
+The special case $W^{k,2}(\Omega)$, denoted by $H^{k}(\Omega)$ also known as Hilbert space, that is equipped with the corresponding inner product. Hilbert's space norm is presented in \ref{eq:H1 norm} and it is clear that it uses the $L^2$ norms. 
 \begin{equation}
     ||u||_{H^1} = \sqrt{\Bigg(\int_\Omega |u|^2 \, dx + \int_\Omega |\nabla u|^2 \, dx \Bigg)}
     \label{eq:H1 norm}
@@ -197,7 +200,7 @@ But why did we need all these spaces? The answer is that for the FEM if our func
 \subsection{Existence of the solution}
 Two of the most important questions in mathematics are the questions of existence and uniqueness. So what we want to ask while solving the PDE using FEM is why do we have a solution and is this solution unique. The answer for these questions is the Lax-Milgram theorem.
 
-According to Lax-Milgram theorem: for every bounded linear functional $f$ on $H$, there exists a unique $x_{f} \in H$ such that \ref{eq:Milgram} is true. 
+According to Lax-Milgram theorem: for every bounded linear functional $f$ on $H$, there exists a unique $x_{f} \in H$ such that \ref{eq:Milgram} is true \cite{b10}. 
 \begin{equation}
     f(x) = \phi(x, x_{f}) \quad \forall x \in H
     \label{eq:Milgram}
@@ -228,7 +231,7 @@ Therefore, by the Lax-Milgram Theorem these properties guaranty that a unique ex
 
 
 \subsection{The Rayleigh-Ritz/Galerkin approximation}
-The idea explored in this section is the core of the Finite Element Approximation (FEA). The solution of PDEs belongs to infinite-dimensional space, so our goal is to go from the infinite-dimensional space to finite-dimensional subspace. 
+The idea explored in this section is the core of the Finite Element Method (FEM). The solution of PDEs belongs to infinite-dimensional space, so our goal is to go from the infinite-dimensional space to finite-dimensional subspace. 
 To do so we can use one of two methods: Rayleigh-Ritz approximation or Galerkin approximation which will give the equivalent solution of the variational problem \cite{b9}.
 
 We will now derive the Rayleigh-Ritz approximation for the Laplace eigenvalue problem. We will look at the arbitrary problem $\lambda w = -\Delta w$, whose weak form can be expressed as in \ref{eq:2D weak}.
@@ -239,7 +242,7 @@ We will now derive the Rayleigh-Ritz approximation for the Laplace eigenvalue pr
 
 By definition of the weak form, the equation must hold for any arbitrary function $v$, therefore if it holds for every basis function defined by $\phi_j$ that spans the subspace, then it holds for any linear combination of them. So, we can rewrite \ref{eq:2D weak} as it is shown in \ref{eq:arbitrary 2D weak form}.
 \begin{equation}
-    \lambda \int_{\Omega}w\phi_j \, dx = - \int_{\Omega}\nabla{w} \dot \nabla{\phi_j} \, dx
+    \lambda \int_{\Omega}w\phi_j \, dx = \int_{\Omega}\nabla{w} \dot \nabla{\phi_j} \, dx
     \label{eq:arbitrary 2D weak form}
 \end{equation}
 
@@ -538,14 +541,14 @@ Therefore, the negative sign forces confinement, oscillation and equilibrium.
 
 \text{Schr\"{o}dinger's} equation is one of the most important equations of the 20th century. It is the quantum version of the Newton's law $F = ma$, it tells us how waves of probability change and behave for simple particles over time, however in this project we will look at the Time-Independent \text{Schr\"{o}dinger's} Equation \ref{eq:Schrodinger equation}.
 \begin{equation}
-    \Bigg[-\frac{\hbar}^2{2m}\nabla^2 + V(\vec{r})\Bigg]\psi({\vec{r}}) = E\psi(\vec{r})
+    \Bigg[-\frac{\hbar^2}{2m}\nabla^2 + V(\vec{r})\Bigg]\psi({\vec{r}}) = E\psi(\vec{r})
     \label{eq:Schrodinger equation}
 \end{equation}
 where $\hbar$ - reduced Planck's constant; $\psi$ - wave function, it holds the information about a quantum particle's state; $m$ - the mass of the studied particle; $V$ - potential energy of the system.
 
 In fact the left part of the equation is known as Hamiltonian operator \ref{eq:Hamiltonian operator}.
 \begin{equation}
-    \hat{H} = \Bigg[-\frac{\hbar}^2{2m}\nabla^2 + V(\vec{r})\Bigg]
+    \hat{H} = \Bigg[-\frac{\hbar^2}{2m}\nabla^2 + V(\vec{r})\Bigg]
     \label{eq:Hamiltonian operator}
 \end{equation}
 
@@ -653,7 +656,14 @@ To do so, we need to follow the straightforward algorithm called assembly \cite{
 
 
 \subsection{Dirichlet boundary conditions}
-- all the nodes on the boundary will vanish
+The Dirichlet (or first-type) boundary condition is a type of boundary condition which specifies the values a solution needs to take on the boundary of the domain \cite{b21} in other words we prescribe the value of the solution at the boundary \cite{b10}.
+
+In this project we will take the simple special case - homogeneous Dirichlet boundary condition. We will make our function be $0$ on the boundary. What does it mean for our algorithm and assembly?
+
+When we assemble our global matrices from local pieces, every point of the domain is used. Hence, since we know that our solution will take the zero values, we can simplify our global matrix and avoid extra calculations that will vanish at the end.
+
+The algorithm for this from \cite{b22} is rather straightforward. Firstly, we assemble the system completely ignoring the Dirichlet conditions. The following global matrix will be correct on the rows corresponding to the test function, but will not satisfy the boundary rows.
+That is why the rows corresponding to boundary are set to 0. This will result in decreasing of the dimensions of the matrix and follwing simplifications of the computations.
 
 
 \subsection{Eigenvalue solver}
@@ -701,32 +711,35 @@ the errors were converging quadratically which can be concluded by the graphs of
 
 \section{Conclusion}
 
-
+\newpage
 \begin{thebibliography}{00}
-\bibitem{b1} Arxiv.org, 2023. https://arxiv.org/pdf/1903.11240 (accessed Jul. 15, 2026)
+\bibitem{b1} Arxiv.org, 2023. \url{https://arxiv.org/pdf/1903.11240} (accessed Jul. 15, 2026)
 \bibitem{b2} W. Ding and Y. Wei, “Generalized Tensor Eigenvalue Problems,” Theory and Computation of Tensors, pp. 11-36, 2016, doi: 10.1016/b978-0-12-803953-3.50002-2
-\bibitem{b3} https://www.researchgate.net/publication/235012188_An_Algorithm_for_the_Generalized_Matrix_Eigenvalue_Problem_Ax_Lambda_Bx
-\bibitem{b4} “What is the difference between strong form and weak form? | ResearchGate,” ResearchGate, 2016. https://www.researchgate.net/post/What_is_the_difference_between_strong_form_and_weak_form (accessed Jul. 18, 2026)
-\bibitem{b5} GeeksforGeeks, “Bilinear Form,” GeeksforGeeks, Sept. 11, 2024. https://www.geeksforgeeks.org/engineering-mathematics/bilinear-form/ (accessed Jul. 20, 2026)
-\bibitem{b6} manavofficial577, “Bilinear Form Linear Algebra Notes,” Scribd, 2026. https://www.scribd.com/document/931572146/Bilinear-Form-Linear-Algebra-Notes (accessed Jul. 20, 2026)
-\bibitem{b7} “Lax-Milgram Theorem,” WolframResearch, 2026. https://mathworld.wolfram.com/Lax-MilgramTheorem.html (accessed Jul. 20, 2026)
-\bibitem{b8} D. bounded, “Mathematics Stack Exchange,” Mathematics Stack Exchange, Mar. 28, 2023. https://math.stackexchange.com/questions/4668104/determining-the-bilinear-form-a-is-bounded (accessed Jul. 21, 2026)
-\bibitem{b9} S. Shaik, “Compare Ritz to Galerkin,” Scribd, 2026. https://www.scribd.com/document/314330469/Compare-Ritz-to-Galerkin (accessed Jul. 25, 2026)
+\bibitem{b3} \url{https://www.researchgate.net/publication/235012188_An_Algorithm_for_the_Generalized_Matrix_Eigenvalue_Problem_Ax_Lambda_Bx}
+\bibitem{b4} “What is the difference between strong form and weak form? | ResearchGate,” ResearchGate, 2016. \url{https://www.researchgate.net/post/What_is_the_difference_between_strong_form_and_weak_form} (accessed Jul. 18, 2026)
+\bibitem{b5} GeeksforGeeks, “Bilinear Form,” GeeksforGeeks, Sept. 11, 2024. \url{https://www.geeksforgeeks.org/engineering-mathematics/bilinear-form/} (accessed Jul. 20, 2026)
+\bibitem{b6} manavofficial577, “Bilinear Form Linear Algebra Notes,” Scribd, 2026. \url{https://www.scribd.com/document/931572146/Bilinear-Form-Linear-Algebra-Notes} (accessed Jul. 20, 2026)
+\bibitem{b7} “Lax-Milgram Theorem,” WolframResearch, 2026. \url{https://mathworld.wolfram.com/Lax-MilgramTheorem.html} (accessed Jul. 20, 2026)
+\bibitem{b8} D. bounded, “Mathematics Stack Exchange,” Mathematics Stack Exchange, Mar. 28, 2023. \url{https://math.stackexchange.com/questions/4668104/determining-the-bilinear-form-a-is-bounded} (accessed Jul. 21, 2026)
+\bibitem{b9} S. Shaik, “Compare Ritz to Galerkin,” Scribd, 2026. \url{https://www.scribd.com/document/314330469/Compare-Ritz-to-Galerkin} (accessed Jul. 25, 2026)
 \bibitem{b10} M. G. Larson and Fredrik Bengzon, The Finite Element Method: Theory, Implementation, and Applications. Springer Science $\&$ Business Media, 2013
-\bibitem{b11} IEEE, “The Advantages of the Finite Element Method - IEEE Innovation at Work,” May 2019. Accessed: Jul. 29, 2026. [Online]. Available: https://innovationatwork.ieee.org/the-advantages-of-fem/
-\bibitem{b12} GeeksforGeeks, “Triangulations Using Matplotlib,” GeeksforGeeks, Feb. 02, 2023. https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/ (accessed Aug. 01, 2026).
-\bibitem{b13} J. Burkardt, “Computational Geometry Lab: FEM BASIS FUNCTIONS FOR A TRIANGLE,” 2018. Accessed: Aug. 01, 2026. [Online]. Available: https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf
-\bibitem{b14} https://www.geophysik.uni-muenchen.de/~igel/Lectures/NMG/08_finite_elements_basisfunctions.pdf
+\bibitem{b11} IEEE, “The Advantages of the Finite Element Method - IEEE Innovation at Work,” May 2019. Accessed: Jul. 29, 2026. [Online]. Available: \url{https://innovationatwork.ieee.org/the-advantages-of-fem/}
+\bibitem{b12} GeeksforGeeks, “Triangulations Using Matplotlib,” GeeksforGeeks, Feb. 02, 2023. \url{https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/} (accessed Aug. 01, 2026).
+\bibitem{b13} J. Burkardt, “Computational Geometry Lab: FEM BASIS FUNCTIONS FOR A TRIANGLE,” 2018. Accessed: Aug. 01, 2026. [Online]. Available: \url{https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf}
+\bibitem{b14} \url{https://www.geophysik.uni-muenchen.de/~igel/Lectures/NMG/08_finite_elements_basisfunctions.pdf}
 \bibitem{b15} D. Xu, J. Stare, and A. L. Cooksy, “Solving the vibrational Schrödinger equation on an arbitrary multidimensional potential energy surface by the finite element method,” Computer Physics Communications, vol. 180, no. 11, pp. 2079-2094, June 2009, doi: 10.1016/j.cpc.2009.06.010.
 \bibitem{b16} Hammer, Preston C., Marlowe, O. J., and Stroud, A. H. Numerical integration over simplexes and cones, Mathematical Tables and Other Aids to Computation 10(55), 130-137, 1956. [DOI: 10.2307/2002483]
 \bibitem{b17} D. A. Dunavant, “High degree efficient symmetrical Gaussian quadrature rules for the triangle,” International Journal for Numerical Methods in Engineering, vol. 21, no. 6, pp. 1129-1148, June 1985, doi: 10.1002/nme.1620210612.
-\bibitem{b18} Sc.edu, 2026. https://people.math.sc.edu/Burkardt/cpp_src/triangle_dunavant_rule/triangle_dunavant_rule.cpp (accessed Aug. 10, 2026).
-\bibitem{b19} “Assembly — FEM Tutorial 0.1.0 documentation,” Uni-erlangen.de, 2017. https://ww8central.ww.uni-erlangen.de/courses/fem101/fem/assembly.html (accessed Jun. 18, 2026).
-\bibitem{b20} https://quickfem.com/wp-content/uploads/IFEM.Ch25.pdf
+\bibitem{b18} Sc.edu, 2026. \url{https://people.math.sc.edu/Burkardt/cpp_src/triangle_dunavant_rule/triangle_dunavant_rule.cpp} (accessed Aug. 10, 2026).
+\bibitem{b19} “Assembly — FEM Tutorial 0.1.0 documentation,” Uni-erlangen.de, 2017. \url{https://ww8central.ww.uni-erlangen.de/courses/fem101/fem/assembly.html} (accessed Jun. 18, 2026).
+\bibitem{b20} \url{https://quickfem.com/wp-content/uploads/IFEM.Ch25.pdf}
+\bibitem{b21} Rakesh Arugonda, “Dirichlet Boundary Condition,” Scribd, 2026. \url{https://www.scribd.com/doc/172742570/Dirichlet-Boundary-Condition} (accessed Jun. 20, 2026)
+\bibitem{b22} “7. Dirichlet boundary conditions — Finite element course 2024.0 documentation,” 2024. Accessed: Aug. 11, 2026. [Online]. Available: \url{https://finite-element.github.io/7_boundary_conditions.html}
 
 \end{thebibliography}
 \vspace{12pt}
 
+\newpage
 \appendices
 \section{Proof of coercivity} \label{sec:proof of coercivity}
 
