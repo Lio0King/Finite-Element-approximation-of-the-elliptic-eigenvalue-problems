@@ -203,12 +203,13 @@ Two of the most important questions in mathematics are the questions of existenc
 According to Lax-Milgram theorem: for every bounded linear functional $f$ on $H$, there exists a unique $x_{f} \in H$ such that \ref{eq:Milgram1} is true \cite{b10}.
 \begin{equation}
     f(x) = \phi(x, x_{f}) \quad \forall x \in H
-    \label{eq:Milgram}
+    \label{eq:Milgram1}
 \end{equation}
 
 But for the project it would be better to give more specific definition - let $V$ be a Hilbert space, $a: V \times V \rightarrow \mathbb{R}$ be continuous and coercive, and $L: V \rightarrow \mathbb{R}$ be a bounded linear functional. Then there exist a unique $u \in V$ such that \ref{eq:Milgram2} is true.
 \begin{equation}
     a(u, v) = L(v) \quad \forall v \in V
+    \label{eq:Milgram2}
 \end{equation}
 
 Where $\phi(x, x_f)$ is a bounded coercive bilinear form of a Hilbert space \cite{b7}.
@@ -220,7 +221,7 @@ It is worth mentioning that Lax-Milgram theorem follows as a corollary to the St
 \end{equation}
 Where $\langle f, v - u \rangle_H$ is an inner product, which in Hilbert spaces defined by \ref{eq:inner product}.
 \begin{equation}
-    \langle u, v \rangle_H^{1}(\Omega) = \int_{\Omega}(uv + \nabla u \dot \nabla v) \, dx
+    \langle u, v \rangle_{H^1}(\Omega) = \int_{\Omega}(uv + \nabla u \nabla v) \, dx
     \label{eq:inner product}
 \end{equation}
 
@@ -237,64 +238,63 @@ Therefore, by the Lax-Milgram Theorem these properties guaranty that a unique ex
 
 \subsection{The Rayleigh-Ritz/Galerkin approximation}
 The idea explored in this section is the core of the Finite Element Method (FEM). The solution of PDEs belongs to infinite-dimensional space, so our goal is to go from the infinite-dimensional space to finite-dimensional subspace. 
-To do so we can use one of two methods: Rayleigh-Ritz approximation or Galerkin approximation which will give the equivalent solution of the variational problem \cite{b9}.
+To do so we will use two methods: Rayleigh-Ritz method and Galerkin discretisation which will give the equivalent solution of the variational problem \cite{b9}.
 
-We will now derive the Rayleigh-Ritz approximation for the Laplace eigenvalue problem. We will look at the arbitrary problem $\lambda w = -\Delta w$, whose weak form can be expressed as in \ref{eq:2D weak}.
+We will now derive the Galerkin discretisation for the Laplace eigenvalue problem. We will look at the arbitrary problem $\lambda u = -\Delta u$, whose weak form can be expressed as in \ref{eq:2D weak}.
 \begin{equation}
-    \lambda \int_{\Omega}wv \, dx = - \int_{\Omega}\nabla{w} \dot \nabla{v} \, dx
+    \lambda \int_{\Omega}uv \, dx = \int_{\Omega}\nabla{u} \nabla{v} \, dx
     \label{eq:2D weak}
 \end{equation}
 
 By definition of the weak form, the equation must hold for any arbitrary function $v$ and it is in our power to put constraints on this test function. One of the main ones will be that our test space becomes discrete \ref{eq:discrete test space}.
 \begin{equation}
     v_h \in V_h \quad \text{where } V_h = span{\phi_1, \dots, \phi_n} \subset V
+    \label{eq:discrete test space}
 \end{equation}
+
+Because our $V_h$ is a finite-dimensional subspace of $V$, it is a closed subspace.
 
 Therefore if it holds for every basis function defined by $\phi_j$ that spans the subspace, then it holds for any linear combination of them. So, we can rewrite \ref{eq:2D weak} as it is shown in \ref{eq:arbitrary 2D weak form}.
 \begin{equation}
-    \lambda \int_{\Omega}w\phi_j \, dx = \int_{\Omega}\nabla{w} \dot \nabla{\phi_j} \, dx
+    \lambda \int_{\Omega}u\phi_j \, dx = \int_{\Omega}\nabla{u} \nabla{\phi_j} \, dx
     \label{eq:arbitrary 2D weak form}
 \end{equation}
 
-Recalling the definition of the inner product $\langle u, v \rangle = \int_{a}^{b}uv \, dx$ helps us to turn \ref{eq:arbitrary 2D weak form} into \ref{eq:inner product 2D weak form}.
+So, we can let $u_{1}, \dots , u_{n}$ be $n$ arbitrary trial functions. Therefore, because we project our infinite-dimensional problem onto finite-dimensional subspace we can express our unknown function $u$ as the linear combination of our trial functions which is shown in \ref{eq:linear combination of trial functions}.
 \begin{equation}
-    \lambda \langle w, \phi_j \rangle = \langle \nabla{w} \dot \nabla{\phi_j} \rangle
-    \label{eq:inner product 2D weak form}
-\end{equation}
-
-Let $w_{1}, \dots , w_{n}$ be $n$ arbitrary trial functions. Therefore, because we project our infinite-dimensional problem onto finite-dimensional subspace we can express our unknown function $w$ as the linear combination of our trial functions which is shown in \ref{eq:linear combination of trial functions}.
-\begin{equation}
-    w_h = \sum^n_{i=1}c_i \phi_i
+    u_h = \sum^n_{i=1}c_i \phi_i
     \label{eq:linear combination of trial functions}
 \end{equation}
 
-Substituting \ref{eq:linear combination of trial functions} into the \ref{eq:inner product 2D weak form} gives us \ref{eq:phi_i, phi_j weak form}.
+Substituting \ref{eq:linear combination of trial functions} into the \ref{eq:arbitrary 2D weak form} gives us \ref{eq:phi_i, phi_j weak form}.
 \begin{equation}
-    \lambda \langle \sum^n_{i=1}c_i \phi_i, \phi_j \rangle = \langle \nabla \Bigg(\sum^n_{i=1}c_i \phi_i\Bigg) \dot \nabla{\phi_j} \rangle
+    \lambda \int_\Omega \sum^n_{i=1}c_i \phi_i\phi_j \, dx = \int_\Omega \nabla \Bigg(\sum^n_{i=1}c_i \phi_i\Bigg)\nabla{\phi_j} \, dx
     \label{eq:phi_i, phi_j weak form}
 \end{equation}
 
-Because our $V_h$ is a finite-dimensional subspace of $V$, it is a closed subspace, it inherits the same boundedness and coercivity constants, so if we reapply Max-Milgram theorem, we will prove that the discrete FEM has a unique solution.
-
-Now we know that solution exists and is unique, but how do we find it?
-
-Following the properties of the inner product we can rewrite \ref{eq:phi_i, phi_j weak form} as \ref{eq:sum out of inner product}.
+Following the properties of integrals we can rewrite \ref{eq:phi_i, phi_j weak form} as \ref{eq:sum out of integral}.
 \begin{equation}
-    \lambda \sum^n_{i=1}c_i\langle \phi_i, \phi_j \rangle = \sum^n_{i=1}c_i \langle \nabla{\phi_i} \dot \nabla{\phi_j} \rangle
-    \label{eq:sum out of inner product}
+    \lambda \sum^n_{i=1}c_i \int_\Omega \phi_i\phi_j \, dx = \sum^n_{i=1}c_i \int_\Omega \nabla{\phi_i}\nabla{\phi_j} \, dx
+    \label{eq:sum out of integral}
 \end{equation}
 
-This allows us to define \ref{eq:stiffness and mass matrices}.
+This allows us to define \ref{eq:stiffness and mass matrices entries}.
 \begin{equation}
 \begin{aligned}
-    A &= \langle \nabla{\phi_i} \dot \nabla{\phi_j} \rangle \\
-    M &= \langle \phi_i, \phi_j \rangle \\
+    A_{i,j} &= \int_\Omega \nabla{\phi_i}\nabla{\phi_j} \, dx \\
+    M_{i,j} &= \int_\Omega \phi_i\phi_j \, dx \\
     \vec{c} &= (c_i)^T
-    \label{eq:stiffness and mass matrices}
+    \label{eq:stiffness and mass matrices entries}
 \end{aligned}
 \end{equation}
 
-So, \ref{eq:sum out of inner product} transforms into \ref{eq:weak formulation in matrix form}.
+So, \ref{eq:sum out of integral} transforms into \ref{eq:weak formulation in sum form}.
+\begin{equation}
+    \lambda \sum^n_{i=1}c_i M_{i,j} = \sum^n_{i=1}c_i A_{i,j}
+    \label{eq:weak formulation in sum form}
+\end{equation}
+
+It is clear that $\sum^n_{i=1}A_{i,j}$ and $\sum^n_{i=1}M_{i,j}$ are the entries of the matrices, so we can rewrite \ref{eq:weak formulation in sum form} as \ref{eq:weak formulation in matrix form}.
 \begin{equation}
     \lambda M\vec{c} = A\vec{c} 
     \label{eq:weak formulation in matrix form}
@@ -302,8 +302,43 @@ So, \ref{eq:sum out of inner product} transforms into \ref{eq:weak formulation i
 
 Which is exactly the form of the generalised eigenvalue problem, where $A$ is so-called stiffness matrix and $M$ is a mass matrix (the properties and meaning of those matrices will be cleared later). 
 
-This whole process is called finite element discretisation. This is what makes FEA so powerful because it allows us to break down a complex continuous physical domain into a finite number of smaller, interconnected subregions (elements).
-This transforms complex governing differential equations into a manageable system of algebraic equations that can be solved numerically.
+Galerkin discretisation is a process when we choose a finite-dimensional test/trial space and require the residual to be orthogonal to that space.
+
+This is what makes FEA so powerful because it allows us to break down a complex continuous physical domain into a finite number of smaller, interconnected subregions (elements).
+
+Since we know that it is difficult to explicitly calculate eigenvalues for a given domain $\Omega \subset \mathbb{R}^n$. Hence, from \cite{b9.1} we will show that eigenvalues are minimisers of a certain functional.
+To do so from \ref{eq:2D weak} we can define \ref{eq:Rayleigh Quotent} the Rayleigh Quotent for a given function $w$ defined of the set $\Omega \subset \mathbb{R}^n$.
+\begin{equation}
+    R(w) = \frac{\|\nabla w\|_{L^2(\Omega)}^2}{\|w\|_{L^2(\Omega)}^2} = \frac{\int_\Omega |\nabla w|^2 \, dx}{\int_\Omega |w|^2 \, dx} \\
+    \label{eq:Rayleigh Quotent}
+\end{equation}
+The Rayleigh quotent can also be expressed in matrix form \ref{eq:Rayleigh quotent matrix form} which suits the discretised problem more.
+\begin{equation}
+    R(c) = \frac{\vec{c}^TA\vec{c}}{\vec{c}^TM\vec{c}}
+    \label{eq:Rayleigh quotent matrix form}
+\end{equation}
+
+
+Now, we can introduce the Minimum Principle for the First Eigenvalue Theorem from \cite{b9.1}.
+
+\textit{
+    Let
+    \begin{equation}
+        Y \equiv {w: w \in C^2(\Omega), w \not\equiv 0, w = 0 for x \in \partial\Omega}.
+    \end{equation}
+    We call this the set of trial functions for $\lambda u = -\Delta u$. Suppose there exists a function $u \in Y$ such that $u$ minimises the Rayleigh quotent over all trial functions $w \in Y$.
+    That is,
+    \begin{equation}
+        m \equiv \frac{\|\nabla u\|^2}{\|u\|^2} = \min_{w \in Y} \Bigg\{\frac{\|\nabla w\|^2}{\|w\|^2} \Bigg\}
+    \end{equation}
+    Then $m$ is the first eigenvalue of $\lambda u = -\Delta u$. That is, $m = \lambda_1$ and $u$ is a corresponding eigenfunction.
+}
+
+The proof can be found in \cite{b9.1} page 3.
+
+The Rayleigh-Ritz method restricts the Rayleigh quotent and minimisation problem to teh finite-dimensional subspace.
+
+Combining both Galerkin discretisation and Rayleigh-Ritz allows us to transform complex governing differential equations into a manageable system of algebraic equations that can be solved numerically.
 
 The next chapter will describe what are the basis functions that we use to break the problem from infinite dimensions to finite, how they are defined and how to use them to solve elliptic PDEs.
 
@@ -312,7 +347,7 @@ The next chapter will describe what are the basis functions that we use to break
 \section{Finite Element Method (FEM)}
 
 Finite Element Method is a numerical method for approximating solutions of differential equations, particularly two-point boundary value problem and eigenvalue problem. The basic idea is to divide the domain into elements (in our case triangles) and look for a polynomial approximations to the unknown functions on each triangle, 
-in other words we approximate locally - while the exact solution is continuous, the solution within each individual element is approximated using simple mathematical functions, typically linear or quadratic polynomials. 
+in other words we approximate locally - while the exact solution belongs to an appropriate function space, the FEM approximates the solution within each individual element using simple mathematical functions, typically linear or quadratic continuous piecewise polynomials. 
 After that we rewrite the boundary value problem as a variational equation, and then seek a solution approximation to this equation from the space of continuous piecewise functions \cite{b10}.
 
 This method has few very important advantages. First of all, it can easily deal with complex geometries and higher order approximations of the solutions. Also, it works for many types of physics like structural loads, heat transfer, and fluid flow. Moreover, it can be easily visualised, which helps with finding the vulnerabilities in design \cite{b11}.
@@ -372,7 +407,26 @@ From linear algebra we know that we can write every function $v \in V_h$ using o
 
 Where $\alpha_i = v(N_i), i = 1, 2, \dots, n_p$, are the nodal values of $v$.
 
-It is worth mentioning since the project explores the convergence of the Finite Element Approximation that P1 elements have the theoretical convergence $O(h^2)$. We are expecting to get this number in our computer implementation.
+It is worth mentioning since the project explores the convergence of the Finite Element Approximation that P1 elements have the theoretical convergence $O(h^2)$.
+This number comes from the \cite{b12.1} and \cite{b12.2} that is presented in \ref{eq:error}.
+\begin{equation}
+    |\lambda - \lambda_h| \leq Ch^{2p}
+    \label{eq:error}
+\end{equation}
+Therefore, when $p = 1$ the convergence of the error will be $h^2$.
+This double convergence rate relative to the $H^1$ norm occurs because of the Rayleigh quotent property \ref{eq:Rayleigh Quotent} \cite{b12.3}. 
+Simply, the error in the eigenfucntion is bounded like it is presented in \ref{eq:error bound}.
+\begin{equation}
+    \|u - u_h\|_{H^1(\Omega)} \leq Ch^p 
+    \label{eq:error bound}
+\end{equation}
+
+The eigenvalue error acts quadratically relative to the eigenvector error \cite{b12.4}, so we have:
+\begin{equation}
+    |\lambda - \lambda_h| \leq C\|u - u_h\|_{H^1(\Omega)}^2 \leq C(h^p)^2 = Ch^{2p}
+\end{equation}
+
+As a result, we are expecting to get this number in our computer implementation.
 
 
 \subsubsection{P2 Elements}
@@ -387,10 +441,10 @@ So, instead of the polynomial space given in \ref{eq:P1 space} we are going to u
 \end{aligned}
 \end{equation}
 
-Since we have the quadratic polynomials that means that the gradients will be much smoother comparing to the constants of the P1. Also, in the real world problems we rarely deal with perfectly shaped domain, usually there are bends and complex shapes, therefore quadratic polynomials will handle these complexities more naturally.
-In addition to this, since we have higher accuracy due to higher degree, we will need less elements to get the same error, which will result in smaller mesh which would take computer less time to compute without the loss of accuracy.
+Since we have the quadratic polynomials that means that the gradients will be linear within each element. This provides local flexibility for representing curved solutions, therefore quadratic polynomials will handle these complexities more naturally comparing ot P1 elements. 
 
-P2 elements give us the convergence rate of $O(h^4)$, which is double comparing to the P1 elements. 
+For sufficiently regular eigenfunctions and an appropriate family of meshes, the eigenvalue error is expected to behave as \ref{eq:error} and give the convergence of $O(h^4)$, which is double comparing to the P1 elements. 
+This can also be explained in less mathematical language - because higher order elements can achieve a given accuracy with fewer elements, as each element has more degrees of freedom.
 
 
 \subsection{Reference (Standard) element}
@@ -398,9 +452,9 @@ Now, when know how to divide our domain into triangulations, and how to interpol
 In practice this approach would be computationally inefficient because we can deal with the complex triangulations that will have different sizes, shapes and orientations, so interpolate each one individually will take a lot of time and effort. 
 That is why we need to come up with the "common factor" that we can relate to every element of our mesh. That is why we are going to use reference triangle.
 
-By definition reference triangle is a triangle with vertices in: (1, 0), (0, 1) and (0, 0) \cite{b13}. In order to avoid confusion with the coordinates, we will say every triangle in $(x, y)$ is mapped to the reference plane $(\xi, \eta)$, this mapping is illustrated
+By definition reference triangle is a triangle with vertices in: (1, 0), (0, 1) and (0, 0) \cite{b13}. In order to avoid confusion with the coordinates, we will say every triangle in $(x, y)$ is mapped to the reference coordinate plane $(\xi, \eta)$, this mapping is illustrated
 
-Any triangle with corners $P_i(x_i, y_i)$, $i = 1, 2, 3$ can be transformed inte a rectangular, equilateral triangle with $x$ and $y$ defined in \ref{eq:coordinate transformation}, using the counterclockwise numbering.
+Any triangle with corners $P_i(x_i, y_i)$, $i = 1, 2, 3$ can be mapped to a reference triangle as in \ref{eq:coordinate transformation}, using the counterclockwise numbering.
 \begin{equation}
 \begin{aligned}
     x &= x_1 + (x_2 - x_1)\xi + (x_3 - x_1)\eta \\
@@ -409,6 +463,16 @@ Any triangle with corners $P_i(x_i, y_i)$, $i = 1, 2, 3$ can be transformed inte
 \end{aligned}
 \end{equation}
 
+However, in order to map any function from physical coordinates we have to the transformation which is represented by Jacabian matrix \ref{eq:jacobian matrix}.
+\begin{equation}
+    J = \begin{bmatrix}
+        \frac{\partial x}{\partial \xi} & \frac{\partial x}{\partial \eta} \\
+        \frac{\partial y}{\partial \xi} & \frac{\partial y}{\partial \eta} 
+    \end{bmatrix}
+    \label{eq:jacobian matrix}
+\end{equation}
+
+This matrix connects $dxdy$ to $d\xi d\eta$ and transforms gradients between reference and physical elements.
 
 \subsubsection{Linear approximation} \label{sub:linear approximation}
 The aim is to approximate the unknown function by a linear form of \ref{eq:linear form}. 
@@ -539,6 +603,8 @@ Here, $\Delta$ is the Laplacian operator that expands in \ref{eq:Laplacian opera
 \end{equation}
 
 This problem has a physical meaning - the feedback mechanism of the physical system. It states that the spatial acceleration (curvature) of a state is directly proportional and opposite to the state itself.
+
+For example, 
 Hence, in the heat/diffusion equation eigenvalues will represent the rate of fundamental thermal decay and eigenfunction shows the elemental spatial distributions of heat.
 The smallest eigenvalue ($\lambda_1)$ dictates the most resilient thermal profile that takes the longest time to cool down to ambient temperature.
 
@@ -568,18 +634,48 @@ Therefore the \ref{eq:Schrodinger equation} can be rewritten as \ref{eq:eigenpro
     \label{eq:eigenproblem Schrodinger}
 \end{equation}
 
-This problem is very crucial for physics however it is not different from the Laplace eigenproblem, since if the potential energy $V = 0$, we will have the simple Laplace equation, this case is known as infinite potential square well, which is good theoretical concept, however cannot be applied to real problems.
+This problem is very crucial for physics however it is not different from the Laplace eigenproblem. If we take a look at a special case of Schr\"{o}dinger equation called - the infinite square well, we will have the potential energy $V = 0$. 
+Hence, \ref{eq:Schrodinger equation} will take the form \ref{eq:reduced Schrodinger}.
+\begin{equation}
+    -\frac{\hbar^2}{2m}\Delta\psi = E\psi
+    \label{eq:reduced Schrodinger}
+\end{equation}
 
-Solving this problem will give us the wave function, whose square $|\psi(x)|^2$ represents the probability density of finding a quantum particle at a specific position in space. We have to do that because according to the Heisenberg's Uncertainty Principle we cannot determine the particle's position and momentum at the same time.
+If we rearange the \ref{eq:reduced Schrodinger} and will call $\lambda = \frac{2mE}{\hbar^2}$ we will have:
+\begin{equation}
+    -\Delta\psi = \lambda\psi
+\end{equation}
 
+Which is exactly the form of the Laplace eigenproblem. Additionally, the infinite square well requires teh infinite potential outside the domain, which is the Dirichlet boundary condition.
+Solving this problem will give us the wave function, whose square $|\psi(x)|^2$ represents the Born interpretation of probability density of finding a quantum particle at a specific position in space. We have to do that because according to the Heisenberg's Uncertainty Principle we cannot determine the particle's position and momentum at the same time.
+
+Although the infinite square well is an idealised model, it provides a useful benchmark because its eigenvalues and eigenfunctions are known analytically.
+
+Furthermore, \ref{eq:eigenproblem Schrodinger} can be rewritten as a generalised eigenproblem \ref{eq:generalised Schrodinger}. However, to do so we need to define $\lambda = \frac{2mE}{\hbar^2}$ and appropriately scale the potential.
+\begin{equation}
+    (A + V)\psi = \lambda M\psi
+    \label{eq:generalised Schrodinger}
+\end{equation}
+which differs from the Laplace problem only by one matrix addition.
+
+
+
+\subsection{Conclusion}
+Looking at what was previously discussed in this section the idea behind this project becomes clear: 
+
+Firstly, we will take the simplest 2D eigenproblem - Laplace, will explore it, learn how to solve it numerically and interpret the results;
+
+Secondly, we will increase the complexity by adding another operation of matrix addition - add potential matrix to the existing stiffness matrix. It should be clear that the code and the logic behind it should not change by going from Laplace to solve Schr\"{o}dinger eigenproblem.
+
+This project will show that problems that look completely different from the physical point of view are solved the same way, with different interpretation of the results. 
+
+Next sections will show the implementation part of this project.
 
 
 
 \section{Goals and Objectives}
 
 The idea behind this project is to research about solving 1D and 2D partial differential equations using Finite Element Method and implement 2D solutions in practice. Another goal is compare and analyse the convergence rates of P1 and P2 elements and compare them to the known data.
-
-
 
 
 \section{Implementation}
@@ -619,20 +715,13 @@ With potential energy matrix $V$ the situation is a bit more conplex because pot
     \label{eq:potential matrix}
 \end{equation}
 
-However, becuase of singularity in those integrals we will have to use Gaussian quadrature for numerical integration. 
+However, becuase evaluating the element integrals analytically for every element and potentially every potential function is inconvinient, we will use the Gaussian quadrature that will provide an efficient approximation.
 To start with we will use our reference mapping $(x, y) \mapsto (\xi, \eta)$. To do so we recall the change of variables.
 \begin{equation}
     \int_K f(x, y) \, dxdy = \int_{\vec{K}}f(\xi, \eta) det(J(\xi, \eta)) \, d\xi d\eta
     \label{eq:from physical to reference}
 \end{equation}
 where $det(J(\xi, \eta))$ is the determinant of the Jacobian matrix defined in \ref{eq:jacobian matrix}.
-\begin{equation}
-    J = \begin{bmatrix}
-        \frac{\partial x}{\partial \xi} & \frac{\partial y}{\partial \xi} \\
-        \frac{\partial x}{\partial \eta} & \frac{\partial y}{\partial \eta} 
-    \end{bmatrix}
-    \label{eq:jacobian matrix}
-\end{equation}
 
 However, for the linear Lagrange finite element, that we are using, the Jacobian matrix is given by \ref{eq:Lagrange jacobian} \cite{b10}.
 \begin{equation}
@@ -655,7 +744,7 @@ Now approxiamting the integral over $\vec{K}$ from \ref{eq:from physical to refe
 \end{equation}
 where $N_q$ is the number of quadrature points, $w_q$ the quadrature weigths, and $(\xi_q, \eta_q)$ the quadrature points.
 
-Since for the Laplace problem we will have the polynomials up to degree 4 we will use the6 point Hammer-Marlowe-Stroud quadrature rules \cite{b16}. This rule has more quadrature points then required for solving this type of integral, however it gives more precision with minor speed sacrifices.
+Since for the Laplace problem we will have the polynomials up to degree 4 we will use the 6 point Hammer-Marlowe-Stroud quadrature rules \cite{b16}. This rule has more quadrature points then required for solving this type of integral, however it gives more precision with minor speed sacrifices.
 
 However, for Schr\"{o}dinger equation we can face higher order polynomials which requares us to use a 12 point David Dunavant's quadrature rule \cite{b17} with Burkardt's implementation from \cite{b18}.
 
@@ -732,8 +821,13 @@ the errors were converging quadratically which can be concluded by the graphs of
 \bibitem{b7} “Lax-Milgram Theorem,” WolframResearch, 2026. \url{https://mathworld.wolfram.com/Lax-MilgramTheorem.html} (accessed Jul. 20, 2026)
 \bibitem{b8} D. bounded, “Mathematics Stack Exchange,” Mathematics Stack Exchange, Mar. 28, 2023. \url{https://math.stackexchange.com/questions/4668104/determining-the-bilinear-form-a-is-bounded} (accessed Jul. 21, 2026)
 \bibitem{b9} S. Shaik, “Compare Ritz to Galerkin,” Scribd, 2026. \url{https://www.scribd.com/document/314330469/Compare-Ritz-to-Galerkin} (accessed Jul. 25, 2026)
+\bibitem{b9.1} “6 Eigenvalues of the Laplacian,” Accessed: Jun. 24, 2026. [Online]. Available:\url{https://web.stanford.edu/class/math220b/handouts/eigenvalues.pdf}
 \bibitem{b10} M. G. Larson and Fredrik Bengzon, The Finite Element Method: Theory, Implementation, and Applications. Springer Science $\&$ Business Media, 2013
 \bibitem{b11} IEEE, “The Advantages of the Finite Element Method - IEEE Innovation at Work,” May 2019. Accessed: Jul. 29, 2026. [Online]. Available: \url{https://innovationatwork.ieee.org/the-advantages-of-fem/}
+\bibitem{b12.1} G. Strang and G. Fix, An Analysis of the Finite Element Method. Wellesley-Cambridge Press, 2018
+\bibitem{b12.2} I. Babuška and J. Osborn, "Eigenvalue problems," in Handbook of Numerical Analysis, vol. II, Finite Element Methods (Part 1), P. G. Ciarlet and J. L. Lions, Eds. Amsterdam, Netherlands: North-Holland, 1991, pp. 641-787
+\bibitem{b12.3} G. Dusson and Y. Maday, “An overview of a posteriori error estimation and post-processing methods for nonlinear eigenvalue problems,” Journal of Computational Physics, vol. 491, p. 112352, July 2023, doi: 10.1016/j.jcp.2023.112352
+\bibitem{b12.4} I. Babuška and J. E. Osborn, “Finite element-Galerkin approximation of the eigenvalues and eigenvectors of selfadjoint problems,” Mathematics of Computation, vol. 52, no. 186, pp. 275-297, 1989, doi: 10.1090/s0025-5718-1989-0962210-8
 \bibitem{b12} GeeksforGeeks, “Triangulations Using Matplotlib,” GeeksforGeeks, Feb. 02, 2023. \url{https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/} (accessed Aug. 01, 2026).
 \bibitem{b13} J. Burkardt, “Computational Geometry Lab: FEM BASIS FUNCTIONS FOR A TRIANGLE,” 2018. Accessed: Aug. 01, 2026. [Online]. Available: \url{https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf}
 \bibitem{b14} \url{https://www.geophysik.uni-muenchen.de/~igel/Lectures/NMG/08_finite_elements_basisfunctions.pdf}
