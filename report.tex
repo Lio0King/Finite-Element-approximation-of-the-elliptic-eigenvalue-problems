@@ -41,13 +41,13 @@ Hence, this report develops mathematical foundations of the finite element appro
 In this section there would be given a brief introduction to the mathematical knowledge required to understand this project.
 
 \subsection{Elliptic partial differential equations}
-One of the branches of differential equations is elliptic differential equation, which has the general form:
+One of the branches of differential equations is elliptic differential equation, which has the general form \cite{b0}:
 \begin{equation}
     A\cdot u_{xx} + B\cdot u_{xy} + C\cdot u_{yy} + D\cdot u_{x} + E\cdot u_{y} + F\cdot u = G
     \label{eq:elliptic PDE}
 \end{equation}
 
-The equation \ref{eq:elliptic PDE} is classified as elliptic if the discriminant is strictly negative:
+The equation \ref{eq:elliptic PDE} is classified as elliptic if the discriminant is strictly negative \cite{b0}:
 \begin{equation}
     B^2 - 4AC < 0
 \end{equation}
@@ -92,22 +92,23 @@ More precisely it is an integral representation that relaxes the strict smoothne
 
 The way from the strong form to weak requires following steps:
 
-Firstly, write the strong form (we will take Poisson equation on the interval I with Dirichlet boundary condition as an example):
+Firstly, write the strong form (we will take Poisson equation on the interval $I$ with Dirichlet boundary condition as an example) \cite{b4.1}:
 \begin{equation}
-    \begin{cases}
-        -u''(x) = f(x), \quad where  x \in I = [0, L] \\
-        u(0) = u(L) = 0
-        \label{eq:Poisson}
-    \end{cases}
+\begin{cases}
+    -u''(x) = f(x), \quad where  x \in I = [0, L] \\
+    u(0) = u(L) = 0
+    \label{eq:Poisson}
+\end{cases}
 \end{equation}
+
 Then, multiply \ref{eq:Poisson} by an arbitrary test function $v$ (rewrite as variational formulation):
 \begin{equation}
--u''(x)v(x) = f(x)v(x)
+    -u''(x)v(x) = f(x)v(x)
 \end{equation}
 
 Where $v(x)$ is a continuous test function which is assumed to vanish at end points.
 
-Finally, integrate over the domain using integration by parts (in our case the domain is the interval I = [0, L]):
+Finally, integrate over the domain using integration by parts (in our case the domain is the interval I = [0, L]) \cite{b10}:
 \begin{equation}
 \begin{aligned}     
     \int_{0}^{L}f(x) \cdot v(x) \, dx 
@@ -125,7 +126,7 @@ Since $v(0) = v(L) = 0$ by Dirichlet BCs:
     \label{eq:weak form}
 \end{equation}
 
-The form obtained in \ref{eq:weak form} is called a weak form in 1D. For 2D and higher dimensions integration by parts follows the divergence theorem is used, in particular the Green's First Identity presented in \ref{eq:Green theorem}:
+The form obtained in \ref{eq:weak form} is called a weak form in 1D. For 2D and higher dimensions integration by parts follows the divergence theorem is used, in particular the Green's First Identity presented in \ref{eq:Green theorem} \cite{b10}:
 \begin{equation}
     \int_{\Omega}-\Delta{u}v \, dx = \int_{\Omega}\nabla{u} \dot \nabla{v} \, dx - \int_{\partial{\Omega}} n \dot \nabla{u}v \, ds
     \label{eq:Green theorem}
@@ -136,16 +137,16 @@ We are going from strong form to the weak one because weak form allows us to sol
 
 \subsection{Bilinear forms}
 In partial differential equations, a bilinear form is a mapping function $B: V \times V \rightarrow \mathbb{R}$ that takes two functions from a vector space and returns a scalar. 
-In the weak formulation of a PDE, it represents the differential operator and boundary conditions. It is also linear in both arguments independently \cite{b6}. This is illustrated in \ref{eq:bilinear form}.
+In the weak formulation of a PDE, it represents the differential operator and boundary conditions. It is also linear in both arguments independently \cite{b6}. This is illustrated in \ref{eq:linearity first} and \ref{eq:linearity second} \cite{b6.1}.
 
-Linearity in the first argument:
 \begin{equation}
-\begin{aligned}
-    B(u + \alpha v, w) = B(u, w) + \alpha B(v, w) \\
-    \text{Linearity in the second argument:} \\
+    B(u + \alpha v, w) = B(u, w) + \alpha B(v, w) 
+    \label{eq:linearity first}
+\end{equation}
+
+\begin{equation}
     B(u, v + \alpha w) = B(u, v) + \alpha B(u, w)
-    \label{eq:bilinear form}
-\end{aligned}
+    \label{eq:linearity second}
 \end{equation}
 
 Therefore, the weak formulation of the Poisson equation \ref{eq:weak form} can be written in abstract variational form - find $u \in V$ such that it will satisfy the \ref{eq:bilinear Poisson}.
@@ -200,16 +201,10 @@ But why did we need all these spaces? The answer is that for the FEM if our func
 \subsection{Existence of the solution}
 Two of the most important questions in mathematics are the questions of existence and uniqueness. So what we want to ask while solving the PDE using FEM is why do we have a solution and is this solution unique. The answer for these questions is the Lax-Milgram theorem.
 
-According to Lax-Milgram theorem: for every bounded linear functional $f$ on $H$, there exists a unique $x_{f} \in H$ such that \ref{eq:Milgram1} is true \cite{b10}.
-\begin{equation}
-    f(x) = \phi(x, x_{f}) \quad \forall x \in H
-    \label{eq:Milgram1}
-\end{equation}
-
-But for the project it would be better to give more specific definition - let $V$ be a Hilbert space, $a: V \times V \rightarrow \mathbb{R}$ be continuous and coercive, and $L: V \rightarrow \mathbb{R}$ be a bounded linear functional. Then there exist a unique $u \in V$ such that \ref{eq:Milgram2} is true.
+The Lax-Milgram theorem provides the uniqueness and existence of the solution of the variational problem. Formally, let $V$ be a Hilbert space, $a: V \times V \rightarrow \mathbb{R}$ be continuous and coercive, and $L: V \rightarrow \mathbb{R}$ be a bounded linear functional. Then there exist a unique $u \in V$ such that \ref{eq:Milgram} is true.
 \begin{equation}
     a(u, v) = L(v) \quad \forall v \in V
-    \label{eq:Milgram2}
+    \label{eq:Milgram}
 \end{equation}
 
 Where $\phi(x, x_f)$ is a bounded coercive bilinear form of a Hilbert space \cite{b7}.
@@ -233,7 +228,8 @@ Then we show that our bilinear form is coercive (or elliptical) which is $a(v, v
 
 To establish continuity of $L(v)$, we must show that $|L(v)| \leq C_{L}||v||_{H^1}$ for a constant $C_{L} > 0$ (proof can be found in \ref{sec:proof of bound}).
 
-Therefore, by the Lax-Milgram Theorem these properties guaranty that a unique exact solution $u \in V$ exists and stable.
+Therefore, by the Lax-Milgram Theorem these properties guaranty that a unique exact solution $u \in V$ exists and stable. Moreover, the Lax-Milgram theorem establishes well-posedness for the corresponding source/Poisson variational problem. 
+While the eigenvalue problem requires a different argument: we seek non-zero $u$ and an eigenvalue $\lambda$ satisying the variational eigenproblem.
 
 
 \subsection{The Rayleigh-Ritz/Galerkin approximation}
@@ -254,13 +250,13 @@ By definition of the weak form, the equation must hold for any arbitrary functio
 
 Because our $V_h$ is a finite-dimensional subspace of $V$, it is a closed subspace.
 
-Therefore if it holds for every basis function defined by $\phi_j$ that spans the subspace, then it holds for any linear combination of them. So, we can rewrite \ref{eq:2D weak} as it is shown in \ref{eq:arbitrary 2D weak form}.
+Therefore if we require the weak formulation to hold for every $v_h \in V_h$ and because $V_h$ is spanned by $\phi_j$, it is sufficient to enforce it for any linear combination of them. So, we can rewrite \ref{eq:2D weak} as it is shown in \ref{eq:arbitrary 2D weak form}.
 \begin{equation}
     \lambda \int_{\Omega}u\phi_j \, dx = \int_{\Omega}\nabla{u} \nabla{\phi_j} \, dx
     \label{eq:arbitrary 2D weak form}
 \end{equation}
 
-So, we can let $u_{1}, \dots , u_{n}$ be $n$ arbitrary trial functions. Therefore, because we project our infinite-dimensional problem onto finite-dimensional subspace we can express our unknown function $u$ as the linear combination of our trial functions which is shown in \ref{eq:linear combination of trial functions}.
+So, we can let $\phi_{1}, \dots , \phi_{n}$ be $n$ arbitrary basis functions. Therefore, because we project our infinite-dimensional problem onto finite-dimensional subspace we can express our unknown function $u$ as the linear combination of our basis functions $\phi_i$ and unknown coefficients $c_i$ as it is shown in \ref{eq:linear combination of trial functions} \cite{b0} \cite{b10}.
 \begin{equation}
     u_h = \sum^n_{i=1}c_i \phi_i
     \label{eq:linear combination of trial functions}
@@ -288,13 +284,7 @@ This allows us to define \ref{eq:stiffness and mass matrices entries}.
 \end{aligned}
 \end{equation}
 
-So, \ref{eq:sum out of integral} transforms into \ref{eq:weak formulation in sum form}.
-\begin{equation}
-    \lambda \sum^n_{i=1}c_i M_{i,j} = \sum^n_{i=1}c_i A_{i,j}
-    \label{eq:weak formulation in sum form}
-\end{equation}
-
-It is clear that $\sum^n_{i=1}A_{i,j}$ and $\sum^n_{i=1}M_{i,j}$ are the entries of the matrices, so we can rewrite \ref{eq:weak formulation in sum form} as \ref{eq:weak formulation in matrix form}.
+So, after putting \ref{eq:stiffness and mass matrices entries} into \ref{eq:sum out of integral} it becomes clear that $\sum^n_{i=1}A_{i,j}$ and $\sum^n_{i=1}M_{i,j}$ are the entries of the matrices, so we can rewrite \ref{eq:sum out of integral} as \ref{eq:weak formulation in matrix form}.
 \begin{equation}
     \lambda M\vec{c} = A\vec{c} 
     \label{eq:weak formulation in matrix form}
@@ -319,7 +309,7 @@ The Rayleigh quotent can also be expressed in matrix form \ref{eq:Rayleigh quote
 \end{equation}
 
 
-Now, we can introduce the Minimum Principle for the First Eigenvalue Theorem from \cite{b9.1}.
+Now, we can introduce the Minimum Principle for the First Eigenvalue Theorem from \cite{b0} \cite{b9.1}.
 
 \textit{
     Let
@@ -454,7 +444,7 @@ That is why we need to come up with the "common factor" that we can relate to ev
 
 By definition reference triangle is a triangle with vertices in: (1, 0), (0, 1) and (0, 0) \cite{b13}. In order to avoid confusion with the coordinates, we will say every triangle in $(x, y)$ is mapped to the reference coordinate plane $(\xi, \eta)$, this mapping is illustrated
 
-Any triangle with corners $P_i(x_i, y_i)$, $i = 1, 2, 3$ can be mapped to a reference triangle as in \ref{eq:coordinate transformation}, using the counterclockwise numbering.
+Any triangle with corners $P_i(x_i, y_i)$, $i = 1, 2, 3$ can be mapped from the reference element to physical as in \ref{eq:coordinate transformation}, using the counterclockwise numbering.
 \begin{equation}
 \begin{aligned}
     x &= x_1 + (x_2 - x_1)\xi + (x_3 - x_1)\eta \\
@@ -604,23 +594,43 @@ Here, $\Delta$ is the Laplacian operator that expands in \ref{eq:Laplacian opera
 
 This problem has a physical meaning - the feedback mechanism of the physical system. It states that the spatial acceleration (curvature) of a state is directly proportional and opposite to the state itself.
 
-For example, 
-Hence, in the heat/diffusion equation eigenvalues will represent the rate of fundamental thermal decay and eigenfunction shows the elemental spatial distributions of heat.
-The smallest eigenvalue ($\lambda_1)$ dictates the most resilient thermal profile that takes the longest time to cool down to ambient temperature.
+For example, if we look at heat equation \ref{eq:heat equation}.
+\begin{equation}
+    u_t - \Delta u = 0
+    \label{eq:heat equation}
+\end{equation}
+Then with separation of variables we are getting \ref{eq:heat eq separation of var}.
+\begin{equation}
+    u(x, t) = \phi(x)e^{-\lambda t}
+    \label{eq:heat eq separation of var}
+\end{equation}
 
-Very important thing that is worth mentioning is the meaning of the negative sign, which ensures stability. In the equation $\Delta u = + \lambda u$, the system would yield exponential growth, representing physical instability, explosion or infinite dissipation.
-Therefore, the negative sign forces confinement, oscillation and equilibrium.
+Substituting back to \ref{eq:heat equation} and asigning $\lambda = e^-\lambda t$ gives us \ref{eq:heat Laplace}.
+\begin{equation}
+    -\Delta\phi = \lambda\phi
+    \label{eq:heat Laplace}
+\end{equation}
+
+Hence, from \ref{eq:heat Laplace} it is clear that eigenvalues in this case determine the rate of fundamental theraml decay and the eigenfunction shows the elemental spatial distributions of heat.
+
+Therefore, the smallest eigenvalue $\lambda_1$ corresponds to the slowest-decaying mode, in other words the most resilient thermal profile that takes the longest time to cool down to ambient temperature.
+
+If we recall the derivation of the weak form we get the generalised Laplace eigenproblem \ref{eq:generalised Laplace}.
+\begin{equation}
+    Au = \lambda Mu
+    \label{eq:generalised Laplace}
+\end{equation}
 
 \subsection{
     \text{Schr\"{o}dinger's Eigenproblem}
 }
 
-\text{Schr\"{o}dinger's} equation is one of the most important equations of the 20th century. It is the quantum version of the Newton's law $F = ma$, it tells us how waves of probability change and behave for simple particles over time, however in this project we will look at the Time-Independent \text{Schr\"{o}dinger's} Equation \ref{eq:Schrodinger equation}.
+\text{Schr\"{o}dinger's} equation is one of the most important equations of the 20th century. The Schr\"{o}dinger equation plays a fundamental dynamical role in non-relativistic quantum mechanics, analogues in importance to the role played by Newton's laws in classical mechanics. It tells us how waves of probability change and behave for simple particles over time, however in this project we will look at the Time-Independent \text{Schr\"{o}dinger's} Equation \ref{eq:Schrodinger equation}.
 \begin{equation}
     \Bigg[-\frac{\hbar^2}{2m}\nabla^2 + V(\vec{r})\Bigg]\psi({\vec{r}}) = E\psi(\vec{r})
     \label{eq:Schrodinger equation}
 \end{equation}
-where $\hbar$ - reduced Planck's constant; $\psi$ - wave function, it holds the information about a quantum particle's state; $m$ - the mass of the studied particle; $V$ - potential energy of the system.
+where $\hbar$ - reduced Planck's constant; $\psi$ - wave function, it describes the particle's quantum state; $m$ - the mass of the studied particle; $V$ - potential energy of the system.
 
 In fact the left part of the equation is known as Hamiltonian operator \ref{eq:Hamiltonian operator}.
 \begin{equation}
@@ -653,11 +663,12 @@ Although the infinite square well is an idealised model, it provides a useful be
 
 Furthermore, \ref{eq:eigenproblem Schrodinger} can be rewritten as a generalised eigenproblem \ref{eq:generalised Schrodinger}. However, to do so we need to define $\lambda = \frac{2mE}{\hbar^2}$ and appropriately scale the potential.
 \begin{equation}
-    (A + V)\psi = \lambda M\psi
+    (A + K_V)\psi = \lambda M\psi
     \label{eq:generalised Schrodinger}
 \end{equation}
-which differs from the Laplace problem only by one matrix addition.
+Where $(K_V)_{ij} = \frac{2m}{\hbar^2} \int_\Omega V(x)\phi_i\phi_j \, dx$ is a potential matrix, with $V(x)$ the potential energy function.
 
+From \ref{eq:generalised Schrodinger} we can see that mathematically the statement of the problem is very similar to the Laplace eigenproblem \ref{eq:generalised Laplace}.
 
 
 \subsection{Conclusion}
@@ -700,25 +711,25 @@ The local potential matrix $V$ measures the potential energy contribution betwee
 
 Following \cite{b10} we know that each entry of stiffness matrix and mass matrix are calculated by \ref{eq:stiffness matrix} and \ref{eq:mass matrix} respectively.
 \begin{equation}
-    A = \int_\Omega \nabla u \nabla v \, dx
+    (A_K)_{ij} = \int_K \nabla \phi_i \nabla \phi_j \, dx
     \label{eq:stiffness matrix}
 \end{equation}
 
 \begin{equation}
-    M = 
+    (M_K)_{ij} = \int_K \phi_i \phi_j \, dx
     \label{eq:mass matrix}
 \end{equation}
 
-With potential energy matrix $V$ the situation is a bit more conplex because potential energy in Schr\"{o}dinger Equation can be defined with various equations. But nevertheless we know that potential matrix $V$ is calcualated using \ref{eq:potential matrix}.
+With potential energy matrix $K_{V,K}$ the situation is a bit more conplex because potential energy in Schr\"{o}dinger Equation can be defined with various equations. But nevertheless we know that potential matrix $K_{V,K}$ is calcualated using \ref{eq:potential matrix}.
 \begin{equation}
-    V = 
+    (K_{V,K})_{ij} = \frac{2m}{\hbar^2}\int_K V(x) \phi_i \phi_j \, dx
     \label{eq:potential matrix}
 \end{equation}
 
 However, becuase evaluating the element integrals analytically for every element and potentially every potential function is inconvinient, we will use the Gaussian quadrature that will provide an efficient approximation.
 To start with we will use our reference mapping $(x, y) \mapsto (\xi, \eta)$. To do so we recall the change of variables.
 \begin{equation}
-    \int_K f(x, y) \, dxdy = \int_{\vec{K}}f(\xi, \eta) det(J(\xi, \eta)) \, d\xi d\eta
+    \int_K f(x, y) \, dxdy = \int_{\vec{K}}f(\xi, \eta) |det(J(\xi, \eta))| \, d\xi d\eta
     \label{eq:from physical to reference}
 \end{equation}
 where $det(J(\xi, \eta))$ is the determinant of the Jacobian matrix defined in \ref{eq:jacobian matrix}.
@@ -739,14 +750,14 @@ Therefore, the determinant of $J$ is
 
 Now approxiamting the integral over $\vec{K}$ from \ref{eq:from physical to reference} by a quadrature formuala we get \ref{eq:quadrature reference}.
 \begin{equation}
-    \int_{\vec{K}}f(\xi, \eta) det(J(\xi, \eta)) \, d\xi d\eta \approx \sum_{q=1}^{n_q} \frac{w_q}{2} f(\xi_q, \eta_q) det(J(\xi_q, \eta_q))
+    \int_{\vec{K}}f(\xi, \eta) |det(J(\xi, \eta))| \, d\xi d\eta \approx \sum_{q=1}^{n_q} \frac{w_q}{2} f(\xi_q, \eta_q) |det(J(\xi_q, \eta_q))|
     \label{eq:quadrature reference}
 \end{equation}
 where $N_q$ is the number of quadrature points, $w_q$ the quadrature weigths, and $(\xi_q, \eta_q)$ the quadrature points.
 
-Since for the Laplace problem we will have the polynomials up to degree 4 we will use the 6 point Hammer-Marlowe-Stroud quadrature rules \cite{b16}. This rule has more quadrature points then required for solving this type of integral, however it gives more precision with minor speed sacrifices.
+Since for the Laplace problem we will have the polynomials up to degree 4, depending on whether we are using P1 or P2 elements (for P2 $\phi_i\phi_j$ can have degree 4). That is why we will use the 6 point Hammer-Marlowe-Stroud quadrature rules \cite{b16}. This rule has more quadrature points then required for solving this type of integral, however it gives more precision with minor speed sacrifices.
 
-However, for Schr\"{o}dinger equation we can face higher order polynomials which requares us to use a 12 point David Dunavant's quadrature rule \cite{b17} with Burkardt's implementation from \cite{b18}.
+However, for Schr\"{o}dinger equation we can face higher order polynomials which require us to use a 12 point David Dunavant's quadrature rule \cite{b17} with Burkardt's implementation from \cite{b18}.
 
 \subsection{Global assembly}
 Once we obtained the local matrices that represent certain physical properties on every small element of the mesh we can build the picture back piece by piece.
@@ -812,17 +823,20 @@ the errors were converging quadratically which can be concluded by the graphs of
 
 \newpage
 \begin{thebibliography}{00}
+\bibitem{b0} W. A. Strauss, Partial Differential Equations. Wiley Global Education, 2012
 \bibitem{b1} Arxiv.org, 2023. \url{https://arxiv.org/pdf/1903.11240} (accessed Jul. 15, 2026)
 \bibitem{b2} W. Ding and Y. Wei, “Generalized Tensor Eigenvalue Problems,” Theory and Computation of Tensors, pp. 11-36, 2016, doi: 10.1016/b978-0-12-803953-3.50002-2
 \bibitem{b3} \url{https://www.researchgate.net/publication/235012188_An_Algorithm_for_the_Generalized_Matrix_Eigenvalue_Problem_Ax_Lambda_Bx}
-\bibitem{b4} “What is the difference between strong form and weak form? | ResearchGate,” ResearchGate, 2016. \url{https://www.researchgate.net/post/What_is_the_difference_between_strong_form_and_weak_form} (accessed Jul. 18, 2026)
-\bibitem{b5} GeeksforGeeks, “Bilinear Form,” GeeksforGeeks, Sept. 11, 2024. \url{https://www.geeksforgeeks.org/engineering-mathematics/bilinear-form/} (accessed Jul. 20, 2026)
-\bibitem{b6} manavofficial577, “Bilinear Form Linear Algebra Notes,” Scribd, 2026. \url{https://www.scribd.com/document/931572146/Bilinear-Form-Linear-Algebra-Notes} (accessed Jul. 20, 2026)
-\bibitem{b7} “Lax-Milgram Theorem,” WolframResearch, 2026. \url{https://mathworld.wolfram.com/Lax-MilgramTheorem.html} (accessed Jul. 20, 2026)
-\bibitem{b8} D. bounded, “Mathematics Stack Exchange,” Mathematics Stack Exchange, Mar. 28, 2023. \url{https://math.stackexchange.com/questions/4668104/determining-the-bilinear-form-a-is-bounded} (accessed Jul. 21, 2026)
-\bibitem{b9} S. Shaik, “Compare Ritz to Galerkin,” Scribd, 2026. \url{https://www.scribd.com/document/314330469/Compare-Ritz-to-Galerkin} (accessed Jul. 25, 2026)
-\bibitem{b9.1} “6 Eigenvalues of the Laplacian,” Accessed: Jun. 24, 2026. [Online]. Available:\url{https://web.stanford.edu/class/math220b/handouts/eigenvalues.pdf}
+\bibitem{b4} “What is the difference between strong form and weak form? | ResearchGate,” ResearchGate, 2016. \url{https://www.researchgate.net/post/What_is_the_difference_between_strong_form_and_weak_form} (accessed Jun. 18, 2026)
+\bibitem{b4.1} “Variational Formulation 2.1 Boundary Value problems Example 2.1.1 (One dim'l problem),” Accessed: Jun. 18, 2026. [Online]. Available: \url{https://mathsci.kaist.ac.kr/~dykwak/Courses/FEM765-17/variation-fem.pdf}
 \bibitem{b10} M. G. Larson and Fredrik Bengzon, The Finite Element Method: Theory, Implementation, and Applications. Springer Science $\&$ Business Media, 2013
+\bibitem{b5} GeeksforGeeks, “Bilinear Form,” GeeksforGeeks, Sept. 11, 2024. \url{https://www.geeksforgeeks.org/engineering-mathematics/bilinear-form/} (accessed Jun. 25, 2026)
+\bibitem{b6} manavofficial577, “Bilinear Form Linear Algebra Notes,” Scribd, 2026. \url{https://www.scribd.com/document/931572146/Bilinear-Form-Linear-Algebra-Notes} (accessed Jun. 25, 2026)
+\bibitem{b6.1} \url{https://www.cip.ifi.lmu.de/~grinberg/algebra/bilf.pdf}
+\bibitem{b7} “Lax-Milgram Theorem,” WolframResearch, 2026. \url{https://mathworld.wolfram.com/Lax-MilgramTheorem.html} (accessed Jul. 10, 2026)
+\bibitem{b8} D. bounded, “Mathematics Stack Exchange,” Mathematics Stack Exchange, Mar. 28, 2023. \url{https://math.stackexchange.com/questions/4668104/determining-the-bilinear-form-a-is-bounded} (accessed Jul. 11, 2026)
+\bibitem{b9} S. Shaik, “Compare Ritz to Galerkin,” Scribd, 2026. \url{https://www.scribd.com/document/314330469/Compare-Ritz-to-Galerkin} (accessed Jul. 15, 2026)
+\bibitem{b9.1} “6 Eigenvalues of the Laplacian,” Accessed: Jun. 24, 2026. [Online]. Available:\url{https://web.stanford.edu/class/math220b/handouts/eigenvalues.pdf}
 \bibitem{b11} IEEE, “The Advantages of the Finite Element Method - IEEE Innovation at Work,” May 2019. Accessed: Jul. 29, 2026. [Online]. Available: \url{https://innovationatwork.ieee.org/the-advantages-of-fem/}
 \bibitem{b12.1} G. Strang and G. Fix, An Analysis of the Finite Element Method. Wellesley-Cambridge Press, 2018
 \bibitem{b12.2} I. Babuška and J. Osborn, "Eigenvalue problems," in Handbook of Numerical Analysis, vol. II, Finite Element Methods (Part 1), P. G. Ciarlet and J. L. Lions, Eds. Amsterdam, Netherlands: North-Holland, 1991, pp. 641-787
@@ -907,8 +921,42 @@ Since $f \in L^2(\Omega)$, the value $C_{L}$ is a finite constant independent of
 
 
 \section{Poincaré inequality} \label{sec:Poincaré inequality}
+From \cite{b10}. 
 
+Let $\Omega \subset \mathbb{R}^2$ be a bounded domain. Then, there is constant $C = C(\Omega)$, such that for any $v \in V_0$,
+\begin{equation}
+    \|v\|_{L^2(\Omega)} \leq C\|\nabla v\|_{L^2(\Omega)}
+\end{equation}
+\textit{Proof.}
+
+Let $\phi$ be a function satisfying $-\Delta\phi = 1$ in $\Omega$ with $\sup_{x\in \Omega}\Big|\nabla \phi(x)\Big| < C$. Such a function exists if the boundary of $\Omega$ is sufficiently smooth.
+
+Multiplying $1 = -\Delta\phi$ with $v^2$, and integrating by parts using Green's formula \ref{eq:Green theorem} we have
+\begin{equation}
+\begin{aligned}
+    \int_\Omega v^2 \, dx &= -\int_\Omega v^2 \Delta\phi \, dx \\
+    &= - \int_{\partial\Omega}v^2 n \cdot \nabla\phi \, ds \\
+    &\quad + \int_\Omega 2v\nabla v \cdot \nabla\phi \, dx \\
+    &= \int_\Omega 2v\nabla v \cdot \nabla\phi \, dx
+\end{aligned}
+\end{equation}
+since $v = 0$ on $\partial\Omega$. Using the Cauchy-Schwarz inequality from Appendix \ref{sec:Cauchy-Schwarz inequality} we further have
+\begin{equation}
+\begin{aligned}
+    \|v\|_{L^2(\Omega)}^2 &= \int_\Omega v^2 \, dx \\
+    &= \int_\Omega 2v\nabla v \cdot \nabla\phi \, dx \\
+    &\leq 2\max |\nabla\phi| \|v\|_{L^2(\Omega)} \|\nabla v\|_{L^2(\Omega)}
+\end{aligned}
+\end{equation}
+
+Finally, we set $C = 2\max |\nabla\phi|$, and divide by $\|v\|_{L^2(\Omega)}$.
+
+The above prove holds if $v$ is zero on the part of the boundary or if the average $|\Omega|^{-1}\int_\Omega v \, dx$ of $v$ is zero.
 
 \section{Cauchy-Schwarz inequality} \label{sec:Cauchy-Schwarz inequality}
+\begin{equation}
+    \int_\Omega vw \, dx \leq \|v\|_{L^2(\Omega)} \|w\|_{L^2(\Omega)}
+\end{equation}
+
 
 \end{document}
