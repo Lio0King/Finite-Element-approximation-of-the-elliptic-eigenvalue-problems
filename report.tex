@@ -701,28 +701,28 @@ In order to avoid breaking the code all the triangulations were sorted in the as
 
 
 \subsection{Local element matrices}
-On every triangle we will compute their own stiffness, mass and potential matrices (in Schr\"{o}dinger case) which are usually called local matrices.
+On every triangle, we compute local stiffness, mass and potential-energy matrices (for the Schrödinger problem). These local matrices describe the contribution of each element to the corresponding global matrices.
 
 The local stiffness matrix $A$ measures the alignment of the gradients of two basis functions or simplier how much the element resist deformation (spring force). 
 
 The local mass matrix $M$ measures how much basis functions occupy the same region of space (overlap), in other words how much the triangle resists acceleration.
 
-The local potential matrix $V$ measures the potential energy contribution between basis functions \cite{b15}.
+The local potential matrix $K_V$ measures the potential energy contribution between basis functions \cite{b15}.
 
 Following \cite{b10} we know that each entry of stiffness matrix and mass matrix are calculated by \ref{eq:stiffness matrix} and \ref{eq:mass matrix} respectively.
 \begin{equation}
-    (A_K)_{ij} = \int_K \nabla \phi_i \nabla \phi_j \, dx
+    (A_K)_{ij} = \int_K \nabla \phi_i \cdot \nabla \phi_j \, dxdy
     \label{eq:stiffness matrix}
 \end{equation}
 
 \begin{equation}
-    (M_K)_{ij} = \int_K \phi_i \phi_j \, dx
+    (M_K)_{ij} = \int_K \phi_i \phi_j \, dxdy
     \label{eq:mass matrix}
 \end{equation}
 
 With potential energy matrix $K_{V,K}$ the situation is a bit more conplex because potential energy in Schr\"{o}dinger Equation can be defined with various equations. But nevertheless we know that potential matrix $K_{V,K}$ is calcualated using \ref{eq:potential matrix}.
 \begin{equation}
-    (K_{V,K})_{ij} = \frac{2m}{\hbar^2}\int_K V(x) \phi_i \phi_j \, dx
+    (K_{V,K})_{ij} = \frac{2m}{\hbar^2}\int_K V(x) \phi_i \phi_j \, dxdy
     \label{eq:potential matrix}
 \end{equation}
 
@@ -737,8 +737,8 @@ where $det(J(\xi, \eta))$ is the determinant of the Jacobian matrix defined in \
 However, for the linear Lagrange finite element, that we are using, the Jacobian matrix is given by \ref{eq:Lagrange jacobian} \cite{b10}.
 \begin{equation}
     J = \begin{bmatrix}
-        x_2 - x_1 & y_2 - y_1 \\
-        x_3 - x_1 & y_3 - y_1
+        x_2 - x_1 & x_3 - x_1 \\
+        y_2 - y_1 & y_3 - y_1
     \end{bmatrix}
     \label{eq:Lagrange jacobian}
 \end{equation}
@@ -759,6 +759,9 @@ Since for the Laplace problem we will have the polynomials up to degree 4, depen
 
 However, for Schr\"{o}dinger equation we can face higher order polynomials which require us to use a 12 point David Dunavant's quadrature rule \cite{b17} with Burkardt's implementation from \cite{b18}.
 
+The very important part in computing local matrices is that the obtained matrices are symmetric. The reason behind this is the ay of computing those matrices, since we are integrating the produt of basis functions or the gradients of the basis functions, and the scalar multiplication is commutative, swapping the indices give the same result.
+We are checking the symmetry by comparing the obtained matrix with its transpose, they should be equal.
+
 \subsection{Global assembly}
 Once we obtained the local matrices that represent certain physical properties on every small element of the mesh we can build the picture back piece by piece.
 
@@ -777,6 +780,8 @@ That is why the rows corresponding to boundary are set to 0. This will result in
 
 
 \subsection{Eigenvalue solver}
+In order to find eigenvalues and eigenvectors we used the SciPy library, in particular scipy.linalg.eigh. It solves a standard or generalised eigenvalue problem for a complex Hermitian or real symmetric matrix \cite{b23}. Since all our matrices are symmetric and real, we will use it to find both eigenvalues and eigenvectors.
+This method returns the 1D array of eigenvalues in ascending order and the 2D array of the normalised eigenvectors, where the column $v[:, i]$ is corresponding to the eigenvalue $w[i]$ \cite{b23}.
 
 
 \subsection{Eigenvalues}
@@ -853,6 +858,7 @@ the errors were converging quadratically which can be concluded by the graphs of
 \bibitem{b20} \url{https://quickfem.com/wp-content/uploads/IFEM.Ch25.pdf}
 \bibitem{b21} Rakesh Arugonda, “Dirichlet Boundary Condition,” Scribd, 2026. \url{https://www.scribd.com/doc/172742570/Dirichlet-Boundary-Condition} (accessed Jun. 20, 2026)
 \bibitem{b22} “7. Dirichlet boundary conditions — Finite element course 2024.0 documentation,” 2024. Accessed: Aug. 11, 2026. [Online]. Available: \url{https://finite-element.github.io/7_boundary_conditions.html}
+\bibitem{b23} “scipy.linalg.eigh — SciPy v1.10.1 Manual.” Accessed: Aug. 17, 2026. [Online]. Available: \url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.eigh.html}
 
 \end{thebibliography}
 \vspace{12pt}
