@@ -700,7 +700,7 @@ To generate mesh we will use the square with coordinates $[0, 1] \times [0, 1]$.
 In order to avoid breaking the code all the triangulations were sorted in the ascending order.
 
 
-\subsection{Local element matrices}
+\subsection{Local element matrices} \label{sec:local matrices}
 On every triangle, we compute local stiffness, mass and potential-energy matrices (for the Schrödinger problem). These local matrices describe the contribution of each element to the corresponding global matrices.
 
 The local stiffness matrix $A$ measures the alignment of the gradients of two basis functions or simplier how much the element resist deformation (spring force). 
@@ -729,7 +729,7 @@ With potential energy matrix $K_{V,K}$ the situation is a bit more conplex becau
 However, becuase evaluating the element integrals analytically for every element and potentially every potential function is inconvinient, we will use the Gaussian quadrature that will provide an efficient approximation.
 To start with we will use our reference mapping $(x, y) \mapsto (\xi, \eta)$. To do so we recall the change of variables.
 \begin{equation}
-    \int_K f(x, y) \, dxdy = \int_{\vec{K}}f(\xi, \eta) |det(J(\xi, \eta))| \, d\xi d\eta
+    \int_K f(x, y) \, dxdy = \int_{\hat{K}}f(\xi, \eta) |det(J(\xi, \eta))| \, d\xi d\eta
     \label{eq:from physical to reference}
 \end{equation}
 where $det(J(\xi, \eta))$ is the determinant of the Jacobian matrix defined in \ref{eq:jacobian matrix}.
@@ -750,39 +750,79 @@ Therefore, the determinant of $J$ is
 
 Now approxiamting the integral over $\vec{K}$ from \ref{eq:from physical to reference} by a quadrature formuala we get \ref{eq:quadrature reference}.
 \begin{equation}
-    \int_{\vec{K}}f(\xi, \eta) |det(J(\xi, \eta))| \, d\xi d\eta \approx \sum_{q=1}^{n_q} \frac{w_q}{2} f(\xi_q, \eta_q) |det(J(\xi_q, \eta_q))|
+    \int_{\hat{K}}f(\xi, \eta) |det(J(\xi, \eta))| \, d\xi d\eta \approx \sum_{q=1}^{n_q} \frac{w_q}{2} f(\xi_q, \eta_q) |det(J(\xi_q, \eta_q))|
     \label{eq:quadrature reference}
 \end{equation}
 where $N_q$ is the number of quadrature points, $w_q$ the quadrature weigths, and $(\xi_q, \eta_q)$ the quadrature points.
 
-Since for the Laplace problem we will have the polynomials up to degree 4, depending on whether we are using P1 or P2 elements (for P2 $\phi_i\phi_j$ can have degree 4). That is why we will use the 6 point Hammer-Marlowe-Stroud quadrature rules \cite{b16}. This rule has more quadrature points then required for solving this type of integral, however it gives more precision with minor speed sacrifices.
+For P1 elements, the mass integrand $\phi_i\phi_j$ has polynomial degree 2, while the stiffness integrand $\nabla\phi_i\cdot\nabla\phi_j$ is constant. For P2 elements, these degrees become 4 and 2, respectively. Therefore, a quadrature rule exact for polynomials of degree at least 4 is sufficient to evaluate the Laplace element integrals exactly in exact arithmetic. That is why we will use the 6 point Hammer-Marlowe-Stroud quadrature rules \cite{b16}. This rule has more quadrature points then required for solving this type of integral, however it gives more precision with minor speed sacrifices.
 
-However, for Schr\"{o}dinger equation we can face higher order polynomials which require us to use a 12 point David Dunavant's quadrature rule \cite{b17} with Burkardt's implementation from \cite{b18}.
+However, For the Schrödinger problem, the degree of the potential integrand additionally depends on the chosen potential $V(x,y)$. For polynomial potentials, increasing the degree of $V$ increases the degree of the integrand $V\phi_i\phi_j$, requiring a quadrature rule of sufficiently high degree. For example, a 12 point David Dunavant's quadrature rule \cite{b17} with Burkardt's implementation from \cite{b18}.
 
-The very important part in computing local matrices is that the obtained matrices are symmetric. The reason behind this is the ay of computing those matrices, since we are integrating the produt of basis functions or the gradients of the basis functions, and the scalar multiplication is commutative, swapping the indices give the same result.
-We are checking the symmetry by comparing the obtained matrix with its transpose, they should be equal.
+An important property of the local matrices is their symmetry. This follows directly from the definitions. For example,
+\begin{equation}
+    (A_K)_{ij} = \int_K\nabla\phi_i \cdot \nabla\phi_j \, dxdy
+\end{equation}
+Since the dot product is commutative, $\nabla\phi_i \cdot \nabla\phi_j = \nabla\phi_j \cdot \nabla\phi_i$, therefore we have:
+\begin{equation}
+    (A_K)_{ij}=(A_K)_{ji}.
+\end{equation}
+
+The same argument applies to $M_K$ and $K_{V,K}$, provided that the potential $V$ is real-valued. 
+
+Thus, the resulting matrices should satisfy $A_K = A_K^T$, $M_K = M_K^T$, and $K_{V,K}= K_{V,K}^T$.
+
 
 \subsection{Global assembly}
 Once we obtained the local matrices that represent certain physical properties on every small element of the mesh we can build the picture back piece by piece.
 
-To do so, we need to follow the straightforward algorithm called assembly \cite{b19}. Each vertex of the triangle has its own global coordinates, so the idea is to put the local matrix in the similar position in global as it belongs in the domain (the more detailed algorithm can be found in \cite{b19} or \cite{b20}).
+To do so, we need to follow the straightforward algorithm called assembly \cite{b19}. Each local element matrix is expressed with respect to the local basis functions associated with the nodes of that element. These local degrees of freedom correspond to specific global degrees of freedom in the mesh. During assembly, each local matrix is added to the corresponding entries of the global matrix \cite{b10}.
+
+More detailed, if an element $K$ has global node indices $N_1$, $N_2$ and $N_3$, its local matrix $A_K$ contributes like it is shown in \ref{eq:local contribution}.
+\begin{equation}
+    A_{N_i, N_j} += (A_K)_{ij} \quad i, j = 1, 2, 3
+    \label{eq:local contribution}
+\end{equation}
+
+The same procedure applies to local mass and potential matrices:
+\begin{equation}
+\begin{aligned}
+    M_{N_i, N_j} &+= (M_K)_{ij} \\
+    (K_V)_{N_i, N_j} &+= (K_{V,K})_{ij}
+\end{aligned}
+\end{equation}
+
+Since neighbouring elements share same nodes, several local matrices contribute to the same entries of the global matrices. This assembly process produces the global matrices representing the entire computational domain.
+
+The more detailed algorithm can be found in \cite{b19} or \cite{b20}.
 
 
 \subsection{Dirichlet boundary conditions}
 The Dirichlet (or first-type) boundary condition is a type of boundary condition which specifies the values a solution needs to take on the boundary of the domain \cite{b21} in other words we prescribe the value of the solution at the boundary \cite{b10}.
 
-In this project we will take the simple special case - homogeneous Dirichlet boundary condition. We will make our function be $0$ on the boundary. What does it mean for our algorithm and assembly?
+In this project we will take the simple special case - homogeneous Dirichlet boundary condition. We will make our function $0$ on the boundary. What does it mean for our algorithm and assembly?
 
 When we assemble our global matrices from local pieces, every point of the domain is used. Hence, since we know that our solution will take the zero values, we can simplify our global matrix and avoid extra calculations that will vanish at the end.
 
-The algorithm for this from \cite{b22} is rather straightforward. Firstly, we assemble the system completely ignoring the Dirichlet conditions. The following global matrix will be correct on the rows corresponding to the test function, but will not satisfy the boundary rows.
-That is why the rows corresponding to boundary are set to 0. This will result in decreasing of the dimensions of the matrix and follwing simplifications of the computations.
+The basic idea is that we can consequently restrict the finite-element space to the subspace of functions whose boundary degrees of freedom vanish \cite{b22}. Algebraically, this corresponds to extracting the interior-interior blocks of the assembled matrices:
+\begin{equation}
+    A_h = A_{II},\qquad M_h=M_{II}
+\end{equation}
+The resulting reduced generalized eigenvalue problem is:
+\begin{equation}
+    A_h u_h = \lambda M_h u_h 
+\end{equation}
+
+The reconstructed finite-element eigenfunction has zero coefficients at the boundary nodes and therefore satisfies the homogeneous Dirichlet condition \cite{b22.1}.
 
 
 \subsection{Eigenvalue solver}
-In order to find eigenvalues and eigenvectors we used the SciPy library, in particular scipy.linalg.eigh. It solves a standard or generalised eigenvalue problem for a complex Hermitian or real symmetric matrix \cite{b23}. Since all our matrices are symmetric and real, we will use it to find both eigenvalues and eigenvectors.
+In order to find eigenvalues and eigenvectors we use the SciPy library, in particular scipy.linalg.eigh. It solves a standard or generalised eigenvalue problem for a complex Hermitian or real symmetric matrix \cite{b23}. From \ref{sec:local matrices} we know that all of our matrices are symmetric and real,that is why it would be appropriate to use it to find both eigenvalues and eigenvectors.
+
 This method returns the 1D array of eigenvalues in ascending order and the 2D array of the normalised eigenvectors, where the column $v[:, i]$ is corresponding to the eigenvalue $w[i]$ \cite{b23}.
 
+
+\section{Discussion of the results}
 
 \subsection{Eigenvalues}
 for P1
@@ -847,17 +887,18 @@ the errors were converging quadratically which can be concluded by the graphs of
 \bibitem{b12.2} I. Babuška and J. Osborn, "Eigenvalue problems," in Handbook of Numerical Analysis, vol. II, Finite Element Methods (Part 1), P. G. Ciarlet and J. L. Lions, Eds. Amsterdam, Netherlands: North-Holland, 1991, pp. 641-787
 \bibitem{b12.3} G. Dusson and Y. Maday, “An overview of a posteriori error estimation and post-processing methods for nonlinear eigenvalue problems,” Journal of Computational Physics, vol. 491, p. 112352, July 2023, doi: 10.1016/j.jcp.2023.112352
 \bibitem{b12.4} I. Babuška and J. E. Osborn, “Finite element-Galerkin approximation of the eigenvalues and eigenvectors of selfadjoint problems,” Mathematics of Computation, vol. 52, no. 186, pp. 275-297, 1989, doi: 10.1090/s0025-5718-1989-0962210-8
-\bibitem{b12} GeeksforGeeks, “Triangulations Using Matplotlib,” GeeksforGeeks, Feb. 02, 2023. \url{https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/} (accessed Aug. 01, 2026).
+\bibitem{b12} GeeksforGeeks, “Triangulations Using Matplotlib,” GeeksforGeeks, Feb. 02, 2023. \url{https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/} (accessed Aug. 01, 2026)
 \bibitem{b13} J. Burkardt, “Computational Geometry Lab: FEM BASIS FUNCTIONS FOR A TRIANGLE,” 2018. Accessed: Aug. 01, 2026. [Online]. Available: \url{https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf}
 \bibitem{b14} \url{https://www.geophysik.uni-muenchen.de/~igel/Lectures/NMG/08_finite_elements_basisfunctions.pdf}
-\bibitem{b15} D. Xu, J. Stare, and A. L. Cooksy, “Solving the vibrational Schrödinger equation on an arbitrary multidimensional potential energy surface by the finite element method,” Computer Physics Communications, vol. 180, no. 11, pp. 2079-2094, June 2009, doi: 10.1016/j.cpc.2009.06.010.
+\bibitem{b15} D. Xu, J. Stare, and A. L. Cooksy, “Solving the vibrational Schrödinger equation on an arbitrary multidimensional potential energy surface by the finite element method,” Computer Physics Communications, vol. 180, no. 11, pp. 2079-2094, June 2009, doi: 10.1016/j.cpc.2009.06.010
 \bibitem{b16} Hammer, Preston C., Marlowe, O. J., and Stroud, A. H. Numerical integration over simplexes and cones, Mathematical Tables and Other Aids to Computation 10(55), 130-137, 1956. [DOI: 10.2307/2002483]
-\bibitem{b17} D. A. Dunavant, “High degree efficient symmetrical Gaussian quadrature rules for the triangle,” International Journal for Numerical Methods in Engineering, vol. 21, no. 6, pp. 1129-1148, June 1985, doi: 10.1002/nme.1620210612.
-\bibitem{b18} Sc.edu, 2026. \url{https://people.math.sc.edu/Burkardt/cpp_src/triangle_dunavant_rule/triangle_dunavant_rule.cpp} (accessed Aug. 10, 2026).
-\bibitem{b19} “Assembly — FEM Tutorial 0.1.0 documentation,” Uni-erlangen.de, 2017. \url{https://ww8central.ww.uni-erlangen.de/courses/fem101/fem/assembly.html} (accessed Jun. 18, 2026).
+\bibitem{b17} D. A. Dunavant, “High degree efficient symmetrical Gaussian quadrature rules for the triangle,” International Journal for Numerical Methods in Engineering, vol. 21, no. 6, pp. 1129-1148, June 1985, doi: 10.1002/nme.1620210612
+\bibitem{b18} Sc.edu, 2026. \url{https://people.math.sc.edu/Burkardt/cpp_src/triangle_dunavant_rule/triangle_dunavant_rule.cpp} (accessed Aug. 10, 2026)
+\bibitem{b19} “Assembly — FEM Tutorial 0.1.0 documentation,” Uni-erlangen.de, 2017. \url{https://ww8central.ww.uni-erlangen.de/courses/fem101/fem/assembly.html} (accessed Jun. 18, 2026)
 \bibitem{b20} \url{https://quickfem.com/wp-content/uploads/IFEM.Ch25.pdf}
 \bibitem{b21} Rakesh Arugonda, “Dirichlet Boundary Condition,” Scribd, 2026. \url{https://www.scribd.com/doc/172742570/Dirichlet-Boundary-Condition} (accessed Jun. 20, 2026)
 \bibitem{b22} “7. Dirichlet boundary conditions — Finite element course 2024.0 documentation,” 2024. Accessed: Aug. 11, 2026. [Online]. Available: \url{https://finite-element.github.io/7_boundary_conditions.html}
+\bibitem{b22.1} P. G. Ciarlet, The Finite Element Method for Elliptic Problems. SIAM, 2002
 \bibitem{b23} “scipy.linalg.eigh — SciPy v1.10.1 Manual.” Accessed: Aug. 17, 2026. [Online]. Available: \url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.eigh.html}
 
 \end{thebibliography}
