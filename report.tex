@@ -348,7 +348,8 @@ In this project we will use 2D Finite Element Approximation to find solutions of
 \subsection{Mesh}
 In order to divide our domain into smaller pieces we first need to introduce the pattern of how we are going to divide it.
 
-\subsubsection{Triangulations}
+\subsubsection{Triangulations} PICTURE
+
 If we want to divide the interval in 1D we will use intervals, that can be either equal to each other or be different length. 
 In 2D idea is the same, but instead of small line intervals we need to add one more point to be able to move from 1D line to 2D surface which is a triangle. The domain divided into triangles is called triangulation.
 
@@ -367,7 +368,8 @@ This method has own advantages and disadvantages. Delaunay algorithm are optimal
 In order to interpolate our unknown function on each element we need to decide what family of functions we are going to use for this interpolation. 
 Polynomials are the best candidates for this because they are mathematically simple to integrate and differentiate, they can be easily translated into code and the accuracy will be easily improved by increasing the order of the polynomials. And because in this project we are going to use first order (P1) and second order polynomials (P2) to interpolate our unknown function on each element of the mesh that is why we "introduce" the space of piecewise polynomials. 
 
-\subsubsection{P1 Elements}
+\subsubsection{P1 Elements} PICTURE
+
 To construct the piecewise linear function, we are letting $K$ be a triangle and in \ref{eq:P1 space} we define the space of linear functions on $K$ denotes $P_1(K)$.
 \begin{equation}
 \begin{aligned}
@@ -419,7 +421,8 @@ The eigenvalue error acts quadratically relative to the eigenvector error \cite{
 As a result, we are expecting to get this number in our computer implementation.
 
 
-\subsubsection{P2 Elements}
+\subsubsection{P2 Elements} PICTURE
+
 P1 elements are easy to implement and give good interpolations, but as it was discussed earlier the main advantage of the polynomials is their faster convergence and more precision with increasing of the degree. 
 
 So, instead of the polynomial space given in \ref{eq:P1 space} we are going to use the space of the second degree polynomials $P_2(K)$ defined in \ref{eq:P2 space}.
@@ -437,7 +440,8 @@ For sufficiently regular eigenfunctions and an appropriate family of meshes, the
 This can also be explained in less mathematical language - because higher order elements can achieve a given accuracy with fewer elements, as each element has more degrees of freedom.
 
 
-\subsection{Reference (Standard) element}
+\subsection{Reference (Standard) element} PICTURE
+
 Now, when know how to divide our domain into triangulations, and how to interpolate unknown function on each triangle using continuous piecewise polynomials, we will have a question: do we have to do this to each triangle individually?
 In practice this approach would be computationally inefficient because we can deal with the complex triangulations that will have different sizes, shapes and orientations, so interpolate each one individually will take a lot of time and effort. 
 That is why we need to come up with the "common factor" that we can relate to every element of our mesh. That is why we are going to use reference triangle.
@@ -464,7 +468,7 @@ However, in order to map any function from physical coordinates we have to the t
 
 This matrix connects $dxdy$ to $d\xi d\eta$ and transforms gradients between reference and physical elements.
 
-\subsubsection{Linear approximation} \label{sub:linear approximation}
+\subsubsection{Linear approximation} \label{sub:linear approximation} PICTURE
 The aim is to approximate the unknown function by a linear form of \ref{eq:linear form}. 
 \begin{equation}
     u(\xi, \eta) = c_1 + c_2\xi + c_3\eta
@@ -508,7 +512,8 @@ Their shapes are given in the figure
 
 
 
-\subsubsection{Quadratic approximation}
+\subsubsection{Quadratic approximation} PICTURE
+
 As it was mentioned before in P2 elements, we can approximate any function defined on the triangle by a quadratic function \ref{eq:P2 space}. So in the reference coordinates it will have the form \ref{eq:reference quadratic}.
 \begin{equation}
     u(\xi, \eta) = c_1 + c_2\xi + c_3\eta + c_4\xi^2 + c_5\xi\eta + c_6\eta^2
@@ -695,7 +700,8 @@ In order to complete this project, the Visual Studio code was used to write and 
 In order to simplify the work various libraries were used, like NumPy, Math and SciPy for different mathematical operations; Pandas for presenting results in good-looking tables; and MatPlotLib and PyVista to visualise plots in 2D and 3D respectively.
 
 
-\subsection{Mesh generation}
+\subsection{Mesh generation} PICTURE
+
 To generate mesh we will use the square with coordinates $[0, 1] \times [0, 1]$. On this square domain we will build triangulations using the Delaunay algorithm from \cite{b10}. In our example we will hard code the number of points per axis, but it is possible to let the user choose the number of points. The mesh with 6 points per axis will look like this (insert the picture).
 In order to avoid breaking the code all the triangulations were sorted in the ascending order.
 
@@ -750,8 +756,11 @@ Therefore, the determinant of $J$ is
 
 Now approxiamting the integral over $\vec{K}$ from \ref{eq:from physical to reference} by a quadrature formuala we get \ref{eq:quadrature reference}.
 \begin{equation}
-    \int_{\hat{K}}f(\xi, \eta) |det(J(\xi, \eta))| \, d\xi d\eta \approx \sum_{q=1}^{n_q} \frac{w_q}{2} f(\xi_q, \eta_q) |det(J(\xi_q, \eta_q))|
+\begin{aligned}
+    \int_{\hat{K}}f(\xi, \eta) &|det(J(\xi, \eta))| \, d\xi d\eta \approx \\
+    \sum_{q=1}^{n_q} &\frac{w_q}{2} f(\xi_q, \eta_q) |det(J(\xi_q, \eta_q))|
     \label{eq:quadrature reference}
+\end{aligned}
 \end{equation}
 where $N_q$ is the number of quadrature points, $w_q$ the quadrature weigths, and $(\xi_q, \eta_q)$ the quadrature points.
 
@@ -773,7 +782,9 @@ The same argument applies to $M_K$ and $K_{V,K}$, provided that the potential $V
 Thus, the resulting matrices should satisfy $A_K = A_K^T$, $M_K = M_K^T$, and $K_{V,K}= K_{V,K}^T$.
 
 
-\subsection{Global assembly}
+\subsection{Global assembly} PICTURE 
+
+
 Once we obtained the local matrices that represent certain physical properties on every small element of the mesh we can build the picture back piece by piece.
 
 To do so, we need to follow the straightforward algorithm called assembly \cite{b19}. Each local element matrix is expressed with respect to the local basis functions associated with the nodes of that element. These local degrees of freedom correspond to specific global degrees of freedom in the mesh. During assembly, each local matrix is added to the corresponding entries of the global matrix \cite{b10}.
@@ -822,23 +833,66 @@ In order to find eigenvalues and eigenvectors we use the SciPy library, in parti
 This method returns the 1D array of eigenvalues in ascending order and the 2D array of the normalised eigenvectors, where the column $v[:, i]$ is corresponding to the eigenvalue $w[i]$ \cite{b23}.
 
 
-\section{Discussion of the results}
 
-\subsection{Eigenvalues}
-for P1
-- the mesh refinement was reducing the error by half 
-- fist eigenvalue was approximated quite precisely
+\section{Results: Eigenvalues} 
+The previous sections established the mathematical formulation and numerical implementation of the finite element eigenvalue problem. In this section, the obtained eigenvalues are analysed to compute the approximation error and to investigate the convergence behaviour of the P1 and P2 finite element approximations.
 
-\subsection{Eigenvectors}
+The scipy.linalg.eigh returned us the array of eigenvalues, but how are we going to check if the numbers are correct? 
+
+One of the ways is to make the calculations by hand and compare with obtained results (this was done for some eigenvalues on small mesh sizes), however it becomes more and more difficult to check every mesh refinement.
+
+Another way is to compare results with the exact values. For the unit square $\Omega = (0, 1)^2$ with homogeneous Dirichlet boundary condition, the analytical eigenpairs can be obtained by separation of variables \cite{b12.1} \cite{b24}. For the Laplace eigenproblem the analytical eigenvalues can be obtained by \ref{eq:eigvals}.
+\begin{equation}
+    \lambda_{m,n} = \pi^2(m^2 + n^2)
+    \label{eq:eigvals}
+\end{equation}
+where $m, n = 1, 2, \ldots$ \cite{b24}.
+
+It is clear that with $m=1$, $n=2$ and $m=2$, $n=1$ we will have the same eigenvalue, this is called degenerate eigenvalues \cite{b12.4} \cite{b24}. It happens, because of the underlying symmetry in the system which forces different states or modes to share the same eigenvalue like an energy or frequency \cite{b25}. For example, for the Laplace eigenproblem, we can say that distinct vibrational modes produce the exact same resonant frequency because swapping the $x$ and $y$ dimensions yields the same energy.
+For the Schr\"{o}dinger eigenproblem, we can that electrons in an atom can have different quantum states that share the same energy level due to rotational symmetry.
+
+Hence, we will compute the exact eigenvalues and observe how close our approximations are.
+
+But, in order to get the most from the analysis we will also use another method, that is applied in practice, when computing the exact values does not seem feasible. We will check how the eigenvalues converge with the mesh refinement.
+This method is useful on practice because we know the convergence of FEM, $O(h^2)$ for P1 elements and $O(h^4)$ for P2 elements, in other words For a sufficiently regular problem and an appropriate family of meshes, the eigenvalue error is expected to decrease asymptotically as $O(h^{2p})$ \cite{b12.4}. Thus, as the mesh is refined, the computed eigenvalues should approach the exact eigenvalues at the theoretically predicted rate.
+To do so we will use the power law. Power law is a relationship between the discretisation error $E_h$ and characteristic mesh size $h$. For a method with convergence order $p$, the asymptotic error is expected to behave according to \ref{eq:discrete error}:
+\begin{equation}
+    E_h \approx Ch^{-p}
+    \label{eq:discrete error}
+\end{equation}
+where $C$ is approximately independent of $h \sim \frac{1}{N}$, where $N$ is the number of intervals per coordinate direction on the unit square and $p$ is the convergence rate \cite{b12.4}. 
+
+Taking logarithms gives:
+\begin{equation}
+    \ln E_h \approx \ln C + p\ln h
+\end{equation} 
+which means that a plot of $\ln E_h$ against $\ln h$ will approach a straight line whose slope is $p$ \cite{b26}.
+
+When the mesh size is being halved $h_2 = \frac{h_1}{2}$ the local order of convergence $p$ will be derived like it is shown in \ref{eq:local convergence}.
+\begin{equation}
+\begin{aligned}
+    E_1 \approx Ch_1^p &\quad\text{and}\quad E_2 \approx C\Bigg(\frac{h_1}{2}\Bigg)^p \\
+    &\quad \implies \frac{E_1}{E_2} = 2^p \\
+    &\quad \therefore p = \log_2\Bigg(\frac{E_1}{E_2}\Bigg)
+    \label{eq:local convergence}
+\end{aligned}
+\end{equation}
+
+For sufficiently fine meshes, the observed convergence rate is expected to approach the theoretical values $2$ and $4$ for P1 and P2 elements, respectively \cite{b12.4}.
+
+This method is used because it does not use complex calculations or depend on the factors we cannot control, it is based strictly on the computed values and knowledge of the theory.
+
+The results show that the coarse meshes produce relatively large eigenvalue errors. As the mesh is refined, the computed eigenvalues approach their analytical values. This behaviour agrees with the finite element convergence theory developed earlier.
+
+The $\ln-\ln$ convergence plot provides a visual confirmation of the theoretical convergence rates \cite{b26}. For the P1 approximation, the calculated convergence rates approach $2$, which is consistent with the theoretical eigenvalue error estimate $O(h^2)$. For the P2 approximation, the convergence rates approach $4$, confirming the theoretically predicted $O(h^4)$ behaviour.
+
+Although P2 elements require more degrees of freedom per element, their higher convergence rate allows the same accuracy to be achieved with a considerably coarser mesh than for P1 elements.
+
+\section{Results: Eigenvectors}
 
 \subsection{Degenerate eigenspaces}
 for 2D case second and third eigenvalues were the same, this can be explained by the exact eigenfunctions which is $u(x, y) = sin(2*\pi*x)*sin(\pi*y)$ and $u(x, y) = sin(\pi*x)*sin(2*\pi*y)$
 
-\subsection{Error analysis}
-
-
-\section{Convergence analysis}
-the errors were converging quadratically which can be concluded by the graphs of convergence, the convergence rates of the eigenvalues and eigenvectors matched the expected theoretical convergence rates
 
 
 \section{Numerical results for the Laplace Eigenproblem}
@@ -900,6 +954,9 @@ the errors were converging quadratically which can be concluded by the graphs of
 \bibitem{b22} “7. Dirichlet boundary conditions — Finite element course 2024.0 documentation,” 2024. Accessed: Aug. 11, 2026. [Online]. Available: \url{https://finite-element.github.io/7_boundary_conditions.html}
 \bibitem{b22.1} P. G. Ciarlet, The Finite Element Method for Elliptic Problems. SIAM, 2002
 \bibitem{b23} “scipy.linalg.eigh — SciPy v1.10.1 Manual.” Accessed: Aug. 17, 2026. [Online]. Available: \url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.eigh.html}
+\bibitem{b24} R. Courant and D. Hilbert, Methods of Mathematical Physics, Volume I
+\bibitem{b25} Bohrium.com, 2026. \url{https://www.bohrium.com/en/sciencepedia/feynman/keyword/degenerate_eigenvalues} (accessed Aug. 8, 2026).
+\bibitem{b26} “Understanding Convergence Rates — Hermes Tutorial Guide,” Hpfem.org, 2026. \url{https://hpfem.org/wp-content/uploads/doc-web/doc-tutorial/src/hermes2d/D-adaptivity/intro-2.html?utm_source=chatgpt.com} (accessed Aug. 12, 2026).
 
 \end{thebibliography}
 \vspace{12pt}
