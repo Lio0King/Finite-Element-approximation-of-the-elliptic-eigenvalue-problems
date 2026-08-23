@@ -440,13 +440,19 @@ For sufficiently regular eigenfunctions and an appropriate family of meshes, the
 This can also be explained in less mathematical language - because higher order elements can achieve a given accuracy with fewer elements, as each element has more degrees of freedom.
 
 
-\subsection{Reference (Standard) element} PICTURE
-
+\subsection{Reference (Standard) element}
 Now, when know how to divide our domain into triangulations, and how to interpolate unknown function on each triangle using continuous piecewise polynomials, we will have a question: do we have to do this to each triangle individually?
 In practice this approach would be computationally inefficient because we can deal with the complex triangulations that will have different sizes, shapes and orientations, so interpolate each one individually will take a lot of time and effort. 
 That is why we need to come up with the "common factor" that we can relate to every element of our mesh. That is why we are going to use reference triangle.
 
-By definition reference triangle is a triangle with vertices in: (1, 0), (0, 1) and (0, 0) \cite{b13}. In order to avoid confusion with the coordinates, we will say every triangle in $(x, y)$ is mapped to the reference coordinate plane $(\xi, \eta)$, this mapping is illustrated
+By definition reference triangle is a triangle with vertices in: (1, 0), (0, 1) and (0, 0) \cite{b13}. In order to avoid confusion with the coordinates, we will say every triangle in $(x, y)$ is mapped to the reference coordinate plane $(\xi, \eta)$, this mapping is illustrated in Fig. \ref{fig:reference triangle mapping}.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{reference triangle.png}
+    \caption{Reference triangle mapping for the (a) linear, (b) quadratic and (c) cubic elements \cite{b13.1}}
+    \label{fig:reference triangle mapping}
+\end{figure}
+
 
 Any triangle with corners $P_i(x_i, y_i)$, $i = 1, 2, 3$ can be mapped from the reference element to physical as in \ref{eq:coordinate transformation}, using the counterclockwise numbering.
 \begin{equation}
@@ -700,10 +706,22 @@ In order to complete this project, the Visual Studio code was used to write and 
 In order to simplify the work various libraries were used, like NumPy, Math and SciPy for different mathematical operations; Pandas for presenting results in good-looking tables; and MatPlotLib and PyVista to visualise plots in 2D and 3D respectively.
 
 
-\subsection{Mesh generation} PICTURE
-
-To generate mesh we will use the square with coordinates $[0, 1] \times [0, 1]$. On this square domain we will build triangulations using the Delaunay algorithm from \cite{b10}. In our example we will hard code the number of points per axis, but it is possible to let the user choose the number of points. The mesh with 6 points per axis will look like this (insert the picture).
+\subsection{Mesh generation} 
+To generate mesh we will use the square with coordinates $[0, 1] \times [0, 1]$. On this square domain we will build triangulations using the Delaunay algorithm from \cite{b10}. In our example we will hard code the number of points per axis, but it is possible to let the user choose the number of points. The mesh with 6 points per axis is illustrated on the Fig. \ref{fig:P1 mesh} for P1 elements and Fig. \ref{fig:P2 mesh} for P2 elements.
 In order to avoid breaking the code all the triangulations were sorted in the ascending order.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{6 pts P1 mesh.png}
+    \caption{Mesh with P1 triangles}
+    \label{fig:P1 mesh}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{6 pts P2 mesh.png}
+    \caption{Mesh with P2 triangles}
+    \label{fig:P2 mesh}
+\end{figure}
 
 
 \subsection{Local element matrices} \label{sec:local matrices}
@@ -834,7 +852,8 @@ This method returns the 1D array of eigenvalues in ascending order and the 2D ar
 
 
 
-\section{Results: Eigenvalues} 
+\section{Results: Eigenvalues} PICTURE
+
 The previous sections established the mathematical formulation and numerical implementation of the finite element eigenvalue problem. In this section, the obtained eigenvalues are analysed to compute the approximation error and to investigate the convergence behaviour of the P1 and P2 finite element approximations.
 
 The scipy.linalg.eigh returned us the array of eigenvalues, but how are we going to check if the numbers are correct? 
@@ -888,10 +907,77 @@ The $\ln-\ln$ convergence plot provides a visual confirmation of the theoretical
 
 Although P2 elements require more degrees of freedom per element, their higher convergence rate allows the same accuracy to be achieved with a considerably coarser mesh than for P1 elements.
 
+
+
 \section{Results: Eigenvectors}
+The eigenvalues alone do not provide the complete solution of the eigenproblem. Each eigenvalue is associated with one or more eigenfunctions and therefore the accuracy of the computed eigenfunctions must also be checked.
+
+For a non-degenerate eigenvalue, the corresponding eigenspace is one-dimensional. Hence, the numerical eigenfunction can be compared directly with the particular analytical eigenfunction. 
+Since eigenfunctions are defined only up to multiplication by a non-zero constant, the numerical eigenfunction must first be normalised consistently with the analytical solution.
+
+For the unit square with homogeneous Dirichlet boundary condition, the analytical eigenfunctions have the form of \ref{eq:analytical eigenfunc}
+\begin{equation}
+    u_{m,n}(x, y) = C\sin(m\pi x)\sin(n\pi y), \quad m,n = 1, 2, \ldots
+    \label{eq:analytical eigenfunc}
+\end{equation}
+where $C$ is a normalisation constant.
+
+The error between the numerical and analytical eigenfunctions is measured using the $L^2$ \ref{eq:L2} and $H^1$ \ref{eq:H1} norms.
+\begin{equation}
+    \|u - u_h\|_{L^2(\Omega)} = \sqrt{\int_{\Omega}|u - u_h|^2 \, dx}
+    \label{eq:L2}
+\end{equation}
+\begin{equation}
+\begin{aligned}
+    \|u - u_h\|_{H^1(\Omega)} &= \sqrt{\|u - u_h\|_{L^2(\Omega)}^{2} + \|\nabla(u - u_h)\|_{L^2(\Omega)}^{2}} \\
+    &= \sqrt{\int_{\Omega}|u - u_h|^2 \, dx + \int_{\Omega}|\nabla u - \nabla u_h|^2 \, dx}
+    \label{eq:H1}
+\end{aligned}
+\end{equation}
+
+Very important note would be the sign check, because both positive and negative eigenvectors are meaningful, they just point in opposite direction we need to make sure that the negative eigenvector will not make the error massive. To do so we check whether the dot product of the approximation $u_h$, mass matrix $M$ and exact eigenfunction $u$ is positive or negative. 
+If the dot product is negative that means that the approximation $u_h$ points in different direction from the exact $u$. Physically and mathematically that is absolutely normal, however, it will make the error enormous. Hence, we prevent this by multiplying our $u_h$ by $-1$ without changing the corresponding eigenvalue or eigenspace.
+
 
 \subsection{Degenerate eigenspaces}
-for 2D case second and third eigenvalues were the same, this can be explained by the exact eigenfunctions which is $u(x, y) = sin(2*\pi*x)*sin(\pi*y)$ and $u(x, y) = sin(\pi*x)*sin(2*\pi*y)$
+The comparison becomes more complicated for degenerate eigenvalues. In this case, an eigenvalue is associated with more than one linearly independent eigenfunction. 
+Therefore, the individual numerical eigenfunctions cannot necessarily be expected to coincide with the particular analycal eigenfunctions chosen for comparison.
+
+For the unit square, the second and third analytical eigenvalues are identical:
+\begin{equation}
+    \lambda_{1, 2} = \lambda_{2, 1} = 5\pi^2
+\end{equation}
+
+The corresponding eigenspace is therefore two-dimensional and is spanned by the two linearly independent eigenfunctions \ref{eq:first eigenfunc} and \ref{eq:second eigenfunc}.
+\begin{equation}
+    u_1(x, y) = \sin(\pi x)\sin(2\pi y)
+    \label{eq:first eigenfunc}
+\end{equation}
+\begin{equation}
+    u_2(x, y) = \sin(2\pi x)\sin(\pi y)
+    \label{eq:second eigenfunc}
+\end{equation}
+
+Since the individual eigenfunctions associated with degenerate eigenvalue are not uniquely determined, comparing the numerical eigenfunctions with one particular analytical eigenfunction is not an appropriate measure of the eigenspace error. Instead, the numerical eigenfunction is being projected onto the exact eigenspace.
+
+We begin with assigning of the exact eigenspace \ref{eq:exact eigenspace} corresponding to the degenerate eigenvalue.
+\begin{equation}
+    E = \operatorname{span}\{u_1, u_2\}
+    \label{eq:exact eigenspace}
+\end{equation}
+
+Known that the analytical eigenfunctions $u_1$ and $u_2$ are orthogonal in $L^2(\Omega)$ the projection of $u_h$ onto $E$ is given by \ref{eq:projection}.
+\begin{equation}
+    P_E u_h = \sum_{i=1}^{2} \frac{(u_h, u_i)_{L^2}}{(u_i, u_i)_{L^2}}u_i
+    \label{eq:projection}
+\end{equation}
+
+So the error will represent the distance between the exact eigenspace and our projection, which can be measured by \ref{eq:proj error}.
+\begin{equation}
+    \|u_h - P_E u_h\|_{L^2(\Omega)}
+    \label{eq:proj error}
+\end{equation}
+The same approach can be extended to the $H^1$ norm, allowing the distance between the numerical eigenfunction and the exact eigenspace to be assessed in both the $L^2$ and $H^1$ settings.
 
 
 
@@ -943,6 +1029,7 @@ for 2D case second and third eigenvalues were the same, this can be explained by
 \bibitem{b12.4} I. Babuška and J. E. Osborn, “Finite element-Galerkin approximation of the eigenvalues and eigenvectors of selfadjoint problems,” Mathematics of Computation, vol. 52, no. 186, pp. 275-297, 1989, doi: 10.1090/s0025-5718-1989-0962210-8
 \bibitem{b12} GeeksforGeeks, “Triangulations Using Matplotlib,” GeeksforGeeks, Feb. 02, 2023. \url{https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/} (accessed Aug. 01, 2026)
 \bibitem{b13} J. Burkardt, “Computational Geometry Lab: FEM BASIS FUNCTIONS FOR A TRIANGLE,” 2018. Accessed: Aug. 01, 2026. [Online]. Available: \url{https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf}
+\bibitem{b13.1} N. G. Gençer and I. O. Tanzer, “Forward problem solution of electromagnetic source imaging using a new BEM formulation with high-order elements,” Physics in Medicine and Biology, vol. 44, no. 9, pp. 2275–2287, Aug. 1999, doi: 10.1088/0031-9155/44/9/314
 \bibitem{b14} \url{https://www.geophysik.uni-muenchen.de/~igel/Lectures/NMG/08_finite_elements_basisfunctions.pdf}
 \bibitem{b15} D. Xu, J. Stare, and A. L. Cooksy, “Solving the vibrational Schrödinger equation on an arbitrary multidimensional potential energy surface by the finite element method,” Computer Physics Communications, vol. 180, no. 11, pp. 2079-2094, June 2009, doi: 10.1016/j.cpc.2009.06.010
 \bibitem{b16} Hammer, Preston C., Marlowe, O. J., and Stroud, A. H. Numerical integration over simplexes and cones, Mathematical Tables and Other Aids to Computation 10(55), 130-137, 1956. [DOI: 10.2307/2002483]
