@@ -10,6 +10,8 @@
 \usepackage{textcomp}
 \usepackage{xcolor}
 \usepackage{hyperref}
+\usepackage{booktabs}
+\usepackage{float}
 
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -229,7 +231,7 @@ Then we show that our bilinear form is coercive (or elliptical) which is $a(v, v
 To establish continuity of $L(v)$, we must show that $|L(v)| \leq C_{L}||v||_{H^1}$ for a constant $C_{L} > 0$ (proof can be found in \ref{sec:proof of bound}).
 
 Therefore, by the Lax-Milgram Theorem these properties guaranty that a unique exact solution $u \in V$ exists and stable. Moreover, the Lax-Milgram theorem establishes well-posedness for the corresponding source/Poisson variational problem. 
-While the eigenvalue problem requires a different argument: we seek non-zero $u$ and an eigenvalue $\lambda$ satisying the variational eigenproblem.
+While the eigenvalue problem requires a different argument: we seek non-zero $u$ and an eigenvalue $\lambda$ satisfying the variational eigenproblem.
 
 
 \subsection{The Rayleigh-Ritz/Galerkin approximation}
@@ -250,7 +252,7 @@ By definition of the weak form, the equation must hold for any arbitrary functio
 
 Because our $V_h$ is a finite-dimensional subspace of $V$, it is a closed subspace.
 
-Therefore if we require the weak formulation to hold for every $v_h \in V_h$ and because $V_h$ is spanned by $\phi_j$, it is sufficient to enforce it for any linear combination of them. So, we can rewrite \ref{eq:2D weak} as it is shown in \ref{eq:arbitrary 2D weak form}.
+Therefore, if we require the weak formulation to hold for every $v_h \in V_h$ and because $V_h$ is spanned by $\phi_j$, it is sufficient to enforce it for any linear combination of them. So, we can rewrite \ref{eq:2D weak} as it is shown in \ref{eq:arbitrary 2D weak form}.
 \begin{equation}
     \lambda \int_{\Omega}u\phi_j \, dx = \int_{\Omega}\nabla{u} \nabla{\phi_j} \, dx
     \label{eq:arbitrary 2D weak form}
@@ -268,7 +270,7 @@ Substituting \ref{eq:linear combination of trial functions} into the \ref{eq:arb
     \label{eq:phi_i, phi_j weak form}
 \end{equation}
 
-Following the properties of integrals we can rewrite \ref{eq:phi_i, phi_j weak form} as \ref{eq:sum out of integral}.
+Following the properties of integrals, we can rewrite \ref{eq:phi_i, phi_j weak form} as \ref{eq:sum out of integral}.
 \begin{equation}
     \lambda \sum^n_{i=1}c_i \int_\Omega \phi_i\phi_j \, dx = \sum^n_{i=1}c_i \int_\Omega \nabla{\phi_i}\nabla{\phi_j} \, dx
     \label{eq:sum out of integral}
@@ -297,15 +299,15 @@ Galerkin discretisation is a process when we choose a finite-dimensional test/tr
 This is what makes FEA so powerful because it allows us to break down a complex continuous physical domain into a finite number of smaller, interconnected subregions (elements).
 
 Since we know that it is difficult to explicitly calculate eigenvalues for a given domain $\Omega \subset \mathbb{R}^n$. Hence, from \cite{b9.1} we will show that eigenvalues are minimisers of a certain functional.
-To do so from \ref{eq:2D weak} we can define \ref{eq:Rayleigh Quotent} the Rayleigh Quotent for a given function $w$ defined of the set $\Omega \subset \mathbb{R}^n$.
+To do so from \ref{eq:2D weak} we can define \ref{eq:Rayleigh Quotient} the Rayleigh Quotient for a given function $w$ defined of the set $\Omega \subset \mathbb{R}^n$.
 \begin{equation}
     R(w) = \frac{\|\nabla w\|_{L^2(\Omega)}^2}{\|w\|_{L^2(\Omega)}^2} = \frac{\int_\Omega |\nabla w|^2 \, dx}{\int_\Omega |w|^2 \, dx} \\
-    \label{eq:Rayleigh Quotent}
+    \label{eq:Rayleigh Quotient}
 \end{equation}
-The Rayleigh quotent can also be expressed in matrix form \ref{eq:Rayleigh quotent matrix form} which suits the discretised problem more.
+The Rayleigh quotient can also be expressed in matrix form \ref{eq:Rayleigh quotient matrix form} which suits the discretised problem more.
 \begin{equation}
     R(c) = \frac{\vec{c}^TA\vec{c}}{\vec{c}^TM\vec{c}}
-    \label{eq:Rayleigh quotent matrix form}
+    \label{eq:Rayleigh quotient matrix form}
 \end{equation}
 
 
@@ -316,7 +318,7 @@ Now, we can introduce the Minimum Principle for the First Eigenvalue Theorem fro
     \begin{equation}
         Y \equiv {w: w \in C^2(\Omega), w \not\equiv 0, w = 0 for x \in \partial\Omega}.
     \end{equation}
-    We call this the set of trial functions for $\lambda u = -\Delta u$. Suppose there exists a function $u \in Y$ such that $u$ minimises the Rayleigh quotent over all trial functions $w \in Y$.
+    We call this the set of trial functions for $\lambda u = -\Delta u$. Suppose there exists a function $u \in Y$ such that $u$ minimises the Rayleigh quotient over all trial functions $w \in Y$.
     That is,
     \begin{equation}
         m \equiv \frac{\|\nabla u\|^2}{\|u\|^2} = \min_{w \in Y} \Bigg\{\frac{\|\nabla w\|^2}{\|w\|^2} \Bigg\}
@@ -326,7 +328,7 @@ Now, we can introduce the Minimum Principle for the First Eigenvalue Theorem fro
 
 The proof can be found in \cite{b9.1} page 3.
 
-The Rayleigh-Ritz method restricts the Rayleigh quotent and minimisation problem to teh finite-dimensional subspace.
+The Rayleigh-Ritz method restricts the Rayleigh quotient and minimisation problem to the finite-dimensional subspace.
 
 Combining both Galerkin discretisation and Rayleigh-Ritz allows us to transform complex governing differential equations into a manageable system of algebraic equations that can be solved numerically.
 
@@ -348,8 +350,7 @@ In this project we will use 2D Finite Element Approximation to find solutions of
 \subsection{Mesh}
 In order to divide our domain into smaller pieces we first need to introduce the pattern of how we are going to divide it.
 
-\subsubsection{Triangulations} PICTURE
-
+\subsubsection{Triangulations} 
 If we want to divide the interval in 1D we will use intervals, that can be either equal to each other or be different length. 
 In 2D idea is the same, but instead of small line intervals we need to add one more point to be able to move from 1D line to 2D surface which is a triangle. The domain divided into triangles is called triangulation.
 
@@ -368,8 +369,7 @@ This method has own advantages and disadvantages. Delaunay algorithm are optimal
 In order to interpolate our unknown function on each element we need to decide what family of functions we are going to use for this interpolation. 
 Polynomials are the best candidates for this because they are mathematically simple to integrate and differentiate, they can be easily translated into code and the accuracy will be easily improved by increasing the order of the polynomials. And because in this project we are going to use first order (P1) and second order polynomials (P2) to interpolate our unknown function on each element of the mesh that is why we "introduce" the space of piecewise polynomials. 
 
-\subsubsection{P1 Elements} PICTURE
-
+\subsubsection{P1 Elements} 
 To construct the piecewise linear function, we are letting $K$ be a triangle and in \ref{eq:P1 space} we define the space of linear functions on $K$ denotes $P_1(K)$.
 \begin{equation}
 \begin{aligned}
@@ -389,7 +389,13 @@ We know from \cite{b10} that a function $v$ in $V_h$ is uniquely determined by i
         0, i \neq j \end{cases} i, j = 1, 2, \dots, n_p
     \label{eq:hat functions}
 \end{equation}
-The picture from \cite{b10} illustrates a typical basis function $\phi_j$ which because of their shape sometimes are called hat functions.
+The Fig. \ref{fig:1D hat function} illustrates a typical basis function $\phi_j$ which because of their shape sometimes are called hat functions.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{hat function.png}
+    \caption{Hat function \cite{b10}}
+    \label{fig:1D hat function}
+\end{figure}
 
 From linear algebra we know that we can write every function $v \in V_h$ using our basis functions. This is shown in \ref{eq:linear combination of basis functions}.
 \begin{equation}
@@ -406,8 +412,8 @@ This number comes from the \cite{b12.1} and \cite{b12.2} that is presented in \r
     \label{eq:error}
 \end{equation}
 Therefore, when $p = 1$ the convergence of the error will be $h^2$.
-This double convergence rate relative to the $H^1$ norm occurs because of the Rayleigh quotent property \ref{eq:Rayleigh Quotent} \cite{b12.3}. 
-Simply, the error in the eigenfucntion is bounded like it is presented in \ref{eq:error bound}.
+This double convergence rate relative to the $H^1$ norm occurs because of the Rayleigh quotient property \ref{eq:Rayleigh Quotient} \cite{b12.3}. 
+Simply, the error in the eigenfunction is bounded like it is presented in \ref{eq:error bound}.
 \begin{equation}
     \|u - u_h\|_{H^1(\Omega)} \leq Ch^p 
     \label{eq:error bound}
@@ -421,11 +427,10 @@ The eigenvalue error acts quadratically relative to the eigenvector error \cite{
 As a result, we are expecting to get this number in our computer implementation.
 
 
-\subsubsection{P2 Elements} PICTURE
-
+\subsubsection{P2 Elements}
 P1 elements are easy to implement and give good interpolations, but as it was discussed earlier the main advantage of the polynomials is their faster convergence and more precision with increasing of the degree. 
 
-So, instead of the polynomial space given in \ref{eq:P1 space} we are going to use the space of the second degree polynomials $P_2(K)$ defined in \ref{eq:P2 space}.
+So, instead of the polynomial space given in \ref{eq:P1 space}, we are going to use the space of the second degree polynomials $P_2(K)$ defined in \ref{eq:P2 space}.
 \begin{equation}
 \begin{aligned}
     P_2(K) = \{v: v = c_0 + c_1x_1 + c_2x_2 + c_3x_1^2 + c_4x_1x_2 + c_5x_2^2 \\
@@ -434,7 +439,15 @@ So, instead of the polynomial space given in \ref{eq:P1 space} we are going to u
 \end{aligned}
 \end{equation}
 
-Since we have the quadratic polynomials that means that the gradients will be linear within each element. This provides local flexibility for representing curved solutions, therefore quadratic polynomials will handle these complexities more naturally comparing ot P1 elements. 
+In Fig. \ref{fig:quadratic hat functions} we can see how the basis functions will behave.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{quadratic.png}
+    \caption{P2 Hat function \cite{b14}}
+    \label{fig:quadratic hat functions}
+\end{figure}
+
+Since we have quadratic polynomials that means that the gradients will be linear within each element. This provides local flexibility for representing curved solutions, therefore, quadratic polynomials will handle these complexities more naturally comparing to P1 elements. 
 
 For sufficiently regular eigenfunctions and an appropriate family of meshes, the eigenvalue error is expected to behave as \ref{eq:error} and give the convergence of $O(h^4)$, which is double comparing to the P1 elements. 
 This can also be explained in less mathematical language - because higher order elements can achieve a given accuracy with fewer elements, as each element has more degrees of freedom.
@@ -463,7 +476,7 @@ Any triangle with corners $P_i(x_i, y_i)$, $i = 1, 2, 3$ can be mapped from the 
 \end{aligned}
 \end{equation}
 
-However, in order to map any function from physical coordinates we have to the transformation which is represented by Jacabian matrix \ref{eq:jacobian matrix}.
+However, in order to map any function from physical coordinates we have to the transformation which is represented by Jacobian matrix \ref{eq:jacobian matrix}.
 \begin{equation}
     J = \begin{bmatrix}
         \frac{\partial x}{\partial \xi} & \frac{\partial x}{\partial \eta} \\
@@ -474,7 +487,9 @@ However, in order to map any function from physical coordinates we have to the t
 
 This matrix connects $dxdy$ to $d\xi d\eta$ and transforms gradients between reference and physical elements.
 
-\subsubsection{Linear approximation} \label{sub:linear approximation} PICTURE
+
+
+\subsubsection{Linear approximation} \label{sub:linear approximation}
 The aim is to approximate the unknown function by a linear form of \ref{eq:linear form}. 
 \begin{equation}
     u(\xi, \eta) = c_1 + c_2\xi + c_3\eta
@@ -514,12 +529,19 @@ From matrix $A$ we calculate the linear basis functions for triangles like it is
 \end{aligned}
 \end{equation}
 
-Their shapes are given in the figure
+In Fig. \ref{fig:p1 approximation} we can see how the linear approximation looks like.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{P1 approximation.png}
+    \caption{Linear approximation \cite{b14}}
+    \label{fig:p1 approximation}
+\end{figure}
 
 
 
-\subsubsection{Quadratic approximation} PICTURE
 
+\subsubsection{Quadratic approximation}
 As it was mentioned before in P2 elements, we can approximate any function defined on the triangle by a quadratic function \ref{eq:P2 space}. So in the reference coordinates it will have the form \ref{eq:reference quadratic}.
 \begin{equation}
     u(\xi, \eta) = c_1 + c_2\xi + c_3\eta + c_4\xi^2 + c_5\xi\eta + c_6\eta^2
@@ -569,7 +591,17 @@ This allow us to obtain basis functions in \ref{eq:basis functions P2} and illus
 \end{aligned}
 \end{equation}
 
-As it is seen from the figure the this approximation is more complex but allows us to get more detailed picture about our unknown function.
+As it is seen from the figure the this approximation is more complex but allows us to get more detailed picture about our unknown function. The shape of these basis functions is presented in Fig. \ref{fig:p2 approximation}.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{P2.1 approximation.png}
+    \includegraphics[width=\columnwidth]{P2.2 approximation.png}
+    \caption{Quadratic approximations \cite{b14}}
+    \label{fig:p2 approximation}
+\end{figure}
+
+Since we have more degrees of freedom this means that more functions will participate in the approximation of the same area.
+
 
 \subsection{Conclusion}
 From everything that was discussed previously we can build the general picture of the project. This can be described simply as we are given a differential equation, whose solution is unknown function.
@@ -616,13 +648,13 @@ Then with separation of variables we are getting \ref{eq:heat eq separation of v
     \label{eq:heat eq separation of var}
 \end{equation}
 
-Substituting back to \ref{eq:heat equation} and asigning $\lambda = e^-\lambda t$ gives us \ref{eq:heat Laplace}.
+Substituting back to \ref{eq:heat equation} and assigning $\lambda = e^-\lambda t$ gives us \ref{eq:heat Laplace}.
 \begin{equation}
     -\Delta\phi = \lambda\phi
     \label{eq:heat Laplace}
 \end{equation}
 
-Hence, from \ref{eq:heat Laplace} it is clear that eigenvalues in this case determine the rate of fundamental theraml decay and the eigenfunction shows the elemental spatial distributions of heat.
+Hence, from \ref{eq:heat Laplace} it is clear that eigenvalues in this case determine the rate of fundamental thermal decay and the eigenfunction shows the elemental spatial distributions of heat.
 
 Therefore, the smallest eigenvalue $\lambda_1$ corresponds to the slowest-decaying mode, in other words the most resilient thermal profile that takes the longest time to cool down to ambient temperature.
 
@@ -662,12 +694,12 @@ Hence, \ref{eq:Schrodinger equation} will take the form \ref{eq:reduced Schrodin
     \label{eq:reduced Schrodinger}
 \end{equation}
 
-If we rearange the \ref{eq:reduced Schrodinger} and will call $\lambda = \frac{2mE}{\hbar^2}$ we will have:
+If we rearrange the \ref{eq:reduced Schrodinger} and will call $\lambda = \frac{2mE}{\hbar^2}$ we will have:
 \begin{equation}
     -\Delta\psi = \lambda\psi
 \end{equation}
 
-Which is exactly the form of the Laplace eigenproblem. Additionally, the infinite square well requires teh infinite potential outside the domain, which is the Dirichlet boundary condition.
+Which is exactly the form of the Laplace eigenproblem. Additionally, the infinite square well requires the infinite potential outside the domain, which is the Dirichlet boundary condition.
 Solving this problem will give us the wave function, whose square $|\psi(x)|^2$ represents the Born interpretation of probability density of finding a quantum particle at a specific position in space. We have to do that because according to the Heisenberg's Uncertainty Principle we cannot determine the particle's position and momentum at the same time.
 
 Although the infinite square well is an idealised model, it provides a useful benchmark because its eigenvalues and eigenfunctions are known analytically.
@@ -725,7 +757,7 @@ In order to avoid breaking the code all the triangulations were sorted in the as
 
 
 \subsection{Local element matrices} \label{sec:local matrices}
-On every triangle, we compute local stiffness, mass and potential-energy matrices (for the Schrödinger problem). These local matrices describe the contribution of each element to the corresponding global matrices.
+On every triangle, we compute local stiffness, mass and potential-energy matrices (for the Schr\"{o}dinger problem). These local matrices describe the contribution of each element to the corresponding global matrices.
 
 The local stiffness matrix $A$ measures the alignment of the gradients of two basis functions or simplier how much the element resist deformation (spring force). 
 
@@ -744,14 +776,15 @@ Following \cite{b10} we know that each entry of stiffness matrix and mass matrix
     \label{eq:mass matrix}
 \end{equation}
 
-With potential energy matrix $K_{V,K}$ the situation is a bit more conplex because potential energy in Schr\"{o}dinger Equation can be defined with various equations. But nevertheless we know that potential matrix $K_{V,K}$ is calcualated using \ref{eq:potential matrix}.
+With potential energy matrix $K_{V,K}$ the situation is a bit more complex because potential energy in Schr\"{o}dinger Equation can be defined with various equations. But nevertheless we know that potential matrix $K_{V,K}$ is calculated using \ref{eq:potential matrix}.
 \begin{equation}
     (K_{V,K})_{ij} = \frac{2m}{\hbar^2}\int_K V(x) \phi_i \phi_j \, dxdy
     \label{eq:potential matrix}
 \end{equation}
 
-However, becuase evaluating the element integrals analytically for every element and potentially every potential function is inconvinient, we will use the Gaussian quadrature that will provide an efficient approximation.
-To start with we will use our reference mapping $(x, y) \mapsto (\xi, \eta)$. To do so we recall the change of variables.
+However, because evaluating the element integrals analytically for every element and potentially every potential function is inconvenient, we will use the Gaussian quadrature that will provide an efficient approximation.
+
+To start with, we will use our reference mapping $(x, y) \mapsto (\xi, \eta)$. To do so we recall the change of variables.
 \begin{equation}
     \int_K f(x, y) \, dxdy = \int_{\hat{K}}f(\xi, \eta) |det(J(\xi, \eta))| \, d\xi d\eta
     \label{eq:from physical to reference}
@@ -772,7 +805,7 @@ Therefore, the determinant of $J$ is
     det(J) = 2|K|
 \end{equation}
 
-Now approxiamting the integral over $\vec{K}$ from \ref{eq:from physical to reference} by a quadrature formuala we get \ref{eq:quadrature reference}.
+Now approximating the integral over $\vec{K}$ from \ref{eq:from physical to reference} by a quadrature formula we get \ref{eq:quadrature reference}.
 \begin{equation}
 \begin{aligned}
     \int_{\hat{K}}f(\xi, \eta) &|det(J(\xi, \eta))| \, d\xi d\eta \approx \\
@@ -780,11 +813,11 @@ Now approxiamting the integral over $\vec{K}$ from \ref{eq:from physical to refe
     \label{eq:quadrature reference}
 \end{aligned}
 \end{equation}
-where $N_q$ is the number of quadrature points, $w_q$ the quadrature weigths, and $(\xi_q, \eta_q)$ the quadrature points.
+where $N_q$ is the number of quadrature points, $w_q$ the quadrature weights, and $(\xi_q, \eta_q)$ the quadrature points.
 
 For P1 elements, the mass integrand $\phi_i\phi_j$ has polynomial degree 2, while the stiffness integrand $\nabla\phi_i\cdot\nabla\phi_j$ is constant. For P2 elements, these degrees become 4 and 2, respectively. Therefore, a quadrature rule exact for polynomials of degree at least 4 is sufficient to evaluate the Laplace element integrals exactly in exact arithmetic. That is why we will use the 6 point Hammer-Marlowe-Stroud quadrature rules \cite{b16}. This rule has more quadrature points then required for solving this type of integral, however it gives more precision with minor speed sacrifices.
 
-However, For the Schrödinger problem, the degree of the potential integrand additionally depends on the chosen potential $V(x,y)$. For polynomial potentials, increasing the degree of $V$ increases the degree of the integrand $V\phi_i\phi_j$, requiring a quadrature rule of sufficiently high degree. For example, a 12 point David Dunavant's quadrature rule \cite{b17} with Burkardt's implementation from \cite{b18}.
+However, for the Schr\"{o}dinger problem, the degree of the potential integrand additionally depends on the chosen potential $V(x,y)$. For polynomial potentials, increasing the degree of $V$ increases the degree of the integrand $V\phi_i\phi_j$, requiring a quadrature rule of sufficiently high degree. For example, a 12 point David Dunavant's quadrature rule \cite{b17} with Burkardt's implementation from \cite{b18}.
 
 An important property of the local matrices is their symmetry. This follows directly from the definitions. For example,
 \begin{equation}
@@ -800,9 +833,7 @@ The same argument applies to $M_K$ and $K_{V,K}$, provided that the potential $V
 Thus, the resulting matrices should satisfy $A_K = A_K^T$, $M_K = M_K^T$, and $K_{V,K}= K_{V,K}^T$.
 
 
-\subsection{Global assembly} PICTURE 
-
-
+\subsection{Global assembly}
 Once we obtained the local matrices that represent certain physical properties on every small element of the mesh we can build the picture back piece by piece.
 
 To do so, we need to follow the straightforward algorithm called assembly \cite{b19}. Each local element matrix is expressed with respect to the local basis functions associated with the nodes of that element. These local degrees of freedom correspond to specific global degrees of freedom in the mesh. During assembly, each local matrix is added to the corresponding entries of the global matrix \cite{b10}.
@@ -824,6 +855,15 @@ The same procedure applies to local mass and potential matrices:
 Since neighbouring elements share same nodes, several local matrices contribute to the same entries of the global matrices. This assembly process produces the global matrices representing the entire computational domain.
 
 The more detailed algorithm can be found in \cite{b19} or \cite{b20}.
+
+The algorithm may seem complicated, but in reality it is very straightforward, so to illustrate it the Fig. \ref{fig:assembly} presents more clear process of the assembly.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{assembly.png}
+    \caption{Assembly process \cite{b20.1}}
+    \label{fig:assembly}
+\end{figure}
+
 
 
 \subsection{Dirichlet boundary conditions}
@@ -852,8 +892,7 @@ This method returns the 1D array of eigenvalues in ascending order and the 2D ar
 
 
 
-\section{Results: Eigenvalues} PICTURE
-
+\section{Eigenvalues}
 The previous sections established the mathematical formulation and numerical implementation of the finite element eigenvalue problem. In this section, the obtained eigenvalues are analysed to compute the approximation error and to investigate the convergence behaviour of the P1 and P2 finite element approximations.
 
 The scipy.linalg.eigh returned us the array of eigenvalues, but how are we going to check if the numbers are correct? 
@@ -867,7 +906,7 @@ Another way is to compare results with the exact values. For the unit square $\O
 \end{equation}
 where $m, n = 1, 2, \ldots$ \cite{b24}.
 
-It is clear that with $m=1$, $n=2$ and $m=2$, $n=1$ we will have the same eigenvalue, this is called degenerate eigenvalues \cite{b12.4} \cite{b24}. It happens, because of the underlying symmetry in the system which forces different states or modes to share the same eigenvalue like an energy or frequency \cite{b25}. For example, for the Laplace eigenproblem, we can say that distinct vibrational modes produce the exact same resonant frequency because swapping the $x$ and $y$ dimensions yields the same energy.
+It is clear that with $m=1$, $n=2$ and $m=2$, $n=1$ we will have the same eigenvalue, this is called degenerate eigenvalue \cite{b12.4} \cite{b24}. It happens, because of the underlying symmetry in the system which forces different states or modes to share the same eigenvalue like an energy or frequency \cite{b25}. For example, for the Laplace eigenproblem, we can say that distinct vibrational modes produce the exact same resonant frequency because swapping the $x$ and $y$ dimensions yields the same energy.
 For the Schr\"{o}dinger eigenproblem, we can that electrons in an atom can have different quantum states that share the same energy level due to rotational symmetry.
 
 Hence, we will compute the exact eigenvalues and observe how close our approximations are.
@@ -876,16 +915,22 @@ But, in order to get the most from the analysis we will also use another method,
 This method is useful on practice because we know the convergence of FEM, $O(h^2)$ for P1 elements and $O(h^4)$ for P2 elements, in other words For a sufficiently regular problem and an appropriate family of meshes, the eigenvalue error is expected to decrease asymptotically as $O(h^{2p})$ \cite{b12.4}. Thus, as the mesh is refined, the computed eigenvalues should approach the exact eigenvalues at the theoretically predicted rate.
 To do so we will use the power law. Power law is a relationship between the discretisation error $E_h$ and characteristic mesh size $h$. For a method with convergence order $p$, the asymptotic error is expected to behave according to \ref{eq:discrete error}:
 \begin{equation}
-    E_h \approx Ch^{-p}
+    E_h \approx Ch^{p}
     \label{eq:discrete error}
 \end{equation}
-where $C$ is approximately independent of $h \sim \frac{1}{N}$, where $N$ is the number of intervals per coordinate direction on the unit square and $p$ is the convergence rate \cite{b12.4}. 
+where $C$ is approximately independent of $h \sim \frac{1}{N - 1}$, where $N$ is the number of intervals per coordinate direction on the unit square and $p$ is the convergence rate \cite{b12.4}. 
 
 Taking logarithms gives:
 \begin{equation}
     \ln E_h \approx \ln C + p\ln h
 \end{equation} 
 which means that a plot of $\ln E_h$ against $\ln h$ will approach a straight line whose slope is $p$ \cite{b26}.
+
+Hence the general formula for the convergence rate will take the form of \ref{eq:convergence rate}.
+\begin{equation}
+    p = \frac{\ln\Big(\frac{E_1}{E_2}\Big)}{\ln\Big(\frac{h_1}{h_2}\Big)}
+    \label{eq:convergence rate}
+\end{equation}
 
 When the mesh size is being halved $h_2 = \frac{h_1}{2}$ the local order of convergence $p$ will be derived like it is shown in \ref{eq:local convergence}.
 \begin{equation}
@@ -903,13 +948,80 @@ This method is used because it does not use complex calculations or depend on th
 
 The results show that the coarse meshes produce relatively large eigenvalue errors. As the mesh is refined, the computed eigenvalues approach their analytical values. This behaviour agrees with the finite element convergence theory developed earlier.
 
-The $\ln-\ln$ convergence plot provides a visual confirmation of the theoretical convergence rates \cite{b26}. For the P1 approximation, the calculated convergence rates approach $2$, which is consistent with the theoretical eigenvalue error estimate $O(h^2)$. For the P2 approximation, the convergence rates approach $4$, confirming the theoretically predicted $O(h^4)$ behaviour.
+The $\log-\log$ convergence plot provides a visual confirmation of the theoretical convergence rates \cite{b26}. For the P1 approximation, the calculated convergence rates approach $2$, which is consistent with the theoretical eigenvalue error estimate $O(h^2)$. For the P2 approximation, the convergence rates approach $4$, confirming the theoretically predicted $O(h^4)$ behaviour.
 
 Although P2 elements require more degrees of freedom per element, their higher convergence rate allows the same accuracy to be achieved with a considerably coarser mesh than for P1 elements.
 
+\subsection{Laplace results}
+For the Laplace eigenproblem we obtained results for P1 and P2 elements. The results are presented in Table \ref{tab:P1 error dependency} and in Table \ref{tab:P2 error dependency}.
+\begin{table}[H]
+    \centering
+    \caption{P1 Error dependency on the number of points per axis.}
+    \label{tab:P1 error dependency}
+    \begin{tabular}{rrrr}
+        \toprule
+        $N$ points per axis & Interior DoF & Computed $\lambda_1$ & $|\lambda_1 - \lambda_{1,h}$ \\
+        \midrule
+        3 & 1 & 48.000000 & 28.260791 \\
+        6 & 16 & 21.640205 & 1.900996 \\
+        12 & 100 & 20.127062 & 0.387853 \\
+        24 & 484 & 19.826257 & 0.087048 \\
+        48 & 2116 & 19.759917 & 0.020708 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \caption{P2 Error dependency on the number of points per axis.}
+    \label{tab:P2 error dependency}
+    \begin{tabular}{rrrr}
+        \toprule
+        $N$ points per axis & Interior DoF & Computed $\lambda_1$ & $|\lambda_1 - \lambda_{1,h}$ \\
+        \midrule
+        3 & 9 & 19.94133 & 0.202126 \\
+        6 & 81 & 19.76407 & 0.024864 \\
+        12 & 441 & 19.74036 & 0.001153 \\
+        24 & 2025 & 19.73927 & 0.000062 \\
+        48 & 8649 & 19.73921 & 0.000004 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+From the tables we can see that with mesh refinement the error decreases for both P1 and P2 elements. However, we can spot that the absolute error of P1 elements with 48 points per axis is nearly the same as the error of P2 elements with 6 points per axis.
+
+Additionally, we can compute the relative error, using \ref{eq:relative error}.
+\begin{equation}
+    e_{rel} = \frac{|\lambda - \lambda_h|}{\lambda}
+    \label{eq:relative error}
+\end{equation}
+
+At $N = 48$ the P1 result has $e_{rel} \approx 1.05 \times 10^{-3}$ which is about $0.105\%$, while the P2 result gives us $e_{rel} \approx 2.03 \times 10^{-7}$ which is about $0.00002\%$. This shows how much more precise P2 elements are.
+
+The results empirically demonstrate the higher accuracy obtained with P2 elements for comparable mesh resolutions. This illustrates how the higher polynomial order can achieve a given accuracy with substantially fewer elements, although P2 elements can become more "expensive" computationally since they introduce additional degrees of freedom.
 
 
-\section{Results: Eigenvectors}
+
+\subsection{Convergence}
+As it is presented in Fig. \ref{fig:p1 convergence} and Fig. \ref{fig:p2 convergence} the convergence plots approach straight lines on the log-log scale. The observed slopes also become closer to the theoretical convergence rates as the mesh is refined. 
+The coarser meshes may exhibit some derivation from asymptotic behaviour because the discretisation error is not yet sufficiently small.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{P1 convergence.png}
+    \caption{P1 element approximation convergence}
+    \label{fig:p1 convergence}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{P2 convergence.png}
+    \caption{P2 element approximation convergence}
+    \label{fig:p2 convergence}
+\end{figure}
+
+The plots approach straight-line behaviour on the log-log scale as the mesh is refined. The corresponding slopes approach the theoretical values of $2$ for P1 and $4$ for P2.
+
+\section{Laplace results: Eigenvectors}
 The eigenvalues alone do not provide the complete solution of the eigenproblem. Each eigenvalue is associated with one or more eigenfunctions and therefore the accuracy of the computed eigenfunctions must also be checked.
 
 For a non-degenerate eigenvalue, the corresponding eigenspace is one-dimensional. Hence, the numerical eigenfunction can be compared directly with the particular analytical eigenfunction. 
@@ -1037,6 +1149,7 @@ The same approach can be extended to the $H^1$ norm, allowing the distance betwe
 \bibitem{b18} Sc.edu, 2026. \url{https://people.math.sc.edu/Burkardt/cpp_src/triangle_dunavant_rule/triangle_dunavant_rule.cpp} (accessed Aug. 10, 2026)
 \bibitem{b19} “Assembly — FEM Tutorial 0.1.0 documentation,” Uni-erlangen.de, 2017. \url{https://ww8central.ww.uni-erlangen.de/courses/fem101/fem/assembly.html} (accessed Jun. 18, 2026)
 \bibitem{b20} \url{https://quickfem.com/wp-content/uploads/IFEM.Ch25.pdf}
+\bibitem{b20.1} “Introduction to Finite Elements,” Inrialpes.fr, 2026. \url{https://imagine.inrialpes.fr/people/Francois.Faure/htmlCourses/FiniteElements.html} (accessed Aug. 24, 2026)
 \bibitem{b21} Rakesh Arugonda, “Dirichlet Boundary Condition,” Scribd, 2026. \url{https://www.scribd.com/doc/172742570/Dirichlet-Boundary-Condition} (accessed Jun. 20, 2026)
 \bibitem{b22} “7. Dirichlet boundary conditions — Finite element course 2024.0 documentation,” 2024. Accessed: Aug. 11, 2026. [Online]. Available: \url{https://finite-element.github.io/7_boundary_conditions.html}
 \bibitem{b22.1} P. G. Ciarlet, The Finite Element Method for Elliptic Problems. SIAM, 2002
