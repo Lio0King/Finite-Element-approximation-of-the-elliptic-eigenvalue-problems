@@ -12,6 +12,7 @@
 \usepackage{hyperref}
 \usepackage{booktabs}
 \usepackage{float}
+\usepackage{subcaption}
 
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -1024,7 +1025,7 @@ The plots approach straight-line behaviour on the log-log scale as the mesh is r
 \section{Laplace results: Eigenvectors}
 The eigenvalues alone do not provide the complete solution of the eigenproblem. Each eigenvalue is associated with one or more eigenfunctions and therefore the accuracy of the computed eigenfunctions must also be checked.
 
-For a non-degenerate eigenvalue, the corresponding eigenspace is one-dimensional. Hence, the numerical eigenfunction can be compared directly with the particular analytical eigenfunction. 
+For a non-degenerate eigenvalue, the corresponding eigenspace is one-dimensional. Hence, after consistent normalisation and sign alignment, the numerical eigenfunction can be compared directly with the particular analytical eigenfunction. 
 Since eigenfunctions are defined only up to multiplication by a non-zero constant, the numerical eigenfunction must first be normalised consistently with the analytical solution.
 
 For the unit square with homogeneous Dirichlet boundary condition, the analytical eigenfunctions have the form of \ref{eq:analytical eigenfunc}
@@ -1034,7 +1035,33 @@ For the unit square with homogeneous Dirichlet boundary condition, the analytica
 \end{equation}
 where $C$ is a normalisation constant.
 
-The error between the numerical and analytical eigenfunctions is measured using the $L^2$ \ref{eq:L2} and $H^1$ \ref{eq:H1} norms.
+When talking about eigenfunctions we want to see its shape and understand what it means. So in the figures below the shape of eigenfunction with 24 points per axis are presented in the figures below in 2D Fig. \ref{fig:first eigfunc P1} and 3D Fig. \ref{fig:first eigfunc P2}. 
+The computed eigenfunctions are visualised using two-dimensional and three-dimensional representations. The P1 approximation is shown using a two-dimensional surface/colour representation, while the P2 approximation is shown as a three-dimensional surface to make its higher-order variation more apparent.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{First eigenfunction 2D P1.png}
+    \caption{First eigenfunction in 2D built with P1 elements}
+    \label{fig:first eigfunc P1}
+\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{eigenfunction_mode1.png}
+    \caption{First eigenfunction in 3D built with P2 elements}
+    \label{fig:first eigfunc P2}
+\end{figure}
+
+The first eigenfunction has no interior nodal lines and contains a single positive maximum. This is characteristic of the fundamental mode of the Dirichlet Laplacian. In applications where the Laplacian represents a vibration problem, this corresponds to the fundamental mode of vibration.
+
+Another question that remains is how precise our obtained graphs?
+We will use the $L^2$- \ref{eq:L2} and $H^1$-norms \ref{eq:H1} of the error to quantify the difference between the numerical and analytical eigenfunctions. Very important note for the computations would be the sign check, because both positive and negative eigenvectors are meaningful, they just point in opposite direction we need to make sure that the negative eigenvector will not make the error massive. To ensure consistent orientation, we evaluate the discrete $L^2$ inner product:
+\begin{equation}
+    (u_h, u)_M = \vec{u}_h^TM\vec{u}
+\end{equation}
+If this quantity is negative, the sign of the numerical eigenfunction is reversed by replacing $u_h$ with $-u_h$. We are using mass matrix $M$ because we are approximating an $L^2$ inner product, not an ordinary Euclidean dot product.
+
+If the dot product is negative that means that the approximation $u_h$ points in different direction from the exact $u$. Physically and mathematically that is absolutely normal, however, it will make the error enormous. Hence, we prevent this by multiplying our $u_h$ by $-1$ without changing the corresponding eigenvalue or eigenspace.
+
+In addition to this, it should be mentioned that all the vectors should be normalised to prevent wrong computed errors.
 \begin{equation}
     \|u - u_h\|_{L^2(\Omega)} = \sqrt{\int_{\Omega}|u - u_h|^2 \, dx}
     \label{eq:L2}
@@ -1047,13 +1074,124 @@ The error between the numerical and analytical eigenfunctions is measured using 
 \end{aligned}
 \end{equation}
 
-Very important note would be the sign check, because both positive and negative eigenvectors are meaningful, they just point in opposite direction we need to make sure that the negative eigenvector will not make the error massive. To do so we check whether the dot product of the approximation $u_h$, mass matrix $M$ and exact eigenfunction $u$ is positive or negative. 
-If the dot product is negative that means that the approximation $u_h$ points in different direction from the exact $u$. Physically and mathematically that is absolutely normal, however, it will make the error enormous. Hence, we prevent this by multiplying our $u_h$ by $-1$ without changing the corresponding eigenvalue or eigenspace.
+Graphically, even on the coarse mesh (6 points per axis) our approximation with both P1 Fig. \ref{fig:numerical/exact P1} and P2 elements Fig. \ref{fig:numerical/exact P2} look very similar to the exact. 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{numerical vs exact P1.png}
+    \caption{Numerical and exact first eigenfunctions obtained using P1 elements}
+    \label{fig:numerical/exact P1}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{numerical vs exact P2.png}
+    \caption{Numerical and exact first eigenfunctions obtained using P2 elements}
+    \label{fig:numerical/exact P2}
+\end{figure}
+
+For P1 elements we can see slight difference in the shade of yellow in the middle which assures us that even on the coarse mesh we are getting quite good approximation.
+
+The P2 approximation is visually closer to the analytical solution, which is consistent with the smaller numerical errors observed in the following error analysis.
+
+Of course graphical analysis is important, but not yet sufficient, we need to look at the errors of both approximations and their convergence to be sure that we meet the theoretical data.
+
+From the code we can create Table \ref{tab:L2 and H1 error P1} for P1 element approximation and Table \ref{tab:L2 and H1 error P2} for P2.
+\begin{table}[H]
+    \centering
+    \caption{$L^2$ and $H^1$ errors for P1 element approximation}
+    \label{tab:L2 and H1 error P1}
+    \begin{tabular}{rrrr}
+        \toprule
+        $N$ points per axis & $L^2$ error & $H^1$ error \\
+        \midrule
+        3 & 0.000000 & 0.000000 \\
+        6 & 0.020375 & 0.407897 \\
+        12 & 0.003773 & 0.150931 \\
+        24 & 0.000886 & 0.073849 \\
+        48 & 0.000206 & 0.037457 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+\begin{table}[H]
+    \centering
+    \caption{$L^2$ and $H^1$ errors for P2 element approximation}
+    \label{tab:L2 and H1 error P2}
+    \begin{tabular}{rrrr}
+        \toprule
+        $N$ points per axis & $L^2$ error & $H^1$ error \\
+        \midrule
+        3 & 0.011323 & 9.150693 \\
+        6 & 0.001789 & 0.159279 \\
+        12 & 0.000153 & 0.034025 \\
+        24 & 0.000016 & 0.007874 \\
+        48 & 0.000002 & 0.001884 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+For the eigenvalue error, the P2 approximation with only 6 points per axis achieves an error comparable to the P1 approximation with 48 points per axis. For the $L^2$ eigenfunction error, however, a P2 mesh with 12 points per axis is required to obtain an error comaprable to the P1 result with 48 points per axis.
+
+The errors with 3 points per axis should not be taken in consideration, since we do not have any degrees of freedom, we accidentally pointed in the right place, which is not a proof of good approximation. For this reason, the reported comparison does not provide a meaningful convergence measurement.
+
+Very reasonable question may arise - why do we need $H^1$ error if it is much larger than $L^2$, what does it show to us?
+
+The $H^1$ error measures the errors in the slope of function, while the $L^2$ measures only the height (value) of a function.
+
+With eigenfunctions low $L^2$ error is not enough because, firstly, a graph can stay close to correct values while bouncing up and down, this will create a jagged, rough line with high $H^1$ error, while $L^2$ error will stay low. 
+Additionally, if the derivative error is high our approximation will predict the wrong physics, in other words, it will predict the right average position, but the wrong speed, pressure or stress.
+
+The last thing to check is the convergence rate: for the $L^2$ the convergence rate is $O(h^{p+1})$, so the slope of the line for P1 approximation should be around $2$ and $3$ for P2; for the $H^1$ the convergence rate is $O(h^{p})$, so the slope of the line for P1 approximation should be around $1$ and $2$ for P2.
+
+As we can see from Fig. \ref{fig:first eigenfunc convergence P1} both $L^2$ \ref{fig:L2 convergence P1} and $H^1$\ref{fig:H1 convergence P1} are approaching theoretical convergence rate. The jump on the right side happens because of first approximations which have lower accuracy and higher convergence rate.
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[scale=0.28]{convergence L2 first eigenfunc P1.png}
+        \caption{}
+        \label{fig:L2 convergence P1}
+    \end{subfigure}
+
+    \vspace{1em}
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[scale=0.28]{convergence H1 first eigenfunc P1.png}
+        \caption{}
+        \label{fig:H1 convergence P1}
+    \end{subfigure}
+
+    \caption{First P1 approximated eigenfunction (a) $L^2$, (b) $H^1$ error convergence}
+    \label{fig:first eigenfunc convergence P1}
+\end{figure}
+
+Same result we are seeing for P2 elements on the Fig. \ref{fig:first eigenfunc convergence P2}, which provides numerical evidence that the implementation is consistent with the theoretical convergence behaviour.
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{convergence L2 first eigenfunc P2.png}
+        \caption{}
+        \label{fig:L2 convegence P2}
+    \end{subfigure}
+
+    \vspace{1em}
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{convergence H1 first eigenfunc P2.png}
+        \caption{}
+        \label{fig:H1 convergence P2}
+    \end{subfigure}
+
+    \caption{First P2 approximated eigenfunction (a) $L^2$, (b) $H^1$ error convergence}
+    \label{fig:first eigenfunc convergence P2}
+\end{figure}
+
+
 
 
 \subsection{Degenerate eigenspaces}
 The comparison becomes more complicated for degenerate eigenvalues. In this case, an eigenvalue is associated with more than one linearly independent eigenfunction. 
-Therefore, the individual numerical eigenfunctions cannot necessarily be expected to coincide with the particular analycal eigenfunctions chosen for comparison.
+Therefore, the individual numerical eigenfunctions cannot necessarily be expected to coincide with the particular analytical eigenfunctions chosen for comparison.
 
 For the unit square, the second and third analytical eigenvalues are identical:
 \begin{equation}
