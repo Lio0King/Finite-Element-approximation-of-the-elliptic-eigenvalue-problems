@@ -734,7 +734,7 @@ The idea behind this project is to research about solving 1D and 2D partial diff
 
 
 \section{Implementation}
-In order to complete this project, the Visual Studio code was used to write and run the code in Python and Jupiter Notebooks. In addition to this, for advanced visualisations Paraview was used.
+In order to complete this project, the Visual Studio code was used to write and run the code in Python and Jupiter Notebooks.
 
 In order to simplify the work various libraries were used, like NumPy, Math and SciPy for different mathematical operations; Pandas for presenting results in good-looking tables; and MatPlotLib and PyVista to visualise plots in 2D and 3D respectively.
 
@@ -1100,7 +1100,7 @@ From the code we can create Table \ref{tab:L2 and H1 error P1} for P1 element ap
     \centering
     \caption{$L^2$ and $H^1$ errors for P1 element approximation}
     \label{tab:L2 and H1 error P1}
-    \begin{tabular}{rrrr}
+    \begin{tabular}{rrr}
         \toprule
         $N$ points per axis & $L^2$ error & $H^1$ error \\
         \midrule
@@ -1116,7 +1116,7 @@ From the code we can create Table \ref{tab:L2 and H1 error P1} for P1 element ap
     \centering
     \caption{$L^2$ and $H^1$ errors for P2 element approximation}
     \label{tab:L2 and H1 error P2}
-    \begin{tabular}{rrrr}
+    \begin{tabular}{rrr}
         \toprule
         $N$ points per axis & $L^2$ error & $H^1$ error \\
         \midrule
@@ -1135,10 +1135,10 @@ The errors with 3 points per axis should not be taken in consideration, since we
 
 Very reasonable question may arise - why do we need $H^1$ error if it is much larger than $L^2$, what does it show to us?
 
-The $H^1$ error measures the errors in the slope of function, while the $L^2$ measures only the height (value) of a function.
+The $L^2$ measures the height (value) of a function, whereas the $H^1$ norm additionally measures the error in its first derivatives.
 
 With eigenfunctions low $L^2$ error is not enough because, firstly, a graph can stay close to correct values while bouncing up and down, this will create a jagged, rough line with high $H^1$ error, while $L^2$ error will stay low. 
-Additionally, if the derivative error is high our approximation will predict the wrong physics, in other words, it will predict the right average position, but the wrong speed, pressure or stress.
+Additionally, if the derivative error is high our approximation will give us wrong predictions, in other words, it will predict the right average position, but the wrong speed, pressure or stress. For PDEs in which derivatives of the solution have direct physical significance, such as gradients, fluxes or strains, controlling $H^1$ error is important.
 
 The last thing to check is the convergence rate: for the $L^2$ the convergence rate is $O(h^{p+1})$, so the slope of the line for P1 approximation should be around $2$ and $3$ for P2; for the $H^1$ the convergence rate is $O(h^{p})$, so the slope of the line for P1 approximation should be around $1$ and $2$ for P2.
 
@@ -1147,7 +1147,7 @@ As we can see from Fig. \ref{fig:first eigenfunc convergence P1} both $L^2$ \ref
     \centering
     \begin{subfigure}{\columnwidth}
         \centering
-        \includegraphics[scale=0.28]{convergence L2 first eigenfunc P1.png}
+        \includegraphics[scale=0.23]{convergence L2 first eigenfunc P1.png}
         \caption{}
         \label{fig:L2 convergence P1}
     \end{subfigure}
@@ -1155,7 +1155,7 @@ As we can see from Fig. \ref{fig:first eigenfunc convergence P1} both $L^2$ \ref
     \vspace{1em}
     \begin{subfigure}{\columnwidth}
         \centering
-        \includegraphics[scale=0.28]{convergence H1 first eigenfunc P1.png}
+        \includegraphics[scale=0.23]{convergence H1 first eigenfunc P1.png}
         \caption{}
         \label{fig:H1 convergence P1}
     \end{subfigure}
@@ -1169,7 +1169,7 @@ Same result we are seeing for P2 elements on the Fig. \ref{fig:first eigenfunc c
     \centering
     \begin{subfigure}{\columnwidth}
         \centering
-        \includegraphics[width=\columnwidth]{convergence L2 first eigenfunc P2.png}
+        \includegraphics[scale=0.28]{convergence L2 first eigenfunc P2.png}
         \caption{}
         \label{fig:L2 convegence P2}
     \end{subfigure}
@@ -1177,7 +1177,7 @@ Same result we are seeing for P2 elements on the Fig. \ref{fig:first eigenfunc c
     \vspace{1em}
     \begin{subfigure}{\columnwidth}
         \centering
-        \includegraphics[width=\columnwidth]{convergence H1 first eigenfunc P2.png}
+        \includegraphics[scale=0.28]{convergence H1 first eigenfunc P2.png}
         \caption{}
         \label{fig:H1 convergence P2}
     \end{subfigure}
@@ -1190,7 +1190,7 @@ Same result we are seeing for P2 elements on the Fig. \ref{fig:first eigenfunc c
 
 
 \subsection{Degenerate eigenspaces}
-The comparison becomes more complicated for degenerate eigenvalues. In this case, an eigenvalue is associated with more than one linearly independent eigenfunction. 
+The comparison becomes more complicated for degenerate eigenvalue. In this case, an eigenvalue is associated with more than one linearly independent eigenfunction. 
 Therefore, the individual numerical eigenfunctions cannot necessarily be expected to coincide with the particular analytical eigenfunctions chosen for comparison.
 
 For the unit square, the second and third analytical eigenvalues are identical:
@@ -1208,9 +1208,79 @@ The corresponding eigenspace is therefore two-dimensional and is spanned by the 
     \label{eq:second eigenfunc}
 \end{equation}
 
-Since the individual eigenfunctions associated with degenerate eigenvalue are not uniquely determined, comparing the numerical eigenfunctions with one particular analytical eigenfunction is not an appropriate measure of the eigenspace error. Instead, the numerical eigenfunction is being projected onto the exact eigenspace.
+Same as for the non-degenerate eigenfunction we first want to have an idea of the shape of these functions. In Fig. \ref{fig:degenerate eigenfunc P1} we can see the 2D plot of the two eigenfunctions with 24 points per axis.
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{eigenfunction 2 P1.png}
+        \caption{}
+        \label{fig:second P1 eigenfunc}
+    \end{subfigure}
+    \vspace{1em}
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{eigenfunction 3 P1.png}
+        \caption{}
+        \label{fig:third P1 eigenfunc}
+    \end{subfigure}
 
-We begin with assigning of the exact eigenspace \ref{eq:exact eigenspace} corresponding to the degenerate eigenvalue.
+    \caption{Degenerate eigenfunctions approxiamted with P1 elements (a) second eigenfunction, (b) third eigenfunction}
+    \label{fig:degenerate eigenfunc P1}
+\end{figure}
+
+And the 3D P2 approximation is presented in Fig. \ref{fig:degenerate eigenfunc P2}.
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{eigenfunction_mode2.png}
+        \caption{}
+        \label{fig:second P2 eigenfunc}
+    \end{subfigure}
+    \vspace{1em}
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{eigenfunction_mode3.png}
+        \caption{}
+        \label{fig:third P2 eigenfunc}
+    \end{subfigure}
+
+    \caption{Degenerate eigenfunctions approxiamted with P2 elements (a) second eigenfunction, (b) third eigenfunction}
+    \label{fig:degenerate eigenfunc P2}
+\end{figure}
+
+As we can tell the third eigenfunctions on Fig. \ref{fig:third P1 eigenfunc} and Fig. \ref{fig:third P2 eigenfunc} are rotated comparing to the second ones.
+This happens because the second eigenvalue is repeated, so the numerical eigensolver does not return $u_{2,1}$ or $u_{1,2}$, it returns some arbitrary rotation of the 2D eigenspace basis.
+
+In order to spot this rotation for P1 elements the program returned the Table \ref{tab:dot products}, where we can analyse the dot products between numerical and exact eigenfunctions.
+\begin{table}[H]
+    \centering
+    \caption{Dot products between exact and numerical eigenfunctions}
+    \label{tab:dot products}
+    \begin{tabular}{rrrrr}
+        \toprule
+        $N$ & $u_{1,2}\dot u_{h,1,2}$ & $u_{2,1}\dot u_{h,2,1}$ & $u_{1,2}\dot u_{h,2,1}$ & $u_{2,1}\dot u_{h,1,2}$ \\
+        \midrule
+        1 & 0.609668 & 0.590639 & 0.803962 & 0.790167 \\
+        2 & 0.595032 & 0.593817 & 0.804533 & 0.803643 \\
+        3 & 0.610267 & 0.610161 & 0.792274 & 0.792193 \\
+        4 & 0.842743 & 0.842736 & 0.538327 & 0.538316 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+The observed values indicate that the numerical eigenvectors are rotated combinations of the exact eigenfunctions, which is the expected behaviour for a degenerate eigenspace.
+Additionally, dot products are not close to $1$, because the numerical eigenvectors are a rotation of the exact basis by some angle $\theta$. Dot product gives the $cos(\theta)$ and $sin(\theta)$. If we look at the table we will see that the $(u_{1,2}\dot u_{h,1,2})^2 + (u_{1,2}\dot u_{h,2,1})^2 \approx 0.6^2 + 0.8^2 \approx 1$, which is Pythagoras theorem. Hence, although neither numerical eigenvector individually coincides with particular analytical eigenfunction, together they provide evidence that the correct eigenspace has been captured.. 
+
+The jump up to $0.84$ in the last row can be explained that the eigensolver is free to choose any orthonormal basis of the approximate 2D eigenspace.
+However, small changes in the discretisation may therefore lead to different rotations of the numerical basis, even though the eigenspace itself is converging correctly. That is why convergence of individual eigenvectors is not an appropriate measure for repeated eigenvalue. Instead the convergence should be assessed at the level of the eigenspace itself.
+And since the individual eigenfunctions associated with degenerate eigenvalue are not uniquely determined, comparing the numerical eigenfunctions with one particular analytical eigenfunction is not an appropriate measure of the eigenspace error.
+
+Since the numerical eigensolver may return any orthonormal basis of the degenerate eigenspace, the individual numerical eigenfunctions should not be compared with the particular analytic eigenfunctions.
+Instead, w should consider measuring the distance between numerical eigenfunction $u_h$ and the exact eigenspace.
+
+This distance is obtained by projecting $u_h$ onto $E$ \ref{eq:exact eigenspace}.
 \begin{equation}
     E = \operatorname{span}\{u_1, u_2\}
     \label{eq:exact eigenspace}
@@ -1224,19 +1294,174 @@ Known that the analytical eigenfunctions $u_1$ and $u_2$ are orthogonal in $L^2(
 
 So the error will represent the distance between the exact eigenspace and our projection, which can be measured by \ref{eq:proj error}.
 \begin{equation}
-    \|u_h - P_E u_h\|_{L^2(\Omega)}
+    d(u_h, E) = \|u_h - P_E u_h\|_{L^2(\Omega)}
     \label{eq:proj error}
 \end{equation}
-The same approach can be extended to the $H^1$ norm, allowing the distance between the numerical eigenfunction and the exact eigenspace to be assessed in both the $L^2$ and $H^1$ settings.
+
+This value approaches zero with the finer mesh, which indicates that the numerical eigenfunction approaches the exact eigenspace, independently of the particular basis chosen by the eigensolver.
+
+The same approach can be extended to the $H^1$-norm, allowing the distance between the numerical eigenfunction and the exact eigenspace to be assessed in both the $L^2$ and $H^1$ settings.
+
+Before we proceed to the computed errors, firstly, we need to get the visual perspective of the difference between numerical and exact eigenfunctions which is show in Fig. \ref{fig:degenerate numerical vs exact}.
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{second eigenfunc vs exact.png}
+        \caption{Second eigenfunction}
+        \label{fig:second numerical vs exact}
+    \end{subfigure}
+    \vspace{1em}
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{third eigenfunc vs exact.png}
+        \caption{Third eigenfunction}
+        \label{fig:third numerical vs exact}
+    \end{subfigure}
+
+    \caption{Degenerate eigenfunctions approxiamted with P2 elements against exact}
+    \label{fig:degenerate numerical vs exact}
+\end{figure}
+
+As we can see on the relatively fine mesh (6 points per axis) we are getting quite accurate visual approximation.
+
+But what about computed errors?
+
+In the Table \ref{tab:projection errors P1} and Table \ref{tab:projection errors P2} we are given the $L^2$-norm of the projection distance of the P1 and P2 approximations.
+\begin{table}[H]
+    \centering
+    \caption{$L^2$-norm of the projection distance of the P1 degenerate eigenfunction}
+    \label{tab:projection errors P1}
+    \begin{tabular}{rrr}
+        \toprule
+        $N$ points per axis & $\|P_ev_{1,2} - u_{1,2}\|_{L^2}$ & $\|P_ev_{2,1} - u_{2,1}\|_{L^2}$ \\
+        \midrule
+        3 & NaN & NaN \\
+        6 & 0.066759 & 0.073152 \\
+        12 & 0.010034 & 0.010344 \\
+        24 & 0.002278 & 0.002248 \\
+        48 & 0.000522 & 0.000516 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+As we can see, errors in both second and third eigenfunctions decrease similarly and have very close numbers, so for P2 approximation it was decided to take the biggest value of both and compare with exact, because it is better to have some margin of error. 
+\begin{table}[H]
+    \centering
+    \caption{$L^2$-norm of the projection distance of the P2 degenerate eigenfunction}
+    \label{tab:projection errors P2}
+    \begin{tabular}{rr}
+        \toprule
+        $N$ points per axis & $\max\{\|P_ev_{1,2} - u_{1,2}\|_{L^2}, \|P_ev_{2,1} - u_{2,1}\|_{L^2}\}$ \\
+        \midrule
+        3 & NaN \\
+        6 & 0.007687 \\
+        12 & 0.000602 \\
+        24 & 0.000063 \\
+        48 & 0.000007 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+Interestingly, we can spot the same idea as in the non-degenerate case, the error of the P1 elements with 48 points per axis is equivalent to the error of P2 elements with 12 points per axis. 
+So, degeneracy does not have an imfluence on the error.
+
+Similarly we obtained the errors for $H^1$-norm projection error for the P1 and P2 approximations.
+
+For the P1 element to find the $H^1$ error the small trick was used. For any nodal vector $w$ representing a piecewise-linear function, the discrete $H^1$ norm can be found using \ref{eq:discrete H1 norm}.
+\begin{equation}
+    \|w\|_{H^1} = w^T Mw + w^T Aw = w^T(M + A)w
+    \label{eq:discrete H1 norm}
+\end{equation}
+Where $M$ is a mass matrix and $A$ is a stiffness matrix or the discrete bilinear form $\int\nabla u\nabla v$. This approach allows us to avoid finding centroid and do complex computations with quadrature.
+The P1 matrix trick, only ever sees nodal values, so it exactly computes the $H^1$ norm of the difference between the piecewise-linear interpolant of $u$ and $u_h$, not $u$ itself. But the main question, will the different computation influence the result?
+
+No, Because by the triangle inequality $\|u - u_h\|_{H^1} \leq \|u - I_hu\|_{H^1} + \|I_hu - u_h\|_{H^1}$, and interpolation error $\|u - I_hu\|_{H^1}$ for P1 is itself $O(h)$ — same order as the FEM discretization error we are trying to measure. So the two quantities are asymptotically equivalent in convergence rate (both $O(h)$), even though their absolute numerical values at a given number of points per axis will not match exactly.
+\begin{table}[H]
+    \centering
+    \caption{$H^1$-norm of the projection distance of the P1 degenerate eigenfunction}
+    \label{tab:H1 projection errors P1}
+    \begin{tabular}{rrr}
+        \toprule
+        $N$ points per axis & $\|P_ev_{1,2} - u_{1,2}\|_{H^1}$ & $\|P_ev_{2,1} - u_{2,1}\|_{H^1}$ \\
+        \midrule
+        3 & NaN & NaN \\
+        6 & 1.146420 & 1.142827 \\
+        12 & 0.420973 & 0.394877 \\
+        24 & 0.186250 & 0.189181 \\
+        48 & 0.093434 & 0.094670 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+\begin{table}[H]
+    \centering
+    \caption{$H^1$-norm of the projection distance of the P2 degenerate eigenfunction}
+    \label{tab:H1 projection errors P2}
+    \begin{tabular}{rr}
+        \toprule
+        $N$ points per axis & $\max\{\|P_ev_{1,2} - u_{1,2}\|_{H^1}, \|P_ev_{2,1} - u_{2,1}\|_{H^1}\}$ \\
+        \midrule
+        3 & NaN \\
+        6 & 0.567328 \\
+        12 & 0.123601 \\
+        24 & 0.028430 \\
+        48 & 0.006829 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+In comparison, the $H^1$-norm error requires more points per axis in P2 approximation in order to get the same precision as in P1 elements. For the coarser mesh, the difference between the two approximations is relatively small, while with further refinement the higher-order P2 approximation exhibits a substantially smaller $H^1$ error.
+This is consistent with the higer-order convergence of P2 elements.
+
+The last check that the project requires is the convergence check, the $L^2$ projection error norm convergence rate is $O(h^{p+1})$, so for P1 elements we are expecting to see the line on the log-log plot with a slope to be around $2$ and for P2 elements slope should be approximately $3$.
+The $H^1$ projection error norm convergence rate is $O(h^p)$, so we are expecting to see the slope of the line $1$ for P1 elements and $2$ for P2.
+
+As we saw from the errors of P1 elements, their numbers are very close, so for the convergence we can take the maximum out of two and plot it. In Fig. \ref{fig:L2 degenerate convergence} and Fig. \ref{fig:H1 degenerate convergence} we can see that the observed convergence rates are consistent with the theoretical rates providing strong numerical evidence that the implementation is behaving as expected.
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[scale=0.23]{convergence L2 degenerate eigenfunc P1.png}
+        \caption{P1 approximation}
+    \end{subfigure}
+    \vspace{1em}
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[scale=0.23]{convergence L2 degenerate eigenfunc P2.png}
+        \caption{P2 approximation}
+    \end{subfigure}
+
+    \caption{$L^2$-norm convergence}
+    \label{fig:L2 degenerate convergence}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{convergence H1 degenerate eigenfunc P1.png}
+        \caption{P1 approximation}
+    \end{subfigure}
+    \vspace{1em}
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[width=\columnwidth]{convergence H1 degenerate eigenfunc P2.png}
+        \caption{P2 approximation}
+    \end{subfigure}
+
+    \caption{$H^1$-norm convergence}
+    \label{fig:H1 degenerate convergence}
+\end{figure}
 
 
+\section{Laplace Eigenproblem Conclusion}
+From the results presented it is clear that P2 elements approximation converges faster, but it has some drawbacks. The main one is complexity in implementation: to write code for the P1 elements approximation is much easier than for P2, due to the need of using the gradients and quadratures for approximating integrals.
+Moreover, P2 elements have more degrees of freedom, which requires more memory and time to proceed with computations. As it was mentioned before the errors for both eigenvalues and eigenvectors of P1 approximation with 48 points per axis is equivalent to P2 approximation with 12 points per axis.
+So each program was executed 5 times and the average time was taken, the P1 approximation with 48 points per axis averaged at 3.6 seconds, while P2 approximation with 12 points per axis averaged at 4.7 seconds. At the same time if we do the same test for P2 approximation with 48 points per axis we will average at about 65 seconds.
 
-\section{Numerical results for the Laplace Eigenproblem}
-- mesh refinement
-- convergence plots
-- eigenfunctions
-- exact vs fem
-- degenerate eigenspaces
+From this we can conclude that P1 elements are easier to implement, they produce fast and quite accurate results and they are easy to explain, at the same time P2 elements producing very accurate approximations and allow to have more detailed picture about the unknown function.
+
+The results therefore illustrate a trade-off between approximation order and computational cost. P2 elements achieve significantly smaller errors on relatively coarse meshes, but each element introduces additional degrees of freedom and requires a more involved assembly procedure. Consequently, although P2 can achieve a prescribed accuracy with fewer mesh refinements, this does not necessarily imply a lower total computational cost for every problem.
+
 
 
 \section{Numerical results for the Schr\"{o}dinger's Eigenproblem}
