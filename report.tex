@@ -1465,6 +1465,31 @@ The results therefore illustrate a trade-off between approximation order and com
 
 
 \section{Numerical results for the Schr\"{o}dinger's Eigenproblem}
+
+As it was mentioned before in the finite element formulation used in this project, Schr\"{o}dinger eigenproblem has the same stiffness and mass matrices as the Laplace eigenproblem, with an additional potential matrix arising from the potential energy term. However, potential energy has one very important detail - it can be defined using different equations, which will change the physical meaning and will require some adjustments in the computer implementation. The main questions are how does each variant of the potential influence the results and what do these results mean? 
+In this project 3 potential models will be considered: infinite square well, harmonic oscillator and 2D Coulomb radial equation.
+
+
+\subsection{Infinite square well}
+Infinite square well is the model where the particle is confined in a single region. The potential is constant inside the well and infinite outside. The zero of potential energy can be chosen arbitrary, so it is convenient to set the potential inside the well to zero.
+The easies to visualise would be 1D infinte square well illustration of which is shown in Fig. \ref{fig:infinite square well}, which restricts particle to move only in $x$ direction. Hence, in our 2D case, the particle will be restricted to move around the $x-y$ plane.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{infinte square well.png}
+    \caption{1D infinite square well \cite{b27}}
+    \label{fig:infinite square well}
+\end{figure}
+
+Moreover, the infinite potential outside the well does not ned to be represented explicitly. Instead, confinement is imposed through homogeneous Dirichlet boundary condition which ensures that we will not have a solution on the boundary.
+
+This case is considered the simpliest of the Schr\"{o}dinger eigenproblem because the only change that happens is the addition of potential matrix to the stiffness matrix from \ref{eq:schrod well} where every element of the matrix is a constant.
+\begin{equation}
+    (A + K_V)\psi = \lambda M\psi
+    \label{eq:schrod well}
+\end{equation}
+
+
+
 - constant potential
 - potential matrix
 - harmonic oscillator and coulomb
@@ -1519,7 +1544,8 @@ The results therefore illustrate a trade-off between approximation order and com
 \bibitem{b23} “scipy.linalg.eigh — SciPy v1.10.1 Manual.” Accessed: Aug. 17, 2026. [Online]. Available: \url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.eigh.html}
 \bibitem{b24} R. Courant and D. Hilbert, Methods of Mathematical Physics, Volume I
 \bibitem{b25} Bohrium.com, 2026. \url{https://www.bohrium.com/en/sciencepedia/feynman/keyword/degenerate_eigenvalues} (accessed Aug. 8, 2026).
-\bibitem{b26} “Understanding Convergence Rates — Hermes Tutorial Guide,” Hpfem.org, 2026. \url{https://hpfem.org/wp-content/uploads/doc-web/doc-tutorial/src/hermes2d/D-adaptivity/intro-2.html?utm_source=chatgpt.com} (accessed Aug. 12, 2026).
+\bibitem{b26} “Understanding Convergence Rates — Hermes Tutorial Guide,” Hpfem.org, 2026. \url{https://hpfem.org/wp-content/uploads/doc-web/doc-tutorial/src/hermes2d/D-adaptivity/intro-2.html?utm_source=chatgpt.com} (accessed Aug. 12, 2026)
+\bibitem{b27} “2.4. Particle in an box with infinite-potential walls — Introduction to Quantum Physics,” York.ac.uk, 2019. \url{https://www-users.york.ac.uk/~pjd113/notebooks/2_4_infinite_square_well.html} (accessed Aug. 31, 2026)
 
 \end{thebibliography}
 \vspace{12pt}
