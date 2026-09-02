@@ -715,6 +715,7 @@ Where $(K_V)_{ij} = \frac{2m}{\hbar^2} \int_\Omega V(x)\phi_i\phi_j \, dx$ is a 
 From \ref{eq:generalised Schrodinger} we can see that mathematically the statement of the problem is very similar to the Laplace eigenproblem \ref{eq:generalised Laplace}.
 
 
+
 \subsection{Conclusion}
 Looking at what was previously discussed in this section the idea behind this project becomes clear: 
 
@@ -1487,7 +1488,55 @@ This case is considered the simpliest of the Schr\"{o}dinger eigenproblem becaus
     (A + K_V)\psi = \lambda M\psi
     \label{eq:schrod well}
 \end{equation}
+Where $K_V = \frac{2m}{\hbar^2}\int_\Omega V\phi_i\phi_j \, dx$ is the scaled potential energy matrix. We need the scale, because in other way the obtained number will not have the physical meaning.
 
+From solving the eigenvalue problem we will be able to recover the physical energies of the particle using \ref{eq:phys energy}.
+\begin{equation}
+    E = \frac{\hbar^2}{2m}\lambda
+    \label{eq:phys energy}
+\end{equation}
+
+In this project we are interested in both scenarios: scaled version to study the physics as the particle and non-scaled version to analyse from mathematical point of view, how potential matrix influences the Laplace eigenvalues and eigenvectors.
+
+\subsubsection{Non-scaled potential matrix}
+To compare results from Laplace eigenproblem with Schr\"{o}dinger eigenproblem with constant potential, we made potential equal to $5$. Since we know that the Laplace implementation converges to the theoretical values we will not check the convergence for Schr\"{o}dinger problem with constant potential.
+The comparison is presented in Table \ref{tab:Laplace vs Schrod}.
+\begin{table}[H]
+    \centering
+    \caption{Laplace eigenvalues and Schr\"{o}dinger eigenvalues with $V=5$}
+    \label{tab:Laplace vs Schrod}
+    \begin{tabular}{rrrrrr}
+        \toprule
+        $\lambda_1$Lap & $\lambda_1$Sch & $|\lambda_{1,Lap} - \lambda_{1,Sch}|$ & $\lambda_{2,3}$Lap & $\lambda_{2,3}$Sch & $|\lambda_{2,3,Lap} - \lambda_{2,3,Sch}|$ \\
+        \midrule
+        19.94133 & 24.94133 & 5.00000 & 57.311070 & 62.311070 & 5.00000 \\
+        19.76407 & 24.76407 & 5.00000 & 49.682181 & 54.682181 & 5.00000 \\
+        19.74036 & 24.74036 & 5.00000 & 49.363364 & 54.363364 & 5.00000 \\
+        19.73927 & 24.73927 & 5.00000 & 49.348834 & 54.348834 & 5.00000 \\
+        19.73921 & 24.73921 & 5.00000 & 49.348069 & 54.348069 & 5.00000 \\
+
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+As we can see all the eigenvalues shifted by the amount of the potential. But what about eigenfunctions? The resutls are shown in Table \ref{tab:Laplace vs Schrod eigvec}.
+\begin{table}[H]
+    \centering
+    \caption{Laplace eigenfunctions and Schr\"{o}dinger eigenvalues with $V=5$}
+    \label{tab:Laplace vs Schrod eigvec}
+    \begin{tabular}{rrrrrr}
+        \toprule
+        $\lambda_1$Lap & $\lambda_1$Sch & $|\lambda_{1,Lap} - \lambda_{1,Sch}|$ & $\lambda_{2,3}$Lap & $\lambda_{2,3}$Sch & $|\lambda_{2,3,Lap} - \lambda_{2,3,Sch}|$ \\
+        \midrule
+        19.94133 & 24.94133 & 5.00000 & 57.311070 & 62.311070 & 5.00000 \\
+        19.76407 & 24.76407 & 5.00000 & 49.682181 & 54.682181 & 5.00000 \\
+        19.74036 & 24.74036 & 5.00000 & 49.363364 & 54.363364 & 5.00000 \\
+        19.73927 & 24.73927 & 5.00000 & 49.348834 & 54.348834 & 5.00000 \\
+        19.73921 & 24.73921 & 5.00000 & 49.348069 & 54.348069 & 5.00000 \\
+
+        \bottomrule
+    \end{tabular}
+\end{table}
 
 
 - constant potential
