@@ -1468,7 +1468,7 @@ The results therefore illustrate a trade-off between approximation order and com
 \section{Numerical results for the Schr\"{o}dinger's Eigenproblem}
 
 As it was mentioned before in the finite element formulation used in this project, Schr\"{o}dinger eigenproblem has the same stiffness and mass matrices as the Laplace eigenproblem, with an additional potential matrix arising from the potential energy term. However, potential energy has one very important detail - it can be defined using different equations, which will change the physical meaning and will require some adjustments in the computer implementation. The main questions are how does each variant of the potential influence the results and what do these results mean? 
-In this project 3 potential models will be considered: infinite square well, harmonic oscillator and 2D Coulomb radial equation.
+In this project 3 potential models will be considered: infinite square well, quantum harmonic oscillator and 2D Coulomb radial equation. Very important note is that the computational experiments use a scaled/nondimensional Schr\"{o}dinger operator, unless specifically stated otherwise.
 
 
 \subsection{Infinite square well}
@@ -1476,7 +1476,7 @@ Infinite square well is the model where the particle is confined in a single reg
 The easies to visualise would be 1D infinte square well illustration of which is shown in Fig. \ref{fig:infinite square well}, which restricts particle to move only in $x$ direction. Hence, in our 2D case, the particle will be restricted to move around the $x-y$ plane.
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\columnwidth]{infinte square well.png}
+    \includegraphics[width=\columnwidth]{infinite square well.png}
     \caption{1D infinite square well \cite{b27}}
     \label{fig:infinite square well}
 \end{figure}
@@ -1488,15 +1488,15 @@ This case is considered the simpliest of the Schr\"{o}dinger eigenproblem becaus
     (A + K_V)\psi = \lambda M\psi
     \label{eq:schrod well}
 \end{equation}
-Where $K_V = \frac{2m}{\hbar^2}\int_\Omega V\phi_i\phi_j \, dx$ is the scaled potential energy matrix. We need the scale, because in other way the obtained number will not have the physical meaning.
-
-From solving the eigenvalue problem we will be able to recover the physical energies of the particle using \ref{eq:phys energy}.
+Where $K_V = \int_\Omega V\phi_i\phi_j \, dx = VM_{i,j}$. This allows us to rewrite \ref{eq:schrod well} as:
 \begin{equation}
-    E = \frac{\hbar^2}{2m}\lambda
-    \label{eq:phys energy}
+\begin{aligned}
+    (A + VM)u = (\lambda_{Lap} + V)Mu \\
+    \text{Therefore } \lambda_{Sch} = \lambda_{Lap} + V
+\end{aligned}
 \end{equation}
+and the eigenvectors are unchanged.
 
-In this project we are interested in both scenarios: scaled version to study the physics as the particle and non-scaled version to analyse from mathematical point of view, how potential matrix influences the Laplace eigenvalues and eigenvectors.
 
 \subsubsection{Non-scaled potential matrix}
 To compare results from Laplace eigenproblem with Schr\"{o}dinger eigenproblem with constant potential, we made potential equal to $5$. Since we know that the Laplace implementation converges to the theoretical values we will not check the convergence for Schr\"{o}dinger problem with constant potential.
@@ -1519,32 +1519,120 @@ The comparison is presented in Table \ref{tab:Laplace vs Schrod}.
     \end{tabular}
 \end{table}
 
-As we can see all the eigenvalues shifted by the amount of the potential. But what about eigenfunctions? The resutls are shown in Table \ref{tab:Laplace vs Schrod eigvec}.
+As we can see all the eigenvalues shifted by the amount of the potential. But what about eigenfunctions? We will check the eigenfunctions on the coarsest mesh, simply because finer meshes will produce more dimensional vectors and it would be difficult to write them down to analyse and moreover all we need is just to see the shift or trend in changes.
+
+The two matrices in \ref{eq:vectors} show the column spaces of first three eigenfunctions.
+\begin{equation}
+    \begin{bmatrix}
+        -2.03449568e+00 \\
+        -9.81551976e-01 \\
+        -1.43986680e+00 \\
+        -9.81551976e-01 \\
+        -1.43986680e+00 \\
+        -9.81551976e-01 \\
+        -1.43986680e+00 \\
+        -1.43986680e+00 \\
+        -9.81551976e-01 \\
+    \end{bmatrix}  \quad
+    \begin{bmatrix}
+        -2.03449568e+00 \\
+        -9.81551976e-01 \\
+        -1.43986680e+00 \\
+        -9.81551976e-01 \\
+        -1.43986680e+00 \\
+        -9.81551976e-01 \\
+        -1.43986680e+00 \\
+        -1.43986680e+00 \\
+        -9.81551976e-01
+    \end{bmatrix} 
+    \label{eq:vectors}
+\end{equation}
+
+The first eigenfunctions are identical, which means that potential matrix does not affect the eigenspaces corresponding to the eigenvalues, in other words, with constant potential, the potential matrix is proportional to the mass matrix, that is why the eigenfunctions remain unchanged while all eigenvalues are shifted by the same amount. Unfortunately, We can not analyse the degenerate pair, because on tis coarse mesh (3 points per axis) there is no degeneracy, and the next mesh produces much larger eigenfunctions which will become a challenge to put in this report.
+
+\subsubsection{Scaled potential matrix}
+When we scale the potential matrix, we will look at physical problem rather than a mathematical object. And because we know that potential matrix just shifts the eigenvalues and does not affect the eigenfunctions, we can be sure that the results will converge to the same numbers we had in the Laplace eigenproblem.
+
+Here we are more interested in the eigenvalues and more importantly in $E$ which is total energy of quantum system. Because in our derivation of reduced Schr\"{o}dinger equation \ref{eq:reduced Schrodinger} we let $\lambda = \frac{2mE}{\hbar^2}$, now we can extract $E$:
+\begin{equation}
+    E = \frac{\hbar^2}{2m}\lambda
+    \label{eq:total energy}
+\end{equation}
+Where $\hbar$ is a reduced Planck's constant and $m$ is the mass of the particle. As a particle we will use electron, whose mass is well-known.
+
+
+
+\subsection{Quantum harmonic oscillator}
+
+The quantum harmonic oscillator models a particle in a parabolic potential well, featuring discrete, equally spaced energy levels and a non-zero ground state energy.
+
+The main difference between infinite square well and quantum harmonic oscillator is that in harmonic oscillator we have quantised energy levels that are given by \ref{eq:harmonic oscill}.
+\begin{equation}
+    E_{n_x, n_y} = \hbar\omega(n_x + n_y + 1) \quad \text{where } n = 0, 1, 2, \dots
+    \label{eq:harmonic oscill}
+\end{equation}
+
+Hence, because our problem is not on the infinite line, so our potential energy will be defined as $V(x, y) = \frac{1}{2}m\omega^2\Big((x - x_0)^2 + (y - y_0)^2\Big)$, where $\omega$ is angular frequency and $m$ is the mass of the particle.
+
+There are few changes that differ this problem from all previous problems. First of all, as it was mentioned before, because we define $V(x, y)$ with equation that contains unknown variables: $x$ and $y$, and the basis functions $\phi_i(x, y)$ and $\phi_j(x, y)$ also depend on $x$ and $y$, multiplying all of them, we can get polynomial up to degree 6. The previous quadrature rule is exact only for polynomials up to degree 4 and is therefore insufficient to integrate this degree-6 integrand exactly.
+Additionally, there is no simple analytical solution for the harmonic oscillator on the finite square domain. Hence, to check whether the FEM eigenvalues are correct, we need a "numerical reference", in other words we need to solve the same problem with trusted numerical method and compare with FEM implementation. Luckily, this 2D problem can be solved easily with few numerical methods.
+
+To start, we reorganise our potential energy formula like it is done in \ref{eq:potential}.
+\begin{equation}
+\begin{aligned}
+    V(x, y) &= \frac{1}{2} \omega^2\Big((x - x_0)^2 + (y - y_0)^2\Big) \\
+    &= \frac{1}{2}\omega^2(x - x_0)^2 + \frac{1}{2}\omega^2(y - y_0)^2
+    \label{eq:potential}
+\end{aligned}
+\end{equation}
+So, now we can separate 2D problem into two identical 1D problems \ref{eq:1D reference} and solve them on $0 < x < 1$ and $0 < y < 1$ and discretised domain with arbitrary number of interior grid points.
+\begin{equation}
+    -u''(x) + \frac{1}{2}\omega^2(x - x_0)^2u(x) = Eu(x)
+    \label{eq:1D reference}
+\end{equation}
+
+We know that the second derivative can be approximated with finite differences \ref{eq:finite diff}.
+\begin{equation}
+    -u''(x_i) \approx \frac{-u_{i-1} + 2u_i - u_{i+1}}{h^2}
+    \label{eq:finite diff}
+\end{equation}
+
+After we solve each 1D problem individually using $scipy.linalg.eigh_tridiagonal$. We get eigenvalues and eigenfunctions. With eigenvalues in order to go from 1D to 2D we can simply add them together. While 2D eigenfunctions are computed differently - for a separable problem, the 2D eigenfunction has the form:
+\begin{equation}
+    \psi_{m,n}(x, y) = \phi_m(x)\phi_n(y)
+\end{equation}
+However, there is one issue, the finite difference method uses more grid points than the FEM implementation, which will cause an error, if implemented without adjustments. We need to interpolate the 1D reference function, we take the point $x_i$ from FEM and check the value of 1D reference function at this $x_i$, which mathematically looks like this:
+\begin{equation}
+    \psi_{m, n}^{ref}(x_i, y_i) = \phi_m^{ref}(x_i)\phi_n^{ref}(y_i)
+\end{equation}
+Another important note is normalisation. The $eigh_tridiagonal$ returns the Euclidean norm, while we need the $L^2$ norm, so normalisation has the form:
+\begin{equation}
+    u_{ref} = \frac{u_{ref}}{\sqrt{u_{ref}^TMu_ref}}
+\end{equation}
+
+\subsubsection{Results: eigenvalues}
+In the implementation we took $\omega = 160$, which gives a sufficiently confining potential that produces oscillator-like low-energy states while remaining convenient for numerical computations. $m$ is the mass of the particle, in this project the particle is electron and $(x_0, y_0) = (0.5, 0.5)$ to have the minimum potential in the middle of the unit square. Also we solved our 1D problem on the mesh adjustable amount of grid points, which depends on the accuracy of the finite difference method, in our case it is up to 4 decimal places.
+
+In the Table \ref{tab:oscil results} eigenvalues and their errors are shown.
 \begin{table}[H]
     \centering
-    \caption{Laplace eigenfunctions and Schr\"{o}dinger eigenvalues with $V=5$}
-    \label{tab:Laplace vs Schrod eigvec}
-    \begin{tabular}{rrrrrr}
+    \caption{Quantum harmonic oscillator eigenvalues}
+    \label{tab:oscil results}
+    \begin{tabular}{rrrr}
         \toprule
-        $\lambda_1$Lap & $\lambda_1$Sch & $|\lambda_{1,Lap} - \lambda_{1,Sch}|$ & $\lambda_{2,3}$Lap & $\lambda_{2,3}$Sch & $|\lambda_{2,3,Lap} - \lambda_{2,3,Sch}|$ \\
+        $\lambda_1$ & $|\lambda_1 - \lambda_{1, ref}|$ & $\lambda_{2,3}$ & $|\lambda_{2,3} - \lambda{2,3,ref}|$ \\
         \midrule
-        19.94133 & 24.94133 & 5.00000 & 57.311070 & 62.311070 & 5.00000 \\
-        19.76407 & 24.76407 & 5.00000 & 49.682181 & 54.682181 & 5.00000 \\
-        19.74036 & 24.74036 & 5.00000 & 49.363364 & 54.363364 & 5.00000 \\
-        19.73927 & 24.73927 & 5.00000 & 49.348834 & 54.348834 & 5.00000 \\
-        19.73921 & 24.73921 & 5.00000 & 49.348069 & 54.348069 & 5.00000 \\
-
+        279.91036 & 53.636212 & 919.984171 & 467.435906 \\
+        237.45286 & 11.178717 & 512.878866 & 60.330601 \\
+        227.15517 & 0.881020 & 456.099324 & 3.551059 \\
+        226.32583 & 0.051687 & 452.754458 & 0.206193 \\
+        226.27727 & 0.003124 & 452.560660 & 0.012395 \\
         \bottomrule
     \end{tabular}
 \end{table}
 
-
-- constant potential
-- potential matrix
-- harmonic oscillator and coulomb
-- comparison with Laplace
-
-
+$\lambda_1$ is the lowest eigenvalue of the scaled finite-domain harmonic oscillator problem.
+\subsection{Results: eigenfunctions}
 
 \section{Discussion}
 - why stiffness matrix alone is insufficient
