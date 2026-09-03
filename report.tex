@@ -1057,6 +1057,7 @@ Another question that remains is how precise our obtained graphs?
 We will use the $L^2$- \ref{eq:L2} and $H^1$-norms \ref{eq:H1} of the error to quantify the difference between the numerical and analytical eigenfunctions. Very important note for the computations would be the sign check, because both positive and negative eigenvectors are meaningful, they just point in opposite direction we need to make sure that the negative eigenvector will not make the error massive. To ensure consistent orientation, we evaluate the discrete $L^2$ inner product:
 \begin{equation}
     (u_h, u)_M = \vec{u}_h^TM\vec{u}
+    \label{eq:norm L2}
 \end{equation}
 If this quantity is negative, the sign of the numerical eigenfunction is reversed by replacing $u_h$ with $-u_h$. We are using mass matrix $M$ because we are approximating an $L^2$ inner product, not an ordinary Euclidean dot product.
 
@@ -1563,12 +1564,11 @@ Where $\hbar$ is a reduced Planck's constant and $m$ is the mass of the particle
 
 
 \subsection{Quantum harmonic oscillator}
-
 The quantum harmonic oscillator models a particle in a parabolic potential well, featuring discrete, equally spaced energy levels and a non-zero ground state energy.
 
 The main difference between infinite square well and quantum harmonic oscillator is that in harmonic oscillator we have quantised energy levels that are given by \ref{eq:harmonic oscill}.
 \begin{equation}
-    E_{n_x, n_y} = \hbar\omega(n_x + n_y + 1) \quad \text{where } n = 0, 1, 2, \dots
+    E_{n_x, n_y} = \hbar\omega(n_x + n_y + 1) \quad \text{where } n_x, n_y = 0, 1, 2, \dots
     \label{eq:harmonic oscill}
 \end{equation}
 
@@ -1577,7 +1577,7 @@ Hence, because our problem is not on the infinite line, so our potential energy 
 There are few changes that differ this problem from all previous problems. First of all, as it was mentioned before, because we define $V(x, y)$ with equation that contains unknown variables: $x$ and $y$, and the basis functions $\phi_i(x, y)$ and $\phi_j(x, y)$ also depend on $x$ and $y$, multiplying all of them, we can get polynomial up to degree 6. The previous quadrature rule is exact only for polynomials up to degree 4 and is therefore insufficient to integrate this degree-6 integrand exactly.
 Additionally, there is no simple analytical solution for the harmonic oscillator on the finite square domain. Hence, to check whether the FEM eigenvalues are correct, we need a "numerical reference", in other words we need to solve the same problem with trusted numerical method and compare with FEM implementation. Luckily, this 2D problem can be solved easily with few numerical methods.
 
-To start, we reorganise our potential energy formula like it is done in \ref{eq:potential}.
+To start, we reorganise our potential energy formula like it is done in \ref{eq:potential} (we will use the scaled version, so all physical constants, such as $m$ are absent).
 \begin{equation}
 \begin{aligned}
     V(x, y) &= \frac{1}{2} \omega^2\Big((x - x_0)^2 + (y - y_0)^2\Big) \\
@@ -1597,7 +1597,13 @@ We know that the second derivative can be approximated with finite differences \
     \label{eq:finite diff}
 \end{equation}
 
-After we solve each 1D problem individually using $scipy.linalg.eigh_tridiagonal$. We get eigenvalues and eigenfunctions. With eigenvalues in order to go from 1D to 2D we can simply add them together. While 2D eigenfunctions are computed differently - for a separable problem, the 2D eigenfunction has the form:
+After we solve each 1D problem individually using $scipy.linalg.eigh_tridiagonal$. We get eigenvalues and eigenfunctions. With eigenvalues in order to go from 1D to 2D we can simply add them together, which mathematically looks like this:
+\begin{equation}
+    H_x\phi_{n_x} = \lambda_m^{(x)}\phi_{n_x}, \quad H_y\phi_{n_y} = \lambda_n^{(y)}\phi_{n_y} \\
+    \therefore \lambda_{n_x,n_y} = \lambda_{n_x}^{(x)} + \lambda_{n_y}^{(y)}
+\end{equation}
+
+And 2D eigenfunctions are computed differently - for a separable problem, the 2D eigenfunction has the form:
 \begin{equation}
     \psi_{m,n}(x, y) = \phi_m(x)\phi_n(y)
 \end{equation}
@@ -1605,7 +1611,7 @@ However, there is one issue, the finite difference method uses more grid points 
 \begin{equation}
     \psi_{m, n}^{ref}(x_i, y_i) = \phi_m^{ref}(x_i)\phi_n^{ref}(y_i)
 \end{equation}
-Another important note is normalisation. The $eigh_tridiagonal$ returns the Euclidean norm, while we need the $L^2$ norm, so normalisation has the form:
+Another important note is normalisation. The $eigh_tridiagonal$ returns the Euclidean norm, while we need the $L^2$ norm \ref{eq:norm L2}, so normalisation has the form:
 \begin{equation}
     u_{ref} = \frac{u_{ref}}{\sqrt{u_{ref}^TMu_ref}}
 \end{equation}
@@ -1634,8 +1640,42 @@ In the Table \ref{tab:oscil results} eigenvalues and their errors are shown.
 $\lambda_1$ is the lowest eigenvalue of the scaled finite-domain harmonic oscillator problem.
 
 
-\subsection{Results: eigenfunctions}
-Eigenfunctions in quantum harmonic oscillator represent the coefficients to construct the approximate wavefunction $\psi$, whose square $|\psi|^2$ shows the probability of finding the particle
+\subsubsection{Results: eigenfunctions}
+The FEM eigenvector $c = (c_1, \dots, c_N)^T$ contains the coefficients to construct the approximate wavefunction $\psi$ as in \ref{eq:wavefunction}, whose square $|\psi|^2$ shows the probability density of finding the particle.
+\begin{equation}
+    \psi_n(x, y) = \sum_{i=1}^{N} c_i\phi_i(x, y)
+    \label{eq:wavefunction}
+\end{equation}
+
+
+\subsubsection{Convergence}
+With constant potential it was clear that convergence will go similarly as the Laplace eigenproblem, however, will additional parameters influence the convergence?
+
+As it was expected, both eigenvalues and eigenvectors errors converged at the theoretical rates, which we can see in Fig. \ref{fig:harmonic oscil convergence}.
+\begin{figure}[htbp]
+    \centering
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[scale=0.23]{oscil eigval convergence.png}
+        \caption{Eigenvalue}
+    \end{subfigure}
+    \vspace{1em}
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[scale=0.23]{oscil eigvec convergence L2.png}
+        \caption{Eigenfunction $L^2$-norm projection}
+    \end{subfigure}
+    \vspace{1em}
+    \begin{subfigure}{\columnwidth}
+        \centering
+        \includegraphics[scale=0.23]{oscil eigvec convergence H1.png}
+        \caption{Eigenfunction $H^1$-norm projection}
+    \end{subfigure}
+    \caption{Quantum harmonic oscillator convergence rates}
+    \label{fig:harmonic oscil convergence}
+\end{figure}
+
+\subsection{Physically scaled quantum harmonic oscillator}
 
 \section{Discussion}
 - why stiffness matrix alone is insufficient
