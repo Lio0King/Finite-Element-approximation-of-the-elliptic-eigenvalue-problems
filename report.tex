@@ -374,9 +374,8 @@ Polynomials are the best candidates for this because they are mathematically sim
 To construct the piecewise linear function, we are letting $K$ be a triangle and in \ref{eq:P1 space} we define the space of linear functions on $K$ denotes $P_1(K)$.
 \begin{equation}
 \begin{aligned}
-    P_1(K) = \\
-    & \{v: v = c_0 + c_1x_1 + c_2x_2 \\
-    & \text{such that }(x_1, x_2) \in K, c_0, c_1, c_2 \in \mathbb{R}\}
+    P_1(K) = \{v:\;& v = c_0 + c_1x_1 + c_2x_2,\\ 
+    & (x_1, x_2) \in K, \quad c_0, c_1, c_2 \in \mathbb{R}\}
     \label{eq:P1 space}
 \end{aligned}
 \end{equation}
@@ -434,8 +433,9 @@ P1 elements are easy to implement and give good interpolations, but as it was di
 So, instead of the polynomial space given in \ref{eq:P1 space}, we are going to use the space of the second degree polynomials $P_2(K)$ defined in \ref{eq:P2 space}.
 \begin{equation}
 \begin{aligned}
-    P_2(K) = \{v: v = c_0 + c_1x_1 + c_2x_2 + c_3x_1^2 + c_4x_1x_2 + c_5x_2^2 \\
-    \text{where }(x_1, x_2) \in K, c_0, c_1, c_2, c_3, c_4, c_5 \in \mathbb{R}\}
+    P_2(K) = \{v:\;& v = c_0 + c_1x_1 + c_2x_2 + c_3x_1^2 + c_4x_1x_2 \\
+    &\quad + c_5x_2^2, \quad (x_1, x_2) \in K, \\
+    &\quad c_0, \ldots, c_5 \in \mathbb{R}\}
     \label{eq:P2 space}
 \end{aligned}
 \end{equation}
@@ -1131,7 +1131,7 @@ From the code we can create Table \ref{tab:L2 and H1 error P1} for P1 element ap
     \end{tabular}
 \end{table}
 
-For the eigenvalue error, the P2 approximation with only 6 points per axis achieves an error comparable to the P1 approximation with 48 points per axis. For the $L^2$ eigenfunction error, however, a P2 mesh with 12 points per axis is required to obtain an error comaprable to the P1 result with 48 points per axis.
+For the eigenvalue error, the P2 approximation with only 6 points per axis achieves an error comparable to the P1 approximation with 48 points per axis. For the $L^2$ eigenfunction error, however, a P2 mesh with 12 points per axis is required to obtain an error comparable to the P1 result with 48 points per axis.
 
 The errors with 3 points per axis should not be taken in consideration, since we do not have any degrees of freedom, we accidentally pointed in the right place, which is not a proof of good approximation. For this reason, the reported comparison does not provide a meaningful convergence measurement.
 
@@ -1412,7 +1412,7 @@ No, Because by the triangle inequality $\|u - u_h\|_{H^1} \leq \|u - I_hu\|_{H^1
 \end{table}
 
 In comparison, the $H^1$-norm error requires more points per axis in P2 approximation in order to get the same precision as in P1 elements. For the coarser mesh, the difference between the two approximations is relatively small, while with further refinement the higher-order P2 approximation exhibits a substantially smaller $H^1$ error.
-This is consistent with the higer-order convergence of P2 elements.
+This is consistent with the higher-order convergence of P2 elements.
 
 The last check that the project requires is the convergence check, the $L^2$ projection error norm convergence rate is $O(h^{p+1})$, so for P1 elements we are expecting to see the line on the log-log plot with a slope to be around $2$ and for P2 elements slope should be approximately $3$.
 The $H^1$ projection error norm convergence rate is $O(h^p)$, so we are expecting to see the slope of the line $1$ for P1 elements and $2$ for P2.
@@ -1469,12 +1469,12 @@ The results therefore illustrate a trade-off between approximation order and com
 \section{Numerical results for the Schr\"{o}dinger's Eigenproblem}
 
 As it was mentioned before in the finite element formulation used in this project, Schr\"{o}dinger eigenproblem has the same stiffness and mass matrices as the Laplace eigenproblem, with an additional potential matrix arising from the potential energy term. However, potential energy has one very important detail - it can be defined using different equations, which will change the physical meaning and will require some adjustments in the computer implementation. The main questions are how does each variant of the potential influence the results and what do these results mean? 
-In this project 3 potential models will be considered: infinite square well, quantum harmonic oscillator and 2D Coulomb radial equation. Very important note is that the computational experiments use a scaled/nondimensional Schr\"{o}dinger operator, unless specifically stated otherwise.
+In this project 3 potential models will be considered: infinite square well, quantum harmonic oscillator and 2D Coulomb radial equation. Very important note is that the computational experiments use a scaled/non-dimensional Schr\"{o}dinger operator, unless specifically stated otherwise.
 
 
 \subsection{Infinite square well}
 Infinite square well is the model where the particle is confined in a single region. The potential is constant inside the well and infinite outside. The zero of potential energy can be chosen arbitrary, so it is convenient to set the potential inside the well to zero.
-The easies to visualise would be 1D infinte square well illustration of which is shown in Fig. \ref{fig:infinite square well}, which restricts particle to move only in $x$ direction. Hence, in our 2D case, the particle will be restricted to move around the $x-y$ plane.
+The easiest to visualise would be 1D infinite square well illustration which is shown in Fig. \ref{fig:infinite square well}, which restricts particle to move only in $x$ direction. Hence, in our 2D case, the particle will be restricted to move around the $x-y$ plane.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\columnwidth]{infinite square well.png}
@@ -1482,7 +1482,7 @@ The easies to visualise would be 1D infinte square well illustration of which is
     \label{fig:infinite square well}
 \end{figure}
 
-Moreover, the infinite potential outside the well does not ned to be represented explicitly. Instead, confinement is imposed through homogeneous Dirichlet boundary condition which ensures that we will not have a solution on the boundary.
+Moreover, the infinite potential outside the well does not need to be represented explicitly. Instead, confinement is imposed through homogeneous Dirichlet boundary condition which ensures that we will not have a solution on the boundary.
 
 This case is considered the simpliest of the Schr\"{o}dinger eigenproblem because the only change that happens is the addition of potential matrix to the stiffness matrix from \ref{eq:schrod well} where every element of the matrix is a constant.
 \begin{equation}
@@ -1599,8 +1599,10 @@ We know that the second derivative can be approximated with finite differences \
 
 After we solve each 1D problem individually using $scipy.linalg.eigh_tridiagonal$. We get eigenvalues and eigenfunctions. With eigenvalues in order to go from 1D to 2D we can simply add them together, which mathematically looks like this:
 \begin{equation}
-    H_x\phi_{n_x} = \lambda_m^{(x)}\phi_{n_x}, \quad H_y\phi_{n_y} = \lambda_n^{(y)}\phi_{n_y} \\
-    \therefore \lambda_{n_x,n_y} = \lambda_{n_x}^{(x)} + \lambda_{n_y}^{(y)}
+\begin{aligned}
+    &H_x\phi_{n_x} = \lambda_m^{(x)}\phi_{n_x}, \quad H_y\phi_{n_y} = \lambda_n^{(y)}\phi_{n_y} \\
+    &\therefore \lambda_{n_x,n_y} = \lambda_{n_x}^{(x)} + \lambda_{n_y}^{(y)}
+\end{aligned}
 \end{equation}
 
 And 2D eigenfunctions are computed differently - for a separable problem, the 2D eigenfunction has the form:
@@ -1617,7 +1619,7 @@ Another important note is normalisation. The $eigh_tridiagonal$ returns the Eucl
 \end{equation}
 
 \subsubsection{Results: eigenvalues}
-In the implementation we took $\omega = 160$, which gives a sufficiently confining potential that produces oscillator-like low-energy states while remaining convenient for numerical computations. $m$ is the mass of the particle, in this project the particle is electron and $(x_0, y_0) = (0.5, 0.5)$ to have the minimum potential in the middle of the unit square. Also we solved our 1D problem on the mesh adjustable amount of grid points, which depends on the accuracy of the finite difference method, in our case it is up to 4 decimal places.
+In the implementation we took $\omega = 160$, which gives a sufficiently confining potential that produces oscillator-like low-energy states while remaining convenient for numerical computations. $(x_0, y_0) = (0.5, 0.5)$ to have the minimum potential in the middle of the unit square. The 1D reference problem is solved using a sufficiently fine finite-difference grid to obtain eigenvalues accurate to approximately four decimal places.
 
 In the Table \ref{tab:oscil results} eigenvalues and their errors are shown.
 \begin{table}[H]
@@ -1626,7 +1628,7 @@ In the Table \ref{tab:oscil results} eigenvalues and their errors are shown.
     \label{tab:oscil results}
     \begin{tabular}{rrrr}
         \toprule
-        $\lambda_1$ & $|\lambda_1 - \lambda_{1, ref}|$ & $\lambda_{2,3}$ & $|\lambda_{2,3} - \lambda{2,3,ref}|$ \\
+        $\lambda_1$ & $|\lambda_1 - \lambda_{1, ref}|$ & $\lambda_{2,3}$ & $|\lambda_{2,3} - \lambda_{2,3,ref}|$ \\
         \midrule
         279.91036 & 53.636212 & 919.984171 & 467.435906 \\
         237.45286 & 11.178717 & 512.878866 & 60.330601 \\
@@ -1637,16 +1639,40 @@ In the Table \ref{tab:oscil results} eigenvalues and their errors are shown.
     \end{tabular}
 \end{table}
 
-$\lambda_1$ is the lowest eigenvalue of the scaled finite-domain harmonic oscillator problem.
+Here, $\lambda_1$ is the lowest eigenvalue of the scaled finite-domain quantum harmonic oscillator problem, while $\lambda_{2,3}$ denotes teh degenerate first excited level.
 
 
 \subsubsection{Results: eigenfunctions}
 The FEM eigenvector $c = (c_1, \dots, c_N)^T$ contains the coefficients to construct the approximate wavefunction $\psi$ as in \ref{eq:wavefunction}, whose square $|\psi|^2$ shows the probability density of finding the particle.
 \begin{equation}
-    \psi_n(x, y) = \sum_{i=1}^{N} c_i\phi_i(x, y)
+    \psi_h(x, y) = \sum_{i=1}^{N} c_i\phi_i(x, y)
     \label{eq:wavefunction}
 \end{equation}
 
+In Fig. \ref{fig:oscil wavefunctions} we can see the plots of wavefunctions at the ground state (left) and two higher energy level states (middle and right).
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{oscil wavefunctions.png}
+    \caption{Wavefunctions at different quantum states}
+    \label{fig:oscil wavefunctions}
+\end{figure}
+
+The wavefunctions $\psi$ are the probability amplitudes, but what does the sign of the wavefunction tell us? Whenever $\psi$ crosses zero (the red/blue boundary) is a node. Node count is important because it allows us to read the excitation level: mode 1 has zero interior sign changes, hence it is a ground state. 
+Modes 2 and 3 each have exactly one nodal line, therefore they are the first excited level. This also meets perfectly with theory, because for a 2D isotropic harmonic oscillator, evergy level $n$ is $(n+1)$ --- so $n = 0$ gives 1 state, $n = 1$ gives 2, that is what we see in the figure.
+
+Another useful characteristic of the wavefunction is its square $|\psi|^2$ that represents the probability density, which informally means where are we most likely to find the particle. The actual probability $P$ can be calculated using \ref{eq:prob}.
+\begin{equation}
+    P = \int_\Omega |\psi(x, y)|^2 \, dxdy
+    \label{eq:prob}
+\end{equation}
+
+It is clear since probability density is the square of the wavefunction, the plot will look similar, but without negative signs. However, if we use only $|\psi|^2$ plots for interpreting results we can miss on the nodal count. Because we will not be able to say if the dark seam is the node or it is jsut a separation of two low-density blobs. To be exact we can look at Fig. \ref{fig:oscil prob density} and notice that we cannot tell if it is a continuous function crossing zero, with the two side carrying opposite phase or not.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{oscil prob density.png}
+    \caption{Probability density at different quantum states}
+    \label{fig:oscil prob density}
+\end{figure}
 
 \subsubsection{Convergence}
 With constant potential it was clear that convergence will go similarly as the Laplace eigenproblem, however, will additional parameters influence the convergence?
