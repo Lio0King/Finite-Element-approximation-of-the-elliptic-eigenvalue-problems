@@ -1469,7 +1469,7 @@ The results therefore illustrate a trade-off between approximation order and com
 \section{Numerical results for the Schr\"{o}dinger's Eigenproblem}
 
 As it was mentioned before in the finite element formulation used in this project, Schr\"{o}dinger eigenproblem has the same stiffness and mass matrices as the Laplace eigenproblem, with an additional potential matrix arising from the potential energy term. However, potential energy has one very important detail - it can be defined using different equations, which will change the physical meaning and will require some adjustments in the computer implementation. The main questions are how does each variant of the potential influence the results and what do these results mean? 
-In this project 3 potential models will be considered: infinite square well, quantum harmonic oscillator and 2D Coulomb radial equation. Very important note is that the computational experiments use a scaled/non-dimensional Schr\"{o}dinger operator, unless specifically stated otherwise.
+In this project 3 potential models will be considered: infinite square well, quantum harmonic oscillator and 2D Coulomb radial equation. Very important note is that the computational experiments use a scaled/non-dimensional Schr\"{o}dinger operator, in order to analyse FEM as mathematical tool for solving partial differential equations.
 
 
 \subsection{Infinite square well}
@@ -1498,8 +1498,6 @@ Where $K_V = \int_\Omega V\phi_i\phi_j \, dx = VM_{i,j}$. This allows us to rewr
 \end{equation}
 and the eigenvectors are unchanged.
 
-
-\subsubsection{Non-scaled potential matrix}
 To compare results from Laplace eigenproblem with Schr\"{o}dinger eigenproblem with constant potential, we made potential equal to $5$. Since we know that the Laplace implementation converges to the theoretical values we will not check the convergence for Schr\"{o}dinger problem with constant potential.
 The comparison is presented in Table \ref{tab:Laplace vs Schrod}.
 \begin{table}[H]
@@ -1551,15 +1549,6 @@ The two matrices in \ref{eq:vectors} show the column spaces of first three eigen
 
 The first eigenfunctions are identical, which means that potential matrix does not affect the eigenspaces corresponding to the eigenvalues, in other words, with constant potential, the potential matrix is proportional to the mass matrix, that is why the eigenfunctions remain unchanged while all eigenvalues are shifted by the same amount. Unfortunately, We can not analyse the degenerate pair, because on tis coarse mesh (3 points per axis) there is no degeneracy, and the next mesh produces much larger eigenfunctions which will become a challenge to put in this report.
 
-\subsubsection{Scaled potential matrix}
-When we scale the potential matrix, we will look at physical problem rather than a mathematical object. And because we know that potential matrix just shifts the eigenvalues and does not affect the eigenfunctions, we can be sure that the results will converge to the same numbers we had in the Laplace eigenproblem.
-
-Here we are more interested in the eigenvalues and more importantly in $E$ which is total energy of quantum system. Because in our derivation of reduced Schr\"{o}dinger equation \ref{eq:reduced Schrodinger} we let $\lambda = \frac{2mE}{\hbar^2}$, now we can extract $E$:
-\begin{equation}
-    E = \frac{\hbar^2}{2m}\lambda
-    \label{eq:total energy}
-\end{equation}
-Where $\hbar$ is a reduced Planck's constant and $m$ is the mass of the particle. As a particle we will use electron, whose mass is well-known.
 
 
 
@@ -1701,7 +1690,8 @@ As it was expected, both eigenvalues and eigenvectors errors converged at the th
     \label{fig:harmonic oscil convergence}
 \end{figure}
 
-\subsection{Physically scaled quantum harmonic oscillator}
+
+\subsection{Coulomb radial equation}
 
 \section{Discussion}
 - why stiffness matrix alone is insufficient
