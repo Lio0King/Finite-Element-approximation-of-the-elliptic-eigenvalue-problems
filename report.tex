@@ -1658,7 +1658,7 @@ Another useful characteristic of the wavefunction is its square $|\psi|^2$ that 
 It is clear since probability density is the square of the wavefunction, the plot will look similar, but without negative signs. However, if we use only $|\psi|^2$ plots for interpreting results we can miss on the nodal count. Because we will not be able to say if the dark seam is the node or it is jsut a separation of two low-density blobs. To be exact we can look at Fig. \ref{fig:oscil prob density} and notice that we cannot tell if it is a continuous function crossing zero, with the two side carrying opposite phase or not.
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\columnwidth]{oscil prob density.png}
+    \includegraphics[scale=0.24]{oscil prob density.png}
     \caption{Probability density at different quantum states}
     \label{fig:oscil prob density}
 \end{figure}
@@ -1671,19 +1671,19 @@ As it was expected, both eigenvalues and eigenvectors errors converged at the th
     \centering
     \begin{subfigure}{\columnwidth}
         \centering
-        \includegraphics[scale=0.23]{oscil eigval convergence.png}
+        \includegraphics[scale=0.2]{oscil eigval convergence.png}
         \caption{Eigenvalue}
     \end{subfigure}
     \vspace{1em}
     \begin{subfigure}{\columnwidth}
         \centering
-        \includegraphics[scale=0.23]{oscil eigvec convergence L2.png}
+        \includegraphics[scale=0.2]{oscil eigvec convergence L2.png}
         \caption{Eigenfunction $L^2$-norm projection}
     \end{subfigure}
     \vspace{1em}
     \begin{subfigure}{\columnwidth}
         \centering
-        \includegraphics[scale=0.23]{oscil eigvec convergence H1.png}
+        \includegraphics[scale=0.2]{oscil eigvec convergence H1.png}
         \caption{Eigenfunction $H^1$-norm projection}
     \end{subfigure}
     \caption{Quantum harmonic oscillator convergence rates}
@@ -1692,6 +1692,28 @@ As it was expected, both eigenvalues and eigenvectors errors converged at the th
 
 
 \subsection{Coulomb radial equation}
+Coulomb potential is definied as: 
+\begin{equation}
+    V(r) = -\frac{Z}{r}, \quad r = \sqrt{(x - x_0)^2 + (y - y_0)^2}
+    \label{eq:coulomb potential}
+\end{equation}
+Where $Z$ is the atomic number, that is equal to amount of protons in the nucleus. For real hydrogen, $Z = 1$. However, since the domain is quite small and we want wavefunction to be strongly concentrated around the nucleus, we use a hydrogen-like ion with $Z = 10$ to obtain a stronger Coulomb potential while retaining a one-electron system. 
+
+As we can also see \ref{eq:coulomb potential} is radially symmetric. Hence, instead of solving problem on the squared domain $\Omega^2 = [0, 1]^2$ with $n$ points per axis, we will choose a polar-coordinate-based mesh as it is more natural for Coulomb potential, and for simplicity will put the nucleus in the middle at $(x_0, y_0) = (0.5, 0.5)$ with 2 parameters $r \in [0, R]$ --- number of radial divisions and $\theta \in [0, 2\pi)$ --- number of angular divisions. The idea of the mesh on the new domain can be visualised as in Fig. \ref{fig:disk mesh} where as we can see mesh consists of concentric radial layers, with regions between adjacent layers subdivided into triangular elements. Also since we are analysing the nucleus we want more nodes in the middle, because the wavefunction varies rapidly near the nucleus and a finer mesh resolves the spacial behaviour more accurately.
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\columnwidth]{disk mesh.png}
+    \caption{The triangular mesh on the disk with P2 elements}
+    \label{fig:disk mesh}
+\end{figure}
+
+One of the main issues that arises from the first glance is the singularity when $r = 0$. This will be solved by using the constrained version of Coulomb potential \ref{eq:constrained coulomb}:
+\begin{equation}
+    V(r) = -\frac{Z}{r_{constr}}, \quad r_{constr} = r + \epsilon e^{-\frac{r}{\epsilon}}
+    \label{eq:constrained coulomb}
+\end{equation}
+
+This ensures that we avoid the division by 0 because when $r = 0$ we will have $V(0) = -\frac{Z}{\epsilon}$, which would be finite, while being close to 0. For $r \gg \epsilon$ the exponential term becomes negligible and $r_{constr} \approx r$, so the constrained potential approaches the original Coulomb potential.
 
 \section{Discussion}
 - why stiffness matrix alone is insufficient
