@@ -1691,7 +1691,7 @@ As it was expected, both eigenvalues and eigenvectors errors converged at the th
 \end{figure}
 
 
-\subsection{Coulomb radial equation}
+\subsection{Coulomb potential and radial formulation}
 Coulomb potential is definied as: 
 \begin{equation}
     V(r) = -\frac{Z}{r}, \quad r = \sqrt{(x - x_0)^2 + (y - y_0)^2}
@@ -1699,7 +1699,7 @@ Coulomb potential is definied as:
 \end{equation}
 Where $Z$ is the atomic number, that is equal to amount of protons in the nucleus. For real hydrogen, $Z = 1$. However, since the domain is quite small and we want wavefunction to be strongly concentrated around the nucleus, we use a hydrogen-like ion with $Z = 10$ to obtain a stronger Coulomb potential while retaining a one-electron system. 
 
-As we can also see \ref{eq:coulomb potential} is radially symmetric. Hence, instead of solving problem on the squared domain $\Omega^2 = [0, 1]^2$ with $n$ points per axis, we will choose a polar-coordinate-based mesh as it is more natural for Coulomb potential, and for simplicity will put the nucleus in the middle at $(x_0, y_0) = (0.5, 0.5)$ with 2 parameters $r \in [0, R]$ --- number of radial divisions and $\theta \in [0, 2\pi)$ --- number of angular divisions. The idea of the mesh on the new domain can be visualised as in Fig. \ref{fig:disk mesh} where as we can see mesh consists of concentric radial layers, with regions between adjacent layers subdivided into triangular elements. Also since we are analysing the nucleus we want more nodes in the middle, because the wavefunction varies rapidly near the nucleus and a finer mesh resolves the spacial behaviour more accurately.
+As we can also see \ref{eq:coulomb potential} is radially symmetric. Hence, instead of solving problem on the squared domain $\Omega^2 = [0, 1]^2$ with $n$ points per axis, we will choose a polar-coordinate-based mesh as it is more natural for Coulomb potential, and for simplicity will put the nucleus in the middle at $(x_0, y_0) = (0.5, 0.5)$ with 2 parameters $N_r $ with $r \in [0, R]$ --- number of radial divisions and $N_\theta$ with $\theta \in [0, 2\pi)$ --- number of angular divisions. The idea of the mesh on the new domain can be visualised as in Fig. \ref{fig:disk mesh} where as we can see mesh consists of rings, where the space between the rings is subdivided into triangles. Also since we are analysing the nucleus we want more nodes in the middle, because the wavefunction varies rapidly near the nucleus and a finer mesh resolves the spacial behaviour more accurately, in addition the singularity of the original Coulomb potential at $r = 0$ is treated separately using the regularisation introduced below.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\columnwidth]{disk mesh.png}
@@ -1707,20 +1707,58 @@ As we can also see \ref{eq:coulomb potential} is radially symmetric. Hence, inst
     \label{fig:disk mesh}
 \end{figure}
 
-Because from the previous experiments we had only number of points per axis we will use them as radial divisions numbers and for the angular divisions we will use the algorithm that will keep the desired ratio between radial and angular divisions, in this project the target ratio is 1.3.
+Because from the previous experiments we had only number of points per axis we will use them as radial divisions numbers and for the angular divisions we will use the algorithm that will keep the desired ratio between radial element length and angular length, in this project the target ratio is 1.3.
 
-One of the main issues that arises from the first glance is the singularity when $r = 0$. This will be solved by using the constrained version of Coulomb potential \ref{eq:constrained coulomb}:
+One of the main issues that arises from the first glance is the singularity when $r = 0$. This will be solved by using the regularised version of Coulomb potential \ref{eq:regularised coulomb}:
 \begin{equation}
     V(r) = -\frac{Z}{r_{constr}}, \quad r_{constr} = r + \epsilon e^{-\frac{r}{\epsilon}}
-    \label{eq:constrained coulomb}
+    \label{eq:regularised coulomb}
 \end{equation}
 
 This ensures that we avoid the division by 0 because when $r = 0$ we will have $V(0) = -\frac{Z}{\epsilon}$, which would be finite, while being close to 0. For $r \gg \epsilon$ the exponential term becomes negligible and $r_{constr} \approx r$, so the constrained potential approaches the original Coulomb potential.
 
 Another aspect that needed a change, comparing to the all previous computations, is the values that we are going to use as reference to compare obtained FEM numbers. 
 
-At first, similar approach as in quantum harmonic oscillator was taken, to use the separation of variables and finite differences. However, finite differences were diverging for the ground state ($m = 0$). That is why it was decided to implement FEM again, in other words the weak form of radial equation was solved using P1 elements and because of its simplicity and low time complexity it was possible to take $N = 5000$ which ensures that the results will be incredibly close to the actual value, which was proven in the \ref{sec: P1 vs P2}. 
-\subsubsection{}
+At first, similar approach, using the separation of variables as in quantum harmonic oscillator was taken. However, for the ground-state radial problem (angular momentum quantum number $l = 0$), the finite-difference approximation did not converge reliably under mesh refinement. That is why it was decided to implement FEM again, specifically the weak form of radial equation was solved using P1 elements and because of its simplicity and low time complexity it was possible to take $N = 5000$ elements which ensured that the results will be a relible reference method, which was proven in the \ref{sec: P1 vs P2}. 
+
+\subsubsection{Results: eigenvalues}
+Eigenvalues were obtained and compared with reference ones (important note, reference numbers are not real values that we get, these are the values that are incredibly close to the actual ones and obtained by the trusted method). The results are presented in Tab. \ref{tab:first eigvals errors} for the first eigenvalues and in Tab. \ref{tab:degenerate pair errors} for the degenerate pair.
+\begin{table}[H]
+    \centering
+    \caption{First eigenvalues errors with Coulomb potential}
+    \label{tab:first eigvals errors}
+    \begin{tabular}{rrrr}
+        \toprule
+        Points per axis & Interior DOFs & $\lambda_{1,h}$ & $|\lambda_{1,ref} - \lambda_{1,h}|$ \\
+        \midrule
+        5 & 131 & -75.980390 & 2.943116 \\
+        11 & 704 & -78.781561 & 0.141944 \\
+        21 & 2542 & -78.905177 & 0.018328 \\
+        41 & 9892 & -78.920242 & 0.003263 \\
+        81 & 38675 & -78.922759 & 0.000746
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+\begin{table}[H]
+    \centering
+    \caption{Degenerate pair eigenvalues errors with Coulomb potential}
+    \label{tab:degenerate pair errors}
+    \begin{tabular}{rrrr}
+        \toprule
+        Points per axis & Interior DOFs & $\max{\lambda_{2,h}, \lambda_{3,h}}$ & $|\lambda_{deg,ref} - \lambda_{deg,h}|$ \\
+        \midrule
+        5 & 131 & 21.445939 & 6.244189 \\
+        11 & 704 & 16.223882 & 1.022133 \\
+        21 & 2542 & 15.470698 & 0.268949 \\
+        41 & 9892 & 15.269349 & 0.067599 \\
+        81 & 38675 & 15.219181 & 0.017431
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+As we can notice the errors are not as small as they were in the previous problems, but before making any conclusions it is a good practice to check the relative error from \ref{eq:relative error}. For the first eigenvalue at the finest mesh $e_{rel} = |\frac{0.000746}{-78.922759}| \approx 9.45 \times 10^{-6}$. And for the degenerate pair $e_{rel} \approx 0.0011$. The first eigenvalue relative error matches the previous P2 element from the Laplace eigenproblem, however the degenerate pair has much higher error.
+ 
 
 \section{Conclusion}
 
