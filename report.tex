@@ -1553,7 +1553,7 @@ The first eigenfunctions are identical, which means that potential matrix does n
 
 
 \subsection{Quantum harmonic oscillator}
-The quantum harmonic oscillator models a particle in a parabolic potential well, featuring discrete, equally spaced energy levels and a non-zero ground state energy.
+The quantum harmonic oscillator models a particle in a parabolic potential well, featuring discrete, equally spaced energy levels and a non-zero ground state energy \cite{b28}.
 
 The main difference between infinite square well and quantum harmonic oscillator is that in harmonic oscillator we have quantised energy levels that are given by \ref{eq:harmonic oscill}.
 \begin{equation}
@@ -1561,7 +1561,7 @@ The main difference between infinite square well and quantum harmonic oscillator
     \label{eq:harmonic oscill}
 \end{equation}
 
-Hence, because our problem is not on the infinite line, so our potential energy will be defined as $V(x, y) = \frac{1}{2}m\omega^2\Big((x - x_0)^2 + (y - y_0)^2\Big)$, where $\omega$ is angular frequency and $m$ is the mass of the particle.
+Hence, because our problem is not on the infinite line, so our potential energy will be defined as $V(x, y) = \frac{1}{2}m\omega^2\Big((x - x_0)^2 + (y - y_0)^2\Big)$, where $\omega$ is angular frequency and $m$ is the mass of the particle \cite{b28}.
 
 There are few changes that differ this problem from all previous problems. First of all, as it was mentioned before, because we define $V(x, y)$ with equation that contains unknown variables: $x$ and $y$, and the basis functions $\phi_i(x, y)$ and $\phi_j(x, y)$ also depend on $x$ and $y$, multiplying all of them, we can get polynomial up to degree 6. The previous quadrature rule is exact only for polynomials up to degree 4 and is therefore insufficient to integrate this degree-6 integrand exactly.
 Additionally, there is no simple analytical solution for the harmonic oscillator on the finite square domain. Hence, to check whether the FEM eigenvalues are correct, we need a "numerical reference", in other words we need to solve the same problem with trusted numerical method and compare with FEM implementation. Luckily, this 2D problem can be solved easily with few numerical methods.
@@ -1707,7 +1707,7 @@ As we can also see \ref{eq:coulomb potential} is radially symmetric. Hence, inst
     \label{fig:disk mesh}
 \end{figure}
 
-Because from the previous experiments we had only number of points per axis we will use them as radial divisions numbers and for the angular divisions we will use the algorithm that will keep the desired ratio $\frac{\text{angular element length}}{\text{radia element length}}$, in this project the target ratio is 1.3.
+Because from the previous experiments we had only number of points per axis we will use them as radial divisions numbers and for the angular divisions we will use the algorithm that will keep the desired ratio $\frac{\text{angular element length}}{\text{radial element length}}$, in this project the target ratio is 1.3.
 
 One of the main issues that arises from the first glance is the singularity when $r = 0$. This will be solved by using the regularised version of Coulomb potential \ref{eq:regularised coulomb}:
 \begin{equation}
@@ -1735,7 +1735,7 @@ Eigenvalues were obtained and compared with reference ones (important note, refe
         11 & 704 & -78.781561 & 0.141944 \\
         21 & 2542 & -78.905177 & 0.018328 \\
         41 & 9892 & -78.920242 & 0.003263 \\
-        81 & 38675 & -78.922759 & 0.000746
+        81 & 38675 & -78.922759 & 0.000746 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -1746,13 +1746,13 @@ Eigenvalues were obtained and compared with reference ones (important note, refe
     \label{tab:degenerate pair errors}
     \begin{tabular}{rrrr}
         \toprule
-        Points per axis & Interior DOFs & $\max(|\lambda_{2,h} - \lambda_{deg}|, |\lambda_{3,h} - \lambda_{deg})$ & $|\lambda_{deg,ref} - \lambda_{deg,h}|$ \\
+        Points per axis & Interior DOFs & $\max(\lambda_{2,h}, \lambda_{3,h})$ & $|\lambda_{deg,ref} - \lambda_{deg,h}|$ \\
         \midrule
         5 & 131 & 21.445939 & 6.244189 \\
         11 & 704 & 16.223882 & 1.022133 \\
         21 & 2542 & 15.470698 & 0.268949 \\
         41 & 9892 & 15.269349 & 0.067599 \\
-        81 & 38675 & 15.219181 & 0.017431
+        81 & 38675 & 15.219181 & 0.017431 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -1767,17 +1767,18 @@ Similar to eigenvalues, eigenfunctions showed predictable behaviour with the gro
     \centering
     \begin{subfigure}{\columnwidth}
         \centering
-        \includegraphics[scale=0.2]{coulomb eigenfunction.png}
+        \includegraphics[scale=0.3]{coulomb eigenfunc.png}
         \caption{Eigenfunctions}
         \label{fig:coulomb eigenfunc}
     \end{subfigure}
     \vspace{1em}
     \begin{subfigure}{\columnwidth}
         \centering
-        \includegraphics[scale=0.2]{coulomb density.png}
+        \includegraphics[scale=0.3]{coulomb density.png}
         \caption{Probability density of the Coulomb potential}
         \label{fig:coulomb density}
     \end{subfigure}
+    \caption{Coulomb problem eigenfunctions and probability density}
     \label{fig:coulomb}
 \end{figure}
 
@@ -1796,7 +1797,7 @@ Finally, eigenfunction errors were decreasing as mesh becomes finer which is pro
         11 & 0.001744 & 0.079745 \\
         21 & 0.000703 & 0.019350 \\
         41 & 0.000228 & 0.005964 \\
-        81 & 0.000066 & 0.002125
+        81 & 0.000066 & 0.002125 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -1814,7 +1815,7 @@ The errors for the degenerate pair can be found in Table \ref{tab:coulomb degene
         11 & 0.010916 & 0.213444 \\
         21 & 0.004405 & 0.083545 \\
         41 & 0.001348 & 0.029705 \\
-        81 & 0.000379 & 0.010731
+        81 & 0.000379 & 0.010731 \\
         \bottomrule
     \end{tabular}
 \end{table}
@@ -1822,51 +1823,100 @@ The errors for the degenerate pair can be found in Table \ref{tab:coulomb degene
 In both tables it is noticable that the $H^1$-norm projection error is noticably higher than the corresponding $L^2$-norm error. This is expected because the $H^1$-norm also measures errors in the derivatives of the eigenfunctions and is therefore more sensible to the resolution of the reference solution. Because the reference solution was obtained using P1 elements, its derivative approximation introduces an additional source of error. Consequently, the reported $H^1$ errors measure the difference between the P2 FEM solution and the finite element reference rather than the error with respect to the exact eigenfunction. The consistent decrease of the errorsunder mesh refinement nevertheless provides evidence of convergence.
 
 \subsubsection{Convergence}
+Notwithstanding good results in error analysis, the convergence analysis did not show the expected results. First of all lets look at Table \ref{tab:coulomb eigval conv} and Table \ref{tab:coulomb eigfunc conv}.
+\begin{table}[H]
+    \centering
+    \caption{Eigenvalues convergence of the Coulomb potential}
+    \label{tab:coulomb eigval conv}
+    \begin{tabular}{rrr}
+        \toprule
+        $h$ & $\lambda_{1,h}$ rate of conv & $max(\lambda_{2,h}, \lambda_{3,h})$ rate of conv \\
+        \midrule
+        0.405071 & NaN & NaN \\
+        0.246174 & 6.087635 & 3.633880 \\
+        0.146306 & 3.933956 & 2.565867 \\
+        0.079500 & 2.829338 & 2.264014 \\
+        0.041601 & 2.278367 & 2.092796 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
+\begin{table}[H]
+    \centering
+    \caption{Eigenfunctions convergence with Coulomb potential}
+    \label{tab:coulomb eigfunc conv}
+    \begin{tabular}{rrrrr}
+        \toprule
+        $h$ & \multicolumn{2}{c}{Ground state} & \multicolumn{2}{c}{Degenerate pair} \\
+        \cmidrule(lr){2-3}
+        \cmidrule(lr){4-5}
+        & $L^2$ & $H^1$ & $L^2$ & $H^1$ \\
+        \midrule
+        0.405071 & NaN & NaN & NaN & NaN \\
+        0.246174 & 6.536669 & 4.364368 & 1.475737 & 1.848184 \\
+        0.146306 & 1.746220 & 2.721565 & 1.743944 & 1.802654 \\
+        0.079500 & 1.847717 & 1.929589 & 1.941339 & 1.695334 \\
+        0.041601 & 1.921016 & 1.593131 & 1.959467 & 1.572191 \\
+        \bottomrule
+    \end{tabular}
+\end{table}
 
+The first noticable feature comparing to the all previous results is that with the mesh refinement the convergence rates are decaying and approaching much lower value than was expected. 
+
+The main reason for this is that theoretical P2 convergence rates, namely $O(h^4)$ for eigenvalues, $O(h^3)$ for the $L^2$ eigenfunction error and $O(h^2)$ for the $H^1$ eigenfunction error, assume a shape-regular family of meshes. In particular, the aspect ratios of teh elements mus retain bounded independently of the mesh size $h$.
+
+That is where the main difference lies, the polar mesh used for the Coulomb problem does not the condition stated above. At the centre of the disk, a single node is connected to all angular divisions, producing a fan of triangles. As the angular resolution is increased, the number of triangles meeting at this central node also increases. For this geometry, the worst-case aspect ratio of the fan grows approximately as $\frac{N_{\theta}}{2\pi}$, which was also confirmed against the measured mesh data up to rounding. Therefore, as $N_\theta$ increases during mesh refinement, the aspect ratio of the central elements becomes unbounded. This violates the shape-regularity assumption regardless of the radial grading or the chosen target aspect ratio.
+
+Another reason for the decaying convergence rates is the interpretation of the global mesh size $h$. For a general triangulation, $h = \max_{K \in \Omega_h}diam(K)$. In previous examples, we used quasi-uniform meshes, for which the element sizes were comparable throughout the domain, so its global value provided a good representation of the overall mesh resolution. In the polar mesh for the Coulomb problem, however, the elements near the centre are much smaller than those near the boundary, because the power method was used to arrange those nodes. Consequently, the global mesh value of $h$ is determined by the largest elements and does not fully represent the much finer resolution near the nucleus.
+
+These two reasons explain why the theoretical P2 convergence rates are not observed for the present mesh family. But it does not mean that P2 finite-element approximation failed, it means that this particular polar mesh family does not satisfy the geometric assumptions required by the standard convergence theory.
+
+Improving the mesh topology so that the elements remain shape-regular while retaining increased resolution near the nucleus would require substantial changes to the mesh-generation procedure. This is therefore considered beyond the scope of the present project and could form the basis of a separate investigation.
 
 \section{Conclusion}
 
 \newpage
 \begin{thebibliography}{00}
 \bibitem{b0} W. A. Strauss, Partial Differential Equations. Wiley Global Education, 2012
-\bibitem{b1} Arxiv.org, 2023. \url{https://arxiv.org/pdf/1903.11240} (accessed Jul. 15, 2026)
+\bibitem{b1} Arxiv.org, 2023. \url{https://arxiv.org/pdf/1903.11240} 
 \bibitem{b2} W. Ding and Y. Wei, “Generalized Tensor Eigenvalue Problems,” Theory and Computation of Tensors, pp. 11-36, 2016, doi: 10.1016/b978-0-12-803953-3.50002-2
-\bibitem{b3} \url{https://www.researchgate.net/publication/235012188_An_Algorithm_for_the_Generalized_Matrix_Eigenvalue_Problem_Ax_Lambda_Bx}
-\bibitem{b4} “What is the difference between strong form and weak form? | ResearchGate,” ResearchGate, 2016. \url{https://www.researchgate.net/post/What_is_the_difference_between_strong_form_and_weak_form} (accessed Jun. 18, 2026)
-\bibitem{b4.1} “Variational Formulation 2.1 Boundary Value problems Example 2.1.1 (One dim'l problem),” Accessed: Jun. 18, 2026. [Online]. Available: \url{https://mathsci.kaist.ac.kr/~dykwak/Courses/FEM765-17/variation-fem.pdf}
+\bibitem{b3} A. K. Saad, “An algorithm for the generalized matrix eigenvalue problem Ax=\lambda Bx,” ResearchGate. [Online]. Available: \url{https://www.researchgate.net/publication/235012188_An_Algorithm_for_the_Generalized_Matrix_Eigenvalue_Problem_Ax_Lambda_Bx}
+\bibitem{b4} “What is the difference between strong form and weak form? | ResearchGate,” ResearchGate, 2016. \url{https://www.researchgate.net/post/What_is_the_difference_between_strong_form_and_weak_form}
+\bibitem{b4.1} “Variational Formulation 2.1 Boundary Value problems Example 2.1.1 (One dim'l problem),”. [Online]. Available: \url{https://mathsci.kaist.ac.kr/~dykwak/Courses/FEM765-17/variation-fem.pdf}
 \bibitem{b10} M. G. Larson and Fredrik Bengzon, The Finite Element Method: Theory, Implementation, and Applications. Springer Science $\&$ Business Media, 2013
-\bibitem{b5} GeeksforGeeks, “Bilinear Form,” GeeksforGeeks, Sept. 11, 2024. \url{https://www.geeksforgeeks.org/engineering-mathematics/bilinear-form/} (accessed Jun. 25, 2026)
-\bibitem{b6} manavofficial577, “Bilinear Form Linear Algebra Notes,” Scribd, 2026. \url{https://www.scribd.com/document/931572146/Bilinear-Form-Linear-Algebra-Notes} (accessed Jun. 25, 2026)
-\bibitem{b6.1} \url{https://www.cip.ifi.lmu.de/~grinberg/algebra/bilf.pdf}
-\bibitem{b7} “Lax-Milgram Theorem,” WolframResearch, 2026. \url{https://mathworld.wolfram.com/Lax-MilgramTheorem.html} (accessed Jul. 10, 2026)
-\bibitem{b8} D. bounded, “Mathematics Stack Exchange,” Mathematics Stack Exchange, Mar. 28, 2023. \url{https://math.stackexchange.com/questions/4668104/determining-the-bilinear-form-a-is-bounded} (accessed Jul. 11, 2026)
-\bibitem{b9} S. Shaik, “Compare Ritz to Galerkin,” Scribd, 2026. \url{https://www.scribd.com/document/314330469/Compare-Ritz-to-Galerkin} (accessed Jul. 15, 2026)
-\bibitem{b9.1} “6 Eigenvalues of the Laplacian,” Accessed: Jun. 24, 2026. [Online]. Available:\url{https://web.stanford.edu/class/math220b/handouts/eigenvalues.pdf}
-\bibitem{b11} IEEE, “The Advantages of the Finite Element Method - IEEE Innovation at Work,” May 2019. Accessed: Jul. 29, 2026. [Online]. Available: \url{https://innovationatwork.ieee.org/the-advantages-of-fem/}
+\bibitem{b5} GeeksforGeeks, “Bilinear Form,” GeeksforGeeks, Sept. 11, 2024. \url{https://www.geeksforgeeks.org/engineering-mathematics/bilinear-form/}
+\bibitem{b6} manavofficial577, “Bilinear Form Linear Algebra Notes,” Scribd, 2026. \url{https://www.scribd.com/document/931572146/Bilinear-Form-Linear-Algebra-Notes}
+\bibitem{b6.1} D. Grinberg, “Bilinear forms,” University of Minnesota. [Online]. Available: \url{https://www.cip.ifi.lmu.de/~grinberg/algebra/bilf.pdf}
+\bibitem{b7} “Lax-Milgram Theorem,” WolframResearch, 2026. \url{https://mathworld.wolfram.com/Lax-MilgramTheorem.html}
+\bibitem{b8} D. bounded, “Mathematics Stack Exchange,” Mathematics Stack Exchange, Mar. 28, 2023. \url{https://math.stackexchange.com/questions/4668104/determining-the-bilinear-form-a-is-bounded}
+\bibitem{b9} S. Shaik, “Compare Ritz to Galerkin,” Scribd, 2026. \url{https://www.scribd.com/document/314330469/Compare-Ritz-to-Galerkin}
+\bibitem{b9.1} “6 Eigenvalues of the Laplacian,”. [Online]. Available:\url{https://web.stanford.edu/class/math220b/handouts/eigenvalues.pdf}
+\bibitem{b11} IEEE, “The Advantages of the Finite Element Method - IEEE Innovation at Work,” May 2019. [Online]. Available: \url{https://innovationatwork.ieee.org/the-advantages-of-fem/}
 \bibitem{b12.1} G. Strang and G. Fix, An Analysis of the Finite Element Method. Wellesley-Cambridge Press, 2018
 \bibitem{b12.2} I. Babuška and J. Osborn, "Eigenvalue problems," in Handbook of Numerical Analysis, vol. II, Finite Element Methods (Part 1), P. G. Ciarlet and J. L. Lions, Eds. Amsterdam, Netherlands: North-Holland, 1991, pp. 641-787
 \bibitem{b12.3} G. Dusson and Y. Maday, “An overview of a posteriori error estimation and post-processing methods for nonlinear eigenvalue problems,” Journal of Computational Physics, vol. 491, p. 112352, July 2023, doi: 10.1016/j.jcp.2023.112352
 \bibitem{b12.4} I. Babuška and J. E. Osborn, “Finite element-Galerkin approximation of the eigenvalues and eigenvectors of selfadjoint problems,” Mathematics of Computation, vol. 52, no. 186, pp. 275-297, 1989, doi: 10.1090/s0025-5718-1989-0962210-8
-\bibitem{b12} GeeksforGeeks, “Triangulations Using Matplotlib,” GeeksforGeeks, Feb. 02, 2023. \url{https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/} (accessed Aug. 01, 2026)
-\bibitem{b13} J. Burkardt, “Computational Geometry Lab: FEM BASIS FUNCTIONS FOR A TRIANGLE,” 2018. Accessed: Aug. 01, 2026. [Online]. Available: \url{https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf}
-\bibitem{b13.1} N. G. Gençer and I. O. Tanzer, “Forward problem solution of electromagnetic source imaging using a new BEM formulation with high-order elements,” Physics in Medicine and Biology, vol. 44, no. 9, pp. 2275–2287, Aug. 1999, doi: 10.1088/0031-9155/44/9/314
-\bibitem{b14} \url{https://www.geophysik.uni-muenchen.de/~igel/Lectures/NMG/08_finite_elements_basisfunctions.pdf}
+\bibitem{b12} GeeksforGeeks, “Triangulations Using Matplotlib,” GeeksforGeeks, Feb. 02, 2023. \url{https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/}
+\bibitem{b13} J. Burkardt, “Computational Geometry Lab: FEM BASIS FUNCTIONS FOR A TRIANGLE,” 2018. [Online]. Available: \url{https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf}
+\bibitem{b13.1} N. G. Gençer and I. O. Tanzer, “Forward problem solution of electromagnetic source imaging using a new BEM formulation with high-order elements,” Physics in Medicine and Biology, vol. 44, no. 9, pp. 2275-2287, Aug. 1999, doi: 10.1088/0031-9155/44/9/314
+\bibitem{b14} M. Igel, “Finite elements: Basis functions,” Ludwig Maximilian University of Munich. [Online]. Available: \url{https://www.geophysik.uni-muenchen.de/~igel/Lectures/NMG/08_finite_elements_basisfunctions.pdf}
 \bibitem{b15} D. Xu, J. Stare, and A. L. Cooksy, “Solving the vibrational Schrödinger equation on an arbitrary multidimensional potential energy surface by the finite element method,” Computer Physics Communications, vol. 180, no. 11, pp. 2079-2094, June 2009, doi: 10.1016/j.cpc.2009.06.010
 \bibitem{b16} Hammer, Preston C., Marlowe, O. J., and Stroud, A. H. Numerical integration over simplexes and cones, Mathematical Tables and Other Aids to Computation 10(55), 130-137, 1956. [DOI: 10.2307/2002483]
 \bibitem{b17} D. A. Dunavant, “High degree efficient symmetrical Gaussian quadrature rules for the triangle,” International Journal for Numerical Methods in Engineering, vol. 21, no. 6, pp. 1129-1148, June 1985, doi: 10.1002/nme.1620210612
-\bibitem{b18} Sc.edu, 2026. \url{https://people.math.sc.edu/Burkardt/cpp_src/triangle_dunavant_rule/triangle_dunavant_rule.cpp} (accessed Aug. 10, 2026)
-\bibitem{b19} “Assembly — FEM Tutorial 0.1.0 documentation,” Uni-erlangen.de, 2017. \url{https://ww8central.ww.uni-erlangen.de/courses/fem101/fem/assembly.html} (accessed Jun. 18, 2026)
-\bibitem{b20} \url{https://quickfem.com/wp-content/uploads/IFEM.Ch25.pdf}
-\bibitem{b20.1} “Introduction to Finite Elements,” Inrialpes.fr, 2026. \url{https://imagine.inrialpes.fr/people/Francois.Faure/htmlCourses/FiniteElements.html} (accessed Aug. 24, 2026)
-\bibitem{b21} Rakesh Arugonda, “Dirichlet Boundary Condition,” Scribd, 2026. \url{https://www.scribd.com/doc/172742570/Dirichlet-Boundary-Condition} (accessed Jun. 20, 2026)
-\bibitem{b22} “7. Dirichlet boundary conditions — Finite element course 2024.0 documentation,” 2024. Accessed: Aug. 11, 2026. [Online]. Available: \url{https://finite-element.github.io/7_boundary_conditions.html}
+\bibitem{b18} J. Burkardt, “triangle_dunavant_rule.cpp,” Triangle Dunavant Rule, [C++ source code]. [Online]. Available: \url{https://people.math.sc.edu/Burkardt/cpp_src/triangle_dunavant_rule/triangle_dunavant_rule.cpp}
+\bibitem{b19} “Assembly — FEM Tutorial 0.1.0 documentation,” Uni-erlangen.de, 2017. \url{https://ww8central.ww.uni-erlangen.de/courses/fem101/fem/assembly.html} 
+\bibitem{b20} “Chapter 25,” iFEM: Introduction to Finite Element Methods. [Online]. Available: \url{https://quickfem.com/wp-content/uploads/IFEM.Ch25.pdf}
+\bibitem{b20.1} “Introduction to Finite Elements,” Inrialpes.fr, 2026. \url{https://imagine.inrialpes.fr/people/Francois.Faure/htmlCourses/FiniteElements.html}
+\bibitem{b21} Rakesh Arugonda, “Dirichlet Boundary Condition,” Scribd, 2026. \url{https://www.scribd.com/doc/172742570/Dirichlet-Boundary-Condition}
+\bibitem{b22} “7. Dirichlet boundary conditions — Finite element course 2024.0 documentation,” 2024. [Online]. Available: \url{https://finite-element.github.io/7_boundary_conditions.html}
 \bibitem{b22.1} P. G. Ciarlet, The Finite Element Method for Elliptic Problems. SIAM, 2002
-\bibitem{b23} “scipy.linalg.eigh — SciPy v1.10.1 Manual.” Accessed: Aug. 17, 2026. [Online]. Available: \url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.eigh.html}
+\bibitem{b23} “scipy.linalg.eigh — SciPy v1.10.1 Manual.”. [Online]. Available: \url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.eigh.html}
 \bibitem{b24} R. Courant and D. Hilbert, Methods of Mathematical Physics, Volume I
-\bibitem{b25} Bohrium.com, 2026. \url{https://www.bohrium.com/en/sciencepedia/feynman/keyword/degenerate_eigenvalues} (accessed Aug. 8, 2026).
-\bibitem{b26} “Understanding Convergence Rates — Hermes Tutorial Guide,” Hpfem.org, 2026. \url{https://hpfem.org/wp-content/uploads/doc-web/doc-tutorial/src/hermes2d/D-adaptivity/intro-2.html?utm_source=chatgpt.com} (accessed Aug. 12, 2026)
-\bibitem{b27} “2.4. Particle in an box with infinite-potential walls — Introduction to Quantum Physics,” York.ac.uk, 2019. \url{https://www-users.york.ac.uk/~pjd113/notebooks/2_4_infinite_square_well.html} (accessed Aug. 31, 2026)
+\bibitem{b25} “Degenerate eigenvalues,” Bohrium SciencePedia. [Online]. Available: \url{https://www.bohrium.com/en/sciencepedia/feynman/keyword/degenerate_eigenvalues}
+\bibitem{b26} “Understanding Convergence Rates — Hermes Tutorial Guide,” Hpfem.org, 2026. \url{https://hpfem.org/wp-content/uploads/doc-web/doc-tutorial/src/hermes2d/D-adaptivity/intro-2.html?utm_source=chatgpt.com}
+\bibitem{b27} “2.4. Particle in an box with infinite-potential walls — Introduction to Quantum Physics,” York.ac.uk, 2019. \url{https://www-users.york.ac.uk/~pjd113/notebooks/2_4_infinite_square_well.html}
+\bibitem{b28} “7.6: The Quantum Harmonic Oscillator,” Physics LibreTexts, Nov. 01, 2016. \url{https://phys.libretexts.org/Bookshelves/University_Physics/University_Physics_(OpenStax)/University_Physics_III_-_Optics_and_Modern_Physics_(OpenStax)/07%3A_Quantum_Mechanics/7.06%3A_The_Quantum_Harmonic_Oscillator}
+\bibitem{b29} S. Fraser, “Schrödinger equation for the nuclear potential,” NUCS 342: Introduction to Nuclear Science, Simon Fraser University, Jan. 24, 2011. [Online]. Available: \url{https://web-docs.gsi.de/~wolle/TELEKOLLEG/KERN/LECTURE/Fraser/L6.pdf}
 
 \end{thebibliography}
 \vspace{12pt}
