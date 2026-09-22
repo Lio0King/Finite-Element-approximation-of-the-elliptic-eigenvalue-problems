@@ -1691,15 +1691,17 @@ As it was expected, both eigenvalues and eigenvectors errors converged at the th
 \end{figure}
 
 
+
+
 \subsection{Coulomb potential and radial formulation}
 Coulomb potential is definied as: 
 \begin{equation}
     V(r) = -\frac{Z}{r}, \quad r = \sqrt{(x - x_0)^2 + (y - y_0)^2}
     \label{eq:coulomb potential}
 \end{equation}
-Where $Z$ is the atomic number, that is equal to amount of protons in the nucleus. For real hydrogen, $Z = 1$. However, since the domain is quite small and we want wavefunction to be strongly concentrated around the nucleus, we use a hydrogen-like ion with $Z = 10$ to obtain a stronger Coulomb potential while retaining a one-electron system. 
+Where $Z$ is the atomic number, that is equal to amount of protons in the nucleus \cite{b29}. For the physical hydrogen atom, the Coulomb potential energy term is proportional to $-\frac{Ze^2}{4\pi\epsilon}$ where $e$ is the elementary charge and $\epsilon$ is vacuum permittivity \cite{b30}. In this project we use scaled mathematical model in which the relevant physical constants are absorbed into scaling, giving $V(r) = -\frac{Z}{r}$. In addition to this, since the domain is quite small and we want wavefunction to be strongly concentrated around the nucleus, we use a hydrogen-like ion with $Z = 10$ to obtain a stronger Coulomb potential while retaining a one-electron system. 
 
-As we can also see \ref{eq:coulomb potential} is radially symmetric. Hence, instead of solving problem on the squared domain $\Omega^2 = [0, 1]^2$ with $n$ points per axis, we will choose a polar-coordinate-based mesh as it is more natural for Coulomb potential, and for simplicity will put the nucleus in the middle at $(x_0, y_0) = (0.5, 0.5)$ with 2 mesh parameters $N_r$ and $N_{\theta}$, denoting the numbers of radial and angular divisions, respectively, with $r \in [0, R]$ and $\theta \in [0, 2\pi)$. The idea of the mesh on the new domain can be visualised as in Fig. \ref{fig:disk mesh} where as we can see mesh consists of rings, where the space between the rings is subdivided into triangles. Also since we are analysing the nucleus we want more nodes in the middle, because the wavefunction varies rapidly near the nucleus and a finer mesh resolves the spatial behaviour more accurately, in addition the singularity of the original Coulomb potential at $r = 0$ is treated separately using the regularisation introduced below.
+As \ref{eq:coulomb potential} depends only on the distance $r$ from the nucleus, the potential is radially symmetric. Hence, instead of solving problem on the squared domain $\Omega^2 = [0, 1]^2$ with $n$ points per axis, we will choose a polar-coordinate-based mesh as it is more natural for Coulomb potential since the geometry of the potential is represented in terms of radial and angular coordinates. For simplicity will put the nucleus in the middle at $(x_0, y_0) = (0.5, 0.5)$ with 2 mesh parameters $N_r$ and $N_{\theta}$, denoting the numbers of radial and angular divisions, respectively, with $r \in [0, R]$ and $\theta \in [0, 2\pi)$. The idea of the mesh on the new domain can be visualised as in Fig. \ref{fig:disk mesh} where as we can see mesh consists of rings, where the space between the rings is subdivided into triangles. Also since we are analysing the nucleus we want more nodes in the middle, because the wavefunction varies rapidly near the nucleus and a finer mesh resolves the spatial behaviour more accurately, in addition the singularity of the original Coulomb potential at $r = 0$ is treated separately using the regularisation introduced below.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\columnwidth]{disk mesh.png}
@@ -1719,7 +1721,18 @@ This ensures that we avoid the division by 0 because when $r = 0$ we will have $
 
 Another aspect that needed a change, comparing to the all previous computations, is the values that we are going to use as reference to compare obtained FEM numbers. 
 
-At first, similar approach, using the separation of variables as in quantum harmonic oscillator was taken. However, for the ground-state radial problem (angular momentum quantum number $l = 0$), the finite-difference approximation did not converge reliably under mesh refinement. That is why it was decided to implement FEM again, specifically the weak form of radial equation was solved using P1 elements and because of its simplicity and low time complexity it was possible to take $N = 5000$ elements which ensured that the results will be a relible reference method, which produces a sufficiently fine numerical results as it was shown in the \ref{sec: P1 vs P2}. 
+At first, the same separation of variables approach as for the quantum harmonic oscillator was taken, writing $\psi(r, \theta) = R(r)e^{im\theta}$ and substituting $u(r) = \sqrt{r}R(r)$ to eliminate the first derivative term, giving the standard radial form:
+\begin{equation}
+    -u''(r) + \left[V(r) + \frac{m^2 - \frac{1}{4}}{r^2}\right]u(r) = Eu(r)
+\end{equation}
+However, for the ground-state radial problem ($m = 0$), neither finite-difference discretisation nor a P1 weak form discretisation of this equation converged reliably under mesh refinement; both instead converged to a stable but incorrect value. The cause was traced to the substitution itself: for $m = 0$ the true solution $R(r)$ is smooth and generally nonzero at the origin (physically, $m = 0$ is the only angular-momentum state permitted nonzero amplitude at the nucleus), so $u(r) = \sqrt{r}R(r)$ behaves like $\sqrt{r}$ near $r = 0$ -- a function with infinite slope at the origin. No polynomial basis, piecewise-linear (P1) or centred finite-difference, can represent this behaviour, regardless of resolution near $r = 0$.
+
+The resolution was to abandon the substitution and solve directly for $R(r)$. Deriving the weak form of the untransformed radial equation with the correct polar measure $r \, dr$ shows that, for $m = 0$, the singular centrifugal term vanishes identically, leaving an entirely regular weak form:
+\begin{equation}
+    \int_0^R R'\varphi'\, r\,dr + \int_0^R V(r)R\varphi\, r\,dr = E \int_0^R R\varphi\, r\,dr
+\end{equation}
+with $R(r)$ free (rather than constrained to zero) at $r = 0$. A P1 discretisation of this direct formulation converged rapidly and mathced the P2 FEM solutionto within $0.02\%$, confirming that the FEM implementation was correct throughout and the earlier disperancy originated entirely in the reference solver. Because of its simplicity and low computational cost, this direct formulation was solved with $N = 5000$ P1 elements, verified sufficiently fine as a reference in \ref{sec: P1 vs P2}.
+
 
 \subsubsection{Results: eigenvalues}
 Eigenvalues were obtained and compared with reference ones (important note, reference numbers are not real values that we get, these are the values that are incredibly close to the actual ones and obtained by the trusted method). The results are presented in Tab. \ref{tab:first eigvals errors} for the first eigenvalues and in Tab. \ref{tab:degenerate pair errors} for the degenerate pair.
@@ -1759,7 +1772,7 @@ Eigenvalues were obtained and compared with reference ones (important note, refe
 
 As we can notice the errors are not as small as they were in the previous problems, but before making any conclusions it is a good practice to check the relative error from \ref{eq:relative error}. For the first eigenvalue at the finest mesh $e_{rel} = |\frac{0.000746}{-78.922759}| \approx 9.45 \times 10^{-6}$. And for the degenerate pair $e_{rel} \approx 0.0011$. The first eigenvalue relative error matches the previous P2 element from the Laplace eigenproblem, however the degenerate pair has much higher error.
  
-From this we can conclude that eigenvalues were converging towards specific number, which provides numerical evidence that the implementation is behaving as expected.
+From this we can conclude that eigenvalues were converging towards specific limiting values, which provides numerical evidence that the implementation is behaving as expected.
 
 \subsubsection{Results: eigenfunctions}
 Similar to eigenvalues, eigenfunctions showed predictable behaviour with the ground-state wavefunction having  the largest magnitude in the middle of the disk (near the nucleus), while the corresponding probability density is strongly concentrated around the centre of the disk. The two degenerate excited states exhibit nodal structure, with the regions of opposite sign separated by a nodal line as it is shown in Fig. \ref{fig:coulomb eigenfunc}. 
@@ -1784,6 +1797,8 @@ Similar to eigenvalues, eigenfunctions showed predictable behaviour with the gro
 
 Moreover, we can notice in Fig. \ref{fig:coulomb density} that the probability density is concentrated around the same spots of the domain, similarly to the quantum harmonic oscillator. This qualitative similarity is expected because in both cases the potential confines the low-energy state around its minimum.
 
+From \cite{b30} we know that two degenerate eigenfunctions are related by a 90 degrees rotation, as expected from the rotational symmetry of the Coulomb potential, and a corresponding relationship can be observed in Fig. \ref{fig:coulomb eigenfunc}. 
+ 
 Finally, eigenfunction errors were decreasing as mesh becomes finer which is proved by the result in Table \ref{tab:coulomb eigenfunc errors}.
 \begin{table}[H]
     \centering
@@ -1820,7 +1835,7 @@ The errors for the degenerate pair can be found in Table \ref{tab:coulomb degene
     \end{tabular}
 \end{table}
 
-In both tables it is noticable that the $H^1$-norm projection error is noticably higher than the corresponding $L^2$-norm error. This is expected because the $H^1$-norm also measures errors in the derivatives of the eigenfunctions and is therefore more sensible to the resolution of the reference solution. Because the reference solution was obtained using P1 elements, its derivative approximation introduces an additional source of error. Consequently, the reported $H^1$ errors measure the difference between the P2 FEM solution and the finite element reference rather than the error with respect to the exact eigenfunction. The consistent decrease of the errorsunder mesh refinement nevertheless provides evidence of convergence.
+In both tables it is noticable that the $H^1$-norm projection error is noticably higher than the corresponding $L^2$-norm error. This is expected from the standard finite-element approximation theory rather than any limitation of the reference solution: for P2 elements, the $H^1$ error converges as $O(h^2)$ while the $L^2$ error converges as $O(h^3)$, one order faster, since the $H^1$-norm measures errors in the derivatives of the eigenfunction, which a piecewise-quadratic approximation captures one order less accurately than the function values themselves. At any fixed mesh size $h$, this means the $H^1$ error is inherenly larger than the $L^2$ error, independent of the reference accuracy. The reference solution's own contribution to this gap is in fact negligible: comparing the $N = 5000$ and $N = 40\,000$-element P1 reference solutions directly gives a residual difference on the order of $10^{-7}$, several orders of magnitude smaller than the reported $H^1$ errors themselves. The consistent decrease of both errors under mesh refinement provides evidence of convergence, at the rates discussed in the following section.
 
 \subsubsection{Convergence}
 Notwithstanding good results in error analysis, the convergence analysis did not show the expected results. First of all lets look at Table \ref{tab:coulomb eigval conv} and Table \ref{tab:coulomb eigfunc conv}.
@@ -1863,17 +1878,31 @@ Notwithstanding good results in error analysis, the convergence analysis did not
 
 The first noticable feature comparing to the all previous results is that with the mesh refinement the convergence rates are decaying and approaching much lower value than was expected. 
 
-The main reason for this is that theoretical P2 convergence rates, namely $O(h^4)$ for eigenvalues, $O(h^3)$ for the $L^2$ eigenfunction error and $O(h^2)$ for the $H^1$ eigenfunction error, assume a shape-regular family of meshes. In particular, the aspect ratios of teh elements mus retain bounded independently of the mesh size $h$.
+The main reason for this is that theoretical P2 convergence rates, namely $O(h^4)$ for eigenvalues, $O(h^3)$ for the $L^2$ eigenfunction error and $O(h^2)$ for the $H^1$ eigenfunction error, assume a shape-regular family of meshes. In particular, the aspect ratios of the elements must retain bounded independently of the mesh size $h$.
 
 That is where the main difference lies, the polar mesh used for the Coulomb problem does not the condition stated above. At the centre of the disk, a single node is connected to all angular divisions, producing a fan of triangles. As the angular resolution is increased, the number of triangles meeting at this central node also increases. For this geometry, the worst-case aspect ratio of the fan grows approximately as $\frac{N_{\theta}}{2\pi}$, which was also confirmed against the measured mesh data up to rounding. Therefore, as $N_\theta$ increases during mesh refinement, the aspect ratio of the central elements becomes unbounded. This violates the shape-regularity assumption regardless of the radial grading or the chosen target aspect ratio.
 
-Another reason for the decaying convergence rates is the interpretation of the global mesh size $h$. For a general triangulation, $h = \max_{K \in \Omega_h}diam(K)$. In previous examples, we used quasi-uniform meshes, for which the element sizes were comparable throughout the domain, so its global value provided a good representation of the overall mesh resolution. In the polar mesh for the Coulomb problem, however, the elements near the centre are much smaller than those near the boundary, because the power method was used to arrange those nodes. Consequently, the global mesh value of $h$ is determined by the largest elements and does not fully represent the much finer resolution near the nucleus.
+Another reason for the decaying convergence rates is the interpretation of the global mesh size $h$. For a general triangulation, $h = \max_{K \in \Omega_h}diam(K)$. In previous examples, we used quasi-uniform meshes, for which the element sizes were comparable throughout the domain, so its global value provided a good representation of the overall mesh resolution. In the polar mesh for the Coulomb problem, however, the elements near the centre are much smaller than those near the boundary, because the power-law radial distribution was used to cluster the nodes near the nucleus. Consequently, the global mesh value of $h$ is determined by the largest elements and does not fully represent the much finer resolution near the nucleus.
 
 These two reasons explain why the theoretical P2 convergence rates are not observed for the present mesh family. But it does not mean that P2 finite-element approximation failed, it means that this particular polar mesh family does not satisfy the geometric assumptions required by the standard convergence theory.
 
 Improving the mesh topology so that the elements remain shape-regular while retaining increased resolution near the nucleus would require substantial changes to the mesh-generation procedure. This is therefore considered beyond the scope of the present project and could form the basis of a separate investigation.
 
+
+
+
 \section{Conclusion}
+To conclude, all discussed problems have their own important physical meaning, however, because they belong to the one group of mathematical objects and can be formulated as elliptic eigenvalue problems of the form:
+\begin{equation}
+    a(u, v) = \lambdab(u, v)
+\end{equation}
+with potential changing the bilinear form, that is why algorithms to their solutions are quite identical. 
+
+Of course in this project all the problems we simplified with scaled versions and did not use the actual metrics, but they showed the general solution steps, that can be implemented as well for the scaled formulations and will produce more physically accurate numbers.
+
+For partial differential equations finite-element method showed its strengths and applicability. It has many advantages, such as simple implementation, variety of approximations (P1, P2 etc elements), systematic convergence under appropriate mesh conditions and ability to build high quiality visualisations and approximations. There are also some disadvantages, for example comparing to the finite-differences it is more complex to study, higher order convergence can be achieved with higher order elements that require more degrees of freedom which leads to increase in computational and implementation complexity.
+
+Nevertheless, finite-element is a very strong mathematical tool that proved its effectiveness in both previous studies and this project.
 
 \newpage
 \begin{thebibliography}{00}
@@ -1917,6 +1946,7 @@ Improving the mesh topology so that the elements remain shape-regular while reta
 \bibitem{b27} “2.4. Particle in an box with infinite-potential walls — Introduction to Quantum Physics,” York.ac.uk, 2019. \url{https://www-users.york.ac.uk/~pjd113/notebooks/2_4_infinite_square_well.html}
 \bibitem{b28} “7.6: The Quantum Harmonic Oscillator,” Physics LibreTexts, Nov. 01, 2016. \url{https://phys.libretexts.org/Bookshelves/University_Physics/University_Physics_(OpenStax)/University_Physics_III_-_Optics_and_Modern_Physics_(OpenStax)/07%3A_Quantum_Mechanics/7.06%3A_The_Quantum_Harmonic_Oscillator}
 \bibitem{b29} S. Fraser, “Schrödinger equation for the nuclear potential,” NUCS 342: Introduction to Nuclear Science, Simon Fraser University, Jan. 24, 2011. [Online]. Available: \url{https://web-docs.gsi.de/~wolle/TELEKOLLEG/KERN/LECTURE/Fraser/L6.pdf}
+\bibitem{b30} “4.5 The Hydrogen Atom.” [Online]. Available: \url{https://ocw.mit.edu/courses/6-974-fundamentals-of-photonics-quantum-electronics-spring-2006/8a3eb732190cc7fc2520fa122bed8dcd_hydrogen_atom.pdf}
 
 \end{thebibliography}
 \vspace{12pt}
