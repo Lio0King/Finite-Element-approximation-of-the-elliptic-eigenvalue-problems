@@ -25,7 +25,7 @@
 \begin{document}
 
 \title{Finite Element approximation of the Elliptic Eigenproblems: Convergence Analysis and Numerical Experiments}
-\author{}
+\author{Aleksei Kuznetsov}
 
 \maketitle
 \section{Introduction}
@@ -353,6 +353,7 @@ In this project we will use 2D Finite Element Approximation to find solutions of
 \subsection{Mesh}
 In order to divide our domain into smaller pieces we first need to introduce the pattern of how we are going to divide it.
 
+
 \subsubsection{Triangulations} 
 If we want to divide the interval in 1D we will use intervals, that can be either equal to each other or be different length. 
 In 2D idea is the same, but instead of small line intervals we need to add one more point to be able to move from 1D line to 2D surface which is a triangle. The domain divided into triangles is called triangulation.
@@ -362,15 +363,16 @@ We next will give the formal definition from \cite{b10}.
 Let $\Omega \subset \mathbb{R}^2$ be a bounded polygonal domain with boundary $\partial\Omega$. A triangulation, or a mesh $\mathfrak{K}$ of $\Omega$ is a set $\{K\}$ of triangles $K$, such that $\Omega = \bigcup_{K \in \mathfrak{K}}K$, and such that the intersection of two triangles is either an edge, a corner, or empty. 
 No node is allowed to be hanging, that is lie on the edge of another triangle. The corners of the triangles are called the nodes \cite{b10}.
 
+
 \subsubsection{Mesh generation}
 To generate the triangular mesh the built-in Delaunay algorithm was used \cite{b12}. Which is taking a set of 2D coordinates and determines the triangulations with the given points as triangle nodes. 
 This method has own advantages and disadvantages. Delaunay algorithm are optimal in the sense that the angles of all triangles are maximal, however practically when the mesh needs to respect the boundaries of the domain, it can lead to triangles with poor quality \cite{b10}.
 
 
-
 \subsection{Piecewise polynomial spaces}
 In order to interpolate our unknown function on each element we need to decide what family of functions we are going to use for this interpolation. 
 Polynomials are the best candidates for this because they are mathematically simple to integrate and differentiate, they can be easily translated into code and the accuracy will be easily improved by increasing the order of the polynomials. And because in this project we are going to use first order (P1) and second order polynomials (P2) to interpolate our unknown function on each element of the mesh that is why we "introduce" the space of piecewise polynomials. 
+
 
 \subsubsection{P1 Elements} 
 To construct the piecewise linear function, we are letting $K$ be a triangle and in \ref{eq:P1 space} we define the space of linear functions on $K$ denotes $P_1(K)$.
@@ -491,7 +493,6 @@ However, in order to map any function from physical coordinates we have to the t
 This matrix connects $dxdy$ to $d\xi d\eta$ and transforms gradients between reference and physical elements.
 
 
-
 \subsubsection{Linear approximation} \label{sub:linear approximation}
 The aim is to approximate the unknown function by a linear form of \ref{eq:linear form}. 
 \begin{equation}
@@ -540,8 +541,6 @@ In Fig. \ref{fig:p1 approximation} we can see how the linear approximation looks
     \caption{Linear approximation \cite{b14}}
     \label{fig:p1 approximation}
 \end{figure}
-
-
 
 
 \subsubsection{Quadratic approximation}
@@ -667,6 +666,7 @@ If we recall the derivation of the weak form we get the generalised Laplace eige
     \label{eq:generalised Laplace}
 \end{equation}
 
+
 \subsection{
     \text{Schr\"{o}dinger's Eigenproblem}
 }
@@ -717,7 +717,6 @@ Where $(K_V)_{ij} = \frac{2m}{\hbar^2} \int_\Omega V(x)\phi_i\phi_j \, dx$ is a 
 From \ref{eq:generalised Schrodinger} we can see that mathematically the statement of the problem is very similar to the Laplace eigenproblem \ref{eq:generalised Laplace}.
 
 
-
 \subsection{Conclusion}
 Looking at what was previously discussed in this section the idea behind this project becomes clear: 
 
@@ -734,6 +733,7 @@ Next sections will show the implementation part of this project.
 \section{Goals and Objectives}
 
 The idea behind this project is to research about solving 1D and 2D partial differential equations using Finite Element Method and implement 2D solutions in practice. Another goal is compare and analyse the convergence rates of P1 and P2 elements and compare them to the known data.
+
 
 
 \section{Implementation}
@@ -763,7 +763,7 @@ In order to avoid breaking the code all the triangulations were sorted in the as
 \subsection{Local element matrices} \label{sec:local matrices}
 On every triangle, we compute local stiffness, mass and potential-energy matrices (for the Schr\"{o}dinger problem). These local matrices describe the contribution of each element to the corresponding global matrices.
 
-The local stiffness matrix $A$ measures the alignment of the gradients of two basis functions or simplier how much the element resist deformation (spring force). 
+The local stiffness matrix $A$ measures the alignment of the gradients of two basis functions or simpler how much the element resist deformation (spring force). 
 
 The local mass matrix $M$ measures how much basis functions occupy the same region of space (overlap), in other words how much the triangle resists acceleration.
 
@@ -869,7 +869,6 @@ The algorithm may seem complicated, but in reality it is very straightforward, s
 \end{figure}
 
 
-
 \subsection{Dirichlet boundary conditions}
 The Dirichlet (or first-type) boundary condition is a type of boundary condition which specifies the values a solution needs to take on the boundary of the domain \cite{b21} in other words we prescribe the value of the solution at the boundary \cite{b10}.
 
@@ -956,6 +955,7 @@ The $\log-\log$ convergence plot provides a visual confirmation of the theoretic
 
 Although P2 elements require more degrees of freedom per element, their higher convergence rate allows the same accuracy to be achieved with a considerably coarser mesh than for P1 elements.
 
+
 \subsection{Laplace results} \label{sec: P1 vs P2}
 For the Laplace eigenproblem we obtained results for P1 and P2 elements. The results are presented in Table \ref{tab:P1 error dependency} and in Table \ref{tab:P2 error dependency}.
 \begin{table}[H]
@@ -1005,7 +1005,6 @@ At $N = 48$ the P1 result has $e_{rel} \approx 1.05 \times 10^{-3}$ which is abo
 The results empirically demonstrate the higher accuracy obtained with P2 elements for comparable mesh resolutions. This illustrates how the higher polynomial order can achieve a given accuracy with substantially fewer elements, although P2 elements can become more "expensive" computationally since they introduce additional degrees of freedom.
 
 
-
 \subsection{Convergence}
 As it is presented in Fig. \ref{fig:p1 convergence} and Fig. \ref{fig:p2 convergence} the convergence plots approach straight lines on the log-log scale. The observed slopes also become closer to the theoretical convergence rates as the mesh is refined. 
 The coarser meshes may exhibit some derivation from asymptotic behaviour because the discretisation error is not yet sufficiently small.
@@ -1024,6 +1023,8 @@ The coarser meshes may exhibit some derivation from asymptotic behaviour because
 \end{figure}
 
 The plots approach straight-line behaviour on the log-log scale as the mesh is refined. The corresponding slopes approach the theoretical values of $2$ for P1 and $4$ for P2.
+
+
 
 \section{Laplace results: Eigenvectors}
 The eigenvalues alone do not provide the complete solution of the eigenproblem. Each eigenvalue is associated with one or more eigenfunctions and therefore the accuracy of the computed eigenfunctions must also be checked.
@@ -1192,7 +1193,6 @@ Same result we are seeing for P2 elements on the Fig. \ref{fig:first eigenfunc c
 
 
 
-
 \subsection{Degenerate eigenspaces}
 The comparison becomes more complicated for degenerate eigenvalue. In this case, an eigenvalue is associated with more than one linearly independent eigenfunction. 
 Therefore, the individual numerical eigenfunctions cannot necessarily be expected to coincide with the particular analytical eigenfunctions chosen for comparison.
@@ -1229,7 +1229,7 @@ Same as for the non-degenerate eigenfunction we first want to have an idea of th
         \label{fig:third P1 eigenfunc}
     \end{subfigure}
 
-    \caption{Degenerate eigenfunctions approxiamted with P1 elements (a) second eigenfunction, (b) third eigenfunction}
+    \caption{Degenerate eigenfunctions approximated with P1 elements (a) second eigenfunction, (b) third eigenfunction}
     \label{fig:degenerate eigenfunc P1}
 \end{figure}
 
@@ -1250,7 +1250,7 @@ And the 3D P2 approximation is presented in Fig. \ref{fig:degenerate eigenfunc P
         \label{fig:third P2 eigenfunc}
     \end{subfigure}
 
-    \caption{Degenerate eigenfunctions approxiamted with P2 elements (a) second eigenfunction, (b) third eigenfunction}
+    \caption{Degenerate eigenfunctions approximated with P2 elements (a) second eigenfunction, (b) third eigenfunction}
     \label{fig:degenerate eigenfunc P2}
 \end{figure}
 
@@ -1323,7 +1323,7 @@ Before we proceed to the computed errors, firstly, we need to get the visual per
         \label{fig:third numerical vs exact}
     \end{subfigure}
 
-    \caption{Degenerate eigenfunctions approxiamted with P2 elements against exact}
+    \caption{Degenerate eigenfunctions approximated with P2 elements against exact}
     \label{fig:degenerate numerical vs exact}
 \end{figure}
 
@@ -1367,7 +1367,7 @@ As we can see, errors in both second and third eigenfunctions decrease similarly
 \end{table}
 
 Interestingly, we can spot the same idea as in the non-degenerate case, the error of the P1 elements with 48 points per axis is equivalent to the error of P2 elements with 12 points per axis. 
-So, degeneracy does not have an imfluence on the error.
+So, degeneracy does not have an influence on the error.
 
 Similarly we obtained the errors for $H^1$-norm projection error for the P1 and P2 approximations.
 
@@ -1379,7 +1379,7 @@ For the P1 element to find the $H^1$ error the small trick was used. For any nod
 Where $M$ is a mass matrix and $A$ is a stiffness matrix or the discrete bilinear form $\int\nabla u\nabla v$. This approach allows us to avoid finding centroid and do complex computations with quadrature.
 The P1 matrix trick, only ever sees nodal values, so it exactly computes the $H^1$ norm of the difference between the piecewise-linear interpolant of $u$ and $u_h$, not $u$ itself. But the main question, will the different computation influence the result?
 
-No, Because by the triangle inequality $\|u - u_h\|_{H^1} \leq \|u - I_hu\|_{H^1} + \|I_hu - u_h\|_{H^1}$, and interpolation error $\|u - I_hu\|_{H^1}$ for P1 is itself $O(h)$ — same order as the FEM discretization error we are trying to measure. So the two quantities are asymptotically equivalent in convergence rate (both $O(h)$), even though their absolute numerical values at a given number of points per axis will not match exactly.
+No, Because by the triangle inequality $\|u - u_h\|_{H^1} \leq \|u - I_hu\|_{H^1} + \|I_hu - u_h\|_{H^1}$, and interpolation error $\|u - I_hu\|_{H^1}$ for P1 is itself $O(h)$ — same order as the FEM discretisation error we are trying to measure. So the two quantities are asymptotically equivalent in convergence rate (both $O(h)$), even though their absolute numerical values at a given number of points per axis will not match exactly.
 \begin{table}[H]
     \centering
     \caption{$H^1$-norm of the projection distance of the P1 degenerate eigenfunction}
@@ -1457,6 +1457,7 @@ As we saw from the errors of P1 elements, their numbers are very close, so for t
 \end{figure}
 
 
+
 \section{Laplace Eigenproblem Conclusion}
 From the results presented it is clear that P2 elements approximation converges faster, but it has some drawbacks. The main one is complexity in implementation: to write code for the P1 elements approximation is much easier than for P2, due to the need of using the gradients and quadratures for approximating integrals.
 Moreover, P2 elements have more degrees of freedom, which requires more memory and time to proceed with computations. As it was mentioned before the errors for both eigenvalues and eigenvectors of P1 approximation with 48 points per axis is equivalent to P2 approximation with 12 points per axis.
@@ -1486,7 +1487,7 @@ The easiest to visualise would be 1D infinite square well illustration which is 
 
 Moreover, the infinite potential outside the well does not need to be represented explicitly. Instead, confinement is imposed through homogeneous Dirichlet boundary condition which ensures that we will not have a solution on the boundary.
 
-This case is considered the simpliest of the Schr\"{o}dinger eigenproblem because the only change that happens is the addition of potential matrix to the stiffness matrix from \ref{eq:schrod well} where every element of the matrix is a constant.
+This case is considered the simplest of the Schr\"{o}dinger eigenproblem because the only change that happens is the addition of potential matrix to the stiffness matrix from \ref{eq:schrod well} where every element of the matrix is a constant.
 \begin{equation}
     (A + K_V)\psi = \lambda M\psi
     \label{eq:schrod well}
@@ -1549,9 +1550,7 @@ The two matrices in \ref{eq:vectors} show the column spaces of first three eigen
     \label{eq:vectors}
 \end{equation}
 
-The first eigenfunctions are identical, which means that potential matrix does not affect the eigenspaces corresponding to the eigenvalues, in other words, with constant potential, the potential matrix is proportional to the mass matrix, that is why the eigenfunctions remain unchanged while all eigenvalues are shifted by the same amount. Unfortunately, We can not analyse the degenerate pair, because on tis coarse mesh (3 points per axis) there is no degeneracy, and the next mesh produces much larger eigenfunctions which will become a challenge to put in this report.
-
-
+The first eigenfunctions are identical, which means that potential matrix does not affect the eigenspaces corresponding to the eigenvalues, in other words, with constant potential, the potential matrix is proportional to the mass matrix, that is why the eigenfunctions remain unchanged while all eigenvalues are shifted by the same amount. Unfortunately, We can not analyse the degenerate pair, because on this coarse mesh (3 points per axis) there is no degeneracy, and the next mesh produces much larger eigenfunctions which will become a challenge to put in this report.
 
 
 \subsection{Quantum harmonic oscillator}
@@ -1733,7 +1732,7 @@ The resolution was to abandon the substitution and solve directly for $R(r)$. De
 \begin{equation}
     \int_0^R R'\varphi'\, r\,dr + \int_0^R V(r)R\varphi\, r\,dr = E \int_0^R R\varphi\, r\,dr
 \end{equation}
-with $R(r)$ free (rather than constrained to zero) at $r = 0$. A P1 discretisation of this direct formulation converged rapidly and mathced the P2 FEM solutionto within $0.02\%$, confirming that the FEM implementation was correct throughout and the earlier disperancy originated entirely in the reference solver. Because of its simplicity and low computational cost, this direct formulation was solved with $N = 5000$ P1 elements, verified sufficiently fine as a reference in \ref{sec: P1 vs P2}.
+with $R(r)$ free (rather than constrained to zero) at $r = 0$. A P1 discretisation of this direct formulation converged rapidly and matched the P2 FEM solution to within $0.02\%$, confirming that the FEM implementation was correct throughout and the earlier disperancy originated entirely in the reference solver. Because of its simplicity and low computational cost, this direct formulation was solved with $N = 5000$ P1 elements, verified sufficiently fine as a reference in \ref{sec: P1 vs P2}.
 
 
 \subsubsection{Results: eigenvalues}
@@ -1837,7 +1836,7 @@ The errors for the degenerate pair can be found in Table \ref{tab:coulomb degene
     \end{tabular}
 \end{table}
 
-In both tables it is noticeable that the $H^1$-norm projection error is noticably higher than the corresponding $L^2$-norm error. This is expected from the standard finite-element approximation theory rather than any limitation of the reference solution: for P2 elements, the $H^1$ error converges as $O(h^2)$ while the $L^2$ error converges as $O(h^3)$, one order faster, since the $H^1$-norm measures errors in the derivatives of the eigenfunction, which a piecewise-quadratic approximation captures one order less accurately than the function values themselves. At any fixed mesh size $h$, this means the $H^1$ error is inherenly larger than the $L^2$ error, independent of the reference accuracy. The reference solution's own contribution to this gap is in fact negligible: comparing the $N = 5000$ and $N = 40\,000$-element P1 reference solutions directly gives a residual difference on the order of $10^{-7}$, several orders of magnitude smaller than the reported $H^1$ errors themselves. The consistent decrease of both errors under mesh refinement provides evidence of convergence, at the rates discussed in the following section.
+In both tables it is noticeable that the $H^1$-norm projection error is noticeably higher than the corresponding $L^2$-norm error. This is expected from the standard finite-element approximation theory rather than any limitation of the reference solution: for P2 elements, the $H^1$ error converges as $O(h^2)$ while the $L^2$ error converges as $O(h^3)$, one order faster, since the $H^1$-norm measures errors in the derivatives of the eigenfunction, which a piecewise-quadratic approximation captures one order less accurately than the function values themselves. At any fixed mesh size $h$, this means the $H^1$ error is inherently larger than the $L^2$ error, independent of the reference accuracy. The reference solution's own contribution to this gap is in fact negligible: comparing the $N = 5000$ and $N = 40\,000$-element P1 reference solutions directly gives a residual difference on the order of $10^{-7}$, several orders of magnitude smaller than the reported $H^1$ errors themselves. The consistent decrease of both errors under mesh refinement provides evidence of convergence, at the rates discussed in the following section.
 
 \subsubsection{Convergence}
 Notwithstanding good results in error analysis, the convergence analysis did not show the expected results. First of all lets look at Table \ref{tab:coulomb eigval conv} and Table \ref{tab:coulomb eigfunc conv}.
@@ -1902,7 +1901,7 @@ with potential changing the bilinear form, that is why algorithms to their solut
 
 Of course in this project all the problems we simplified with scaled versions and did not use the actual metrics, but they showed the general solution steps, that can be implemented as well for the scaled formulations and will produce more physically accurate numbers.
 
-For partial differential equations finite-element method showed its strengths and applicability. It has many advantages, such as simple implementation, variety of approximations (P1, P2 etc elements), systematic convergence under appropriate mesh conditions and ability to build high quiality visualisations and approximations. There are also some disadvantages, for example comparing to the finite-differences it is more complex to study, higher order convergence can be achieved with higher order elements that require more degrees of freedom which leads to increase in computational and implementation complexity.
+For partial differential equations finite-element method showed its strengths and applicability. It has many advantages, such as simple implementation, variety of approximations (P1, P2 etc elements), systematic convergence under appropriate mesh conditions and ability to build high quality visualisations and approximations. There are also some disadvantages, for example comparing to the finite-differences it is more complex to study, higher order convergence can be achieved with higher order elements that require more degrees of freedom which leads to increase in computational and implementation complexity.
 
 Nevertheless, finite-element is a very strong mathematical tool that proved its effectiveness in both previous studies and this project.
 
@@ -1934,7 +1933,7 @@ Nevertheless, finite-element is a very strong mathematical tool that proved its 
 \bibitem{b15} D. Xu, J. Stare, and A. L. Cooksy, “Solving the vibrational Schrödinger equation on an arbitrary multidimensional potential energy surface by the finite element method,” Computer Physics Communications, vol. 180, no. 11, pp. 2079-2094, June 2009, doi: 10.1016/j.cpc.2009.06.010
 \bibitem{b16} Hammer, Preston C., Marlowe, O. J., and Stroud, A. H. Numerical integration over simplexes and cones, Mathematical Tables and Other Aids to Computation 10(55), 130-137, 1956. [DOI: 10.2307/2002483]
 \bibitem{b17} D. A. Dunavant, “High degree efficient symmetrical Gaussian quadrature rules for the triangle,” International Journal for Numerical Methods in Engineering, vol. 21, no. 6, pp. 1129-1148, June 1985, doi: 10.1002/nme.1620210612
-\bibitem{b18} J. Burkardt, “triangle_dunavant_rule.cpp,” Triangle Dunavant Rule, [C++ source code]. [Online]. Available: \url{https://people.math.sc.edu/Burkardt/cpp_src/triangle_dunavant_rule/triangle_dunavant_rule.cpp}
+\bibitem{b18} J. Burkardt, “triangle\_dunavant\_rule.cpp,” Triangle Dunavant Rule, [C++ source code]. [Online]. Available: \url{https://people.math.sc.edu/Burkardt/cpp_src/triangle_dunavant_rule/triangle_dunavant_rule.cpp}
 \bibitem{b19} “Assembly — FEM Tutorial 0.1.0 documentation,” Uni-erlangen.de, 2017. \url{https://ww8central.ww.uni-erlangen.de/courses/fem101/fem/assembly.html} 
 \bibitem{b20} “Chapter 25,” iFEM: Introduction to Finite Element Methods. [Online]. Available: \url{https://quickfem.com/wp-content/uploads/IFEM.Ch25.pdf}
 \bibitem{b20.1} “Introduction to Finite Elements,” Inrialpes.fr, 2026. \url{https://imagine.inrialpes.fr/people/Francois.Faure/htmlCourses/FiniteElements.html}
