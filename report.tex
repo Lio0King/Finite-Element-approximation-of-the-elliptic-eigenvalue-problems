@@ -13,6 +13,8 @@
 \usepackage{booktabs}
 \usepackage{float}
 \usepackage{subcaption}
+\usepackage{url}
+\usepackage{hyperref}
 
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -55,7 +57,7 @@ The equation \ref{eq:elliptic PDE} is classified as elliptic if the discriminant
     B^2 - 4AC < 0
 \end{equation}
 
-Elliptic equations commonly arise in steady-state or equilibrium problems. Unlike hyperbolic and parabolic equations they describe the propagation of an initial condition in time. 
+Elliptic equations commonly arise in steady-state or equilibrium problems. They generally describe equilibrium/spatial problems, while in comparison parabolic and hyperbolic equations are the classes associated with time evolution.
 Moreover, their solutions depend only on spatial variables and require boundary conditions rather than initial conditions, the most common are Dirichlet (specifying the value on the boundary) and Neumann (specifying the derivative or the flux at the boundary). 
 In addition to this, changes at any point of the domain influences the solution, reflecting the global nature of elliptic problems.
 
@@ -82,7 +84,7 @@ Another variation of the eigenvalue problem is the generalised eigenvalue proble
 \begin{equation}
     AX = BXD
 \end{equation}
-Where $X$ is the column matrix of the eigenvectors; $D$ is a diagonal matrix of eigenvalues; $B$ acts as a weighting (mass) matrix that defines a new inner product for the vector space. 
+Where $X$ is the column matrix of the eigenvectors; $D$ is a diagonal matrix of eigenvalues; $B$ acts as a weighting (mass) matrix that defines a new inner product for the vector space. The main condition is that $B$ is symmetric positive definite matrix. 
 
 In other words, it changes the geometry of the problem by measuring vectors not in the standard Euclidean space, but relative to the properties of $B$ itself \cite{b1}. It usually represents a specific geometric or physical constraint \cite{b2}. 
 
@@ -231,7 +233,7 @@ Then we show that our bilinear form is coercive (or elliptical) which is $a(v, v
 
 To establish continuity of $L(v)$, we must show that $|L(v)| \leq C_{L}||v||_{H^1}$ for a constant $C_{L} > 0$ (proof can be found in \ref{sec:proof of bound}).
 
-Therefore, by the Lax-Milgram Theorem these properties guaranty that a unique exact solution $u \in V$ exists and stable. Moreover, the Lax-Milgram theorem establishes well-posedness for the corresponding source/Poisson variational problem. 
+Therefore, by the Lax-Milgram Theorem these properties guarantee that a unique exact solution $u \in V$ exists and stable. Moreover, the Lax-Milgram theorem establishes well-posedness for the corresponding source/Poisson variational problem. 
 While the eigenvalue problem requires a different argument: we seek non-zero $u$ and an eigenvalue $\lambda$ satisfying the variational eigenproblem.
 
 
@@ -1835,7 +1837,7 @@ The errors for the degenerate pair can be found in Table \ref{tab:coulomb degene
     \end{tabular}
 \end{table}
 
-In both tables it is noticable that the $H^1$-norm projection error is noticably higher than the corresponding $L^2$-norm error. This is expected from the standard finite-element approximation theory rather than any limitation of the reference solution: for P2 elements, the $H^1$ error converges as $O(h^2)$ while the $L^2$ error converges as $O(h^3)$, one order faster, since the $H^1$-norm measures errors in the derivatives of the eigenfunction, which a piecewise-quadratic approximation captures one order less accurately than the function values themselves. At any fixed mesh size $h$, this means the $H^1$ error is inherenly larger than the $L^2$ error, independent of the reference accuracy. The reference solution's own contribution to this gap is in fact negligible: comparing the $N = 5000$ and $N = 40\,000$-element P1 reference solutions directly gives a residual difference on the order of $10^{-7}$, several orders of magnitude smaller than the reported $H^1$ errors themselves. The consistent decrease of both errors under mesh refinement provides evidence of convergence, at the rates discussed in the following section.
+In both tables it is noticeable that the $H^1$-norm projection error is noticably higher than the corresponding $L^2$-norm error. This is expected from the standard finite-element approximation theory rather than any limitation of the reference solution: for P2 elements, the $H^1$ error converges as $O(h^2)$ while the $L^2$ error converges as $O(h^3)$, one order faster, since the $H^1$-norm measures errors in the derivatives of the eigenfunction, which a piecewise-quadratic approximation captures one order less accurately than the function values themselves. At any fixed mesh size $h$, this means the $H^1$ error is inherenly larger than the $L^2$ error, independent of the reference accuracy. The reference solution's own contribution to this gap is in fact negligible: comparing the $N = 5000$ and $N = 40\,000$-element P1 reference solutions directly gives a residual difference on the order of $10^{-7}$, several orders of magnitude smaller than the reported $H^1$ errors themselves. The consistent decrease of both errors under mesh refinement provides evidence of convergence, at the rates discussed in the following section.
 
 \subsubsection{Convergence}
 Notwithstanding good results in error analysis, the convergence analysis did not show the expected results. First of all lets look at Table \ref{tab:coulomb eigval conv} and Table \ref{tab:coulomb eigfunc conv}.
@@ -1876,7 +1878,7 @@ Notwithstanding good results in error analysis, the convergence analysis did not
     \end{tabular}
 \end{table}
 
-The first noticable feature comparing to the all previous results is that with the mesh refinement the convergence rates are decaying and approaching much lower value than was expected. 
+The first noticeable feature comparing to the all previous results is that with the mesh refinement the convergence rates are decaying and approaching much lower value than was expected. 
 
 The main reason for this is that theoretical P2 convergence rates, namely $O(h^4)$ for eigenvalues, $O(h^3)$ for the $L^2$ eigenfunction error and $O(h^2)$ for the $H^1$ eigenfunction error, assume a shape-regular family of meshes. In particular, the aspect ratios of the elements must retain bounded independently of the mesh size $h$.
 
@@ -1894,7 +1896,7 @@ Improving the mesh topology so that the elements remain shape-regular while reta
 \section{Conclusion}
 To conclude, all discussed problems have their own important physical meaning, however, because they belong to the one group of mathematical objects and can be formulated as elliptic eigenvalue problems of the form:
 \begin{equation}
-    a(u, v) = \lambdab(u, v)
+    a(u, v) = \lambda b(u, v)
 \end{equation}
 with potential changing the bilinear form, that is why algorithms to their solutions are quite identical. 
 
@@ -1909,7 +1911,7 @@ Nevertheless, finite-element is a very strong mathematical tool that proved its 
 \bibitem{b0} W. A. Strauss, Partial Differential Equations. Wiley Global Education, 2012
 \bibitem{b1} Arxiv.org, 2023. \url{https://arxiv.org/pdf/1903.11240} 
 \bibitem{b2} W. Ding and Y. Wei, “Generalized Tensor Eigenvalue Problems,” Theory and Computation of Tensors, pp. 11-36, 2016, doi: 10.1016/b978-0-12-803953-3.50002-2
-\bibitem{b3} A. K. Saad, “An algorithm for the generalized matrix eigenvalue problem Ax=\lambda Bx,” ResearchGate. [Online]. Available: \url{https://www.researchgate.net/publication/235012188_An_Algorithm_for_the_Generalized_Matrix_Eigenvalue_Problem_Ax_Lambda_Bx}
+\bibitem{b3} A. K. Saad, “An algorithm for the generalized matrix eigenvalue problem $Ax=\lambda Bx$,” ResearchGate. [Online]. Available: \url{https://www.researchgate.net/publication/235012188_An_Algorithm_for_the_Generalized_Matrix_Eigenvalue_Problem_Ax_Lambda_Bx}
 \bibitem{b4} “What is the difference between strong form and weak form? | ResearchGate,” ResearchGate, 2016. \url{https://www.researchgate.net/post/What_is_the_difference_between_strong_form_and_weak_form}
 \bibitem{b4.1} “Variational Formulation 2.1 Boundary Value problems Example 2.1.1 (One dim'l problem),”. [Online]. Available: \url{https://mathsci.kaist.ac.kr/~dykwak/Courses/FEM765-17/variation-fem.pdf}
 \bibitem{b10} M. G. Larson and Fredrik Bengzon, The Finite Element Method: Theory, Implementation, and Applications. Springer Science $\&$ Business Media, 2013
