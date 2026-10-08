@@ -133,7 +133,7 @@ Since $v(0) = v(L) = 0$ by Dirichlet BCs:
 
 The form obtained in \ref{eq:weak form} is called a weak form in 1D. For 2D and higher dimensions integration by parts follows the divergence theorem is used, in particular the Green's First Identity presented in \ref{eq:Green theorem} \cite{b10}:
 \begin{equation}
-    \int_{\Omega}-\Delta{u}v \, dx = \int_{\Omega}\nabla{u} \dot \nabla{v} \, dx - \int_{\partial{\Omega}} n \dot \nabla{u}v \, ds
+    \int_{\Omega}-\Delta{u}v \, dx = \int_{\Omega}\nabla{u}\nabla{v} \, dx - \int_{\partial{\Omega}} n \nabla{u}v \, ds
     \label{eq:Green theorem}
 \end{equation}
 
@@ -158,7 +158,7 @@ Therefore, the weak formulation of the Poisson equation \ref{eq:weak form} can b
 \begin{equation}
 \begin{aligned}
     B(u, v) &= L(v) \quad \forall v \in V \text{, where} \\
-    B(u, v) &= \int_{\Omega}\nabla{u} \dot \nabla{v} \, dx \\
+    B(u, v) &= \int_{\Omega}\nabla{u}\nabla{v} \, dx \\
     L(v) &= \int_{\Omega}fv \, dx
     \label{eq:bilinear Poisson}
 \end{aligned}
