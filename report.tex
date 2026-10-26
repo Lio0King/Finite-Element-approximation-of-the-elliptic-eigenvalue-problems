@@ -100,7 +100,7 @@ The way from the strong form to weak requires following steps:
 Firstly, write the strong form (we will take Poisson equation on the interval $I$ with Dirichlet boundary condition as an example) \cite{b4.1}:
 \begin{equation}
 \begin{cases}
-    -u''(x) = f(x), \quad where  x \in I = [0, L] \\
+    -u''(x) = f(x), \quad \text{where} x \in I = [0, L] \\
     u(0) = u(L) = 0
     \label{eq:Poisson}
 \end{cases}
@@ -116,18 +116,18 @@ Where $v(x)$ is a continuous test function which is assumed to vanish at end poi
 Finally, integrate over the domain using integration by parts (in our case the domain is the interval I = [0, L]) \cite{b10}:
 \begin{equation}
 \begin{aligned}     
-    \int_{0}^{L}f(x) \cdot v(x) \, dx 
-        &= \int_{0}^{L}-u''(x) \cdot v(x) \, dx \\ 
-        &= \left[ -v(x) \cdot u'(x) \right]\Big|_{0}^{L} \\ 
-        &\quad + \int_{0}^{L}u'(x) \cdot v'(x) \, dx \\ 
-        &= \int_{0}^{L}u'(x) \cdot v'(x) \, dx \\ 
-        &\quad - u'(L) \cdot v(L) + u'(0) \cdot v(0) \\
+    \int_{0}^{L}f(x) v(x) \, dx 
+        &= \int_{0}^{L}-u''(x) v(x) \, dx \\ 
+        &= \left[ -v(x) u'(x) \right]\Big|_{0}^{L} \\ 
+        &\quad + \int_{0}^{L}u'(x) v'(x) \, dx \\ 
+        &= \int_{0}^{L}u'(x) v'(x) \, dx \\ 
+        &\quad - u'(L) v(L) + u'(0) v(0) \\
 \end{aligned}
 \end{equation}
 
 Since $v(0) = v(L) = 0$ by Dirichlet BCs:
 \begin{equation}
-    \int_{0}^{L}f(x) \cdot v(x) \, dx = \int_{0}^{L}u'(x) \cdot v'(x) \, dx
+    \int_{0}^{L}f(x) v(x) \, dx = \int_{0}^{L}u'(x) v'(x) \, dx
     \label{eq:weak form}
 \end{equation}
 
@@ -249,7 +249,7 @@ We will now derive the Galerkin discretisation for the Laplace eigenvalue proble
 
 By definition of the weak form, the equation must hold for any arbitrary function $v$ and it is in our power to put constraints on this test function. One of the main ones will be that our test space becomes discrete \ref{eq:discrete test space}.
 \begin{equation}
-    v_h \in V_h \quad \text{where } V_h = span{\phi_1, \dots, \phi_n} \subset V
+    v_h \in V_h \quad \text{where } V_h = span\{\phi_1, \dots, \phi_n\} \subset V
     \label{eq:discrete test space}
 \end{equation}
 
@@ -304,7 +304,7 @@ This is what makes FEA so powerful because it allows us to break down a complex 
 Since we know that it is difficult to explicitly calculate eigenvalues for a given domain $\Omega \subset \mathbb{R}^n$. Hence, from \cite{b9.1} we will show that eigenvalues are minimisers of a certain functional.
 To do so from \ref{eq:2D weak} we can define \ref{eq:Rayleigh Quotient} the Rayleigh Quotient for a given function $w$ defined of the set $\Omega \subset \mathbb{R}^n$.
 \begin{equation}
-    R(w) = \frac{\|\nabla w\|_{L^2(\Omega)}^2}{\|w\|_{L^2(\Omega)}^2} = \frac{\int_\Omega |\nabla w|^2 \, dx}{\int_\Omega |w|^2 \, dx} \\
+    R(w) = \frac{\|\nabla w\|_{L^2(\Omega)}^2}{\|w\|_{L^2(\Omega)}^2} = \frac{\int_\Omega |\nabla w|^2 \, dx}{\int_\Omega |w|^2 \, dx}
     \label{eq:Rayleigh Quotient}
 \end{equation}
 The Rayleigh quotient can also be expressed in matrix form \ref{eq:Rayleigh quotient matrix form} which suits the discretised problem more.
@@ -319,7 +319,7 @@ Now, we can introduce the Minimum Principle for the First Eigenvalue Theorem fro
 \textit{
     Let
     \begin{equation}
-        Y \equiv {w: w \in C^2(\Omega), w \not\equiv 0, w = 0 for x \in \partial\Omega}.
+        Y \equiv \{w: w \in C^2(\Omega), w \not\equiv 0, w = 0 \, for \, x \in \partial\Omega\}.
     \end{equation}
     We call this the set of trial functions for $\lambda u = -\Delta u$. Suppose there exists a function $u \in Y$ such that $u$ minimises the Rayleigh quotient over all trial functions $w \in Y$.
     That is,
@@ -593,7 +593,7 @@ This allow us to obtain basis functions in \ref{eq:basis functions P2} and illus
 \end{aligned}
 \end{equation}
 
-As it is seen from the figure the this approximation is more complex but allows us to get more detailed picture about our unknown function. The shape of these basis functions is presented in Fig. \ref{fig:p2 approximation}.
+As it is seen from the figure, this approximation is more complex but allows us to get more detailed picture about our unknown function. The shape of these basis functions is presented in Fig. \ref{fig:p2 approximation}.
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\columnwidth]{P2.1 approximation.png}
@@ -650,7 +650,7 @@ Then with separation of variables we are getting \ref{eq:heat eq separation of v
     \label{eq:heat eq separation of var}
 \end{equation}
 
-Substituting back to \ref{eq:heat equation} and assigning $\lambda = e^-\lambda t$ gives us \ref{eq:heat Laplace}.
+Substituting back to \ref{eq:heat equation} and assigning $\lambda = e^{-\lambda t}$ gives us \ref{eq:heat Laplace}.
 \begin{equation}
     -\Delta\phi = \lambda\phi
     \label{eq:heat Laplace}
@@ -737,9 +737,9 @@ The idea behind this project is to research about solving 1D and 2D partial diff
 
 
 \section{Implementation}
-In order to complete this project, the Visual Studio code was used to write and run the code in Python and Jupiter Notebooks.
+In order to complete this project, the Visual Studio Code was used to write and run the code in Python and Jupiter.
 
-In order to simplify the work various libraries were used, like NumPy, Math and SciPy for different mathematical operations; Pandas for presenting results in good-looking tables; and MatPlotLib and PyVista to visualise plots in 2D and 3D respectively.
+In order to simplify the work various libraries were used, like NumPy, Math and SciPy for different mathematical operations; Pandas for presenting results in good-looking tables; and Matplotlib and PyVista to visualise plots in 2D and 3D respectively.
 
 
 \subsection{Mesh generation} 
@@ -771,7 +771,7 @@ The local potential matrix $K_V$ measures the potential energy contribution betw
 
 Following \cite{b10} we know that each entry of stiffness matrix and mass matrix are calculated by \ref{eq:stiffness matrix} and \ref{eq:mass matrix} respectively.
 \begin{equation}
-    (A_K)_{ij} = \int_K \nabla \phi_i \cdot \nabla \phi_j \, dxdy
+    (A_K)_{ij} = \int_K \nabla \phi_i \nabla \phi_j \, dxdy
     \label{eq:stiffness matrix}
 \end{equation}
 
@@ -819,15 +819,15 @@ Now approximating the integral over $\vec{K}$ from \ref{eq:from physical to refe
 \end{equation}
 where $N_q$ is the number of quadrature points, $w_q$ the quadrature weights, and $(\xi_q, \eta_q)$ the quadrature points.
 
-For P1 elements, the mass integrand $\phi_i\phi_j$ has polynomial degree 2, while the stiffness integrand $\nabla\phi_i\cdot\nabla\phi_j$ is constant. For P2 elements, these degrees become 4 and 2, respectively. Therefore, a quadrature rule exact for polynomials of degree at least 4 is sufficient to evaluate the Laplace element integrals exactly in exact arithmetic. That is why we will use the 6 point Hammer-Marlowe-Stroud quadrature rules \cite{b16}. This rule has more quadrature points then required for solving this type of integral, however it gives more precision with minor speed sacrifices.
+For P1 elements, the mass integrand $\phi_i\phi_j$ has polynomial degree 2, while the stiffness integrand $\nabla\phi_i \nabla\phi_j$ is constant. For P2 elements, these degrees become 4 and 2, respectively. Therefore, a quadrature rule exact for polynomials of degree at least 4 is sufficient to evaluate the Laplace element integrals exactly in exact arithmetic. That is why we will use the 6 point Hammer-Marlowe-Stroud quadrature rules \cite{b16}. This rule has more quadrature points then required for solving this type of integral, however it gives more precision with minor speed sacrifices.
 
 However, for the Schr\"{o}dinger problem, the degree of the potential integrand additionally depends on the chosen potential $V(x,y)$. For polynomial potentials, increasing the degree of $V$ increases the degree of the integrand $V\phi_i\phi_j$, requiring a quadrature rule of sufficiently high degree. For example, a 12 point David Dunavant's quadrature rule \cite{b17} with Burkardt's implementation from \cite{b18}.
 
 An important property of the local matrices is their symmetry. This follows directly from the definitions. For example,
 \begin{equation}
-    (A_K)_{ij} = \int_K\nabla\phi_i \cdot \nabla\phi_j \, dxdy
+    (A_K)_{ij} = \int_K\nabla\phi_i \nabla\phi_j \, dxdy
 \end{equation}
-Since the dot product is commutative, $\nabla\phi_i \cdot \nabla\phi_j = \nabla\phi_j \cdot \nabla\phi_i$, therefore we have:
+Since the dot product is commutative, $\nabla\phi_i \nabla\phi_j = \nabla\phi_j \nabla\phi_i$, therefore we have:
 \begin{equation}
     (A_K)_{ij}=(A_K)_{ji}.
 \end{equation}
@@ -889,16 +889,15 @@ The reconstructed finite-element eigenfunction has zero coefficients at the boun
 
 
 \subsection{Eigenvalue solver}
-In order to find eigenvalues and eigenvectors we use the SciPy library, in particular scipy.linalg.eigh. It solves a standard or generalised eigenvalue problem for a complex Hermitian or real symmetric matrix \cite{b23}. From \ref{sec:local matrices} we know that all of our matrices are symmetric and real,that is why it would be appropriate to use it to find both eigenvalues and eigenvectors.
+In order to find eigenvalues and eigenvectors we use the SciPy library, in particular \texttt{scipy.linalg.eigh}. It solves a standard or generalised eigenvalue problem for a complex Hermitian or real symmetric matrix \cite{b23}. From \ref{sec:local matrices} we know that all of our matrices are symmetric and real,that is why it would be appropriate to use it to find both eigenvalues and eigenvectors.
 
 This method returns the 1D array of eigenvalues in ascending order and the 2D array of the normalised eigenvectors, where the column $v[:, i]$ is corresponding to the eigenvalue $w[i]$ \cite{b23}.
-
 
 
 \section{Eigenvalues}
 The previous sections established the mathematical formulation and numerical implementation of the finite element eigenvalue problem. In this section, the obtained eigenvalues are analysed to compute the approximation error and to investigate the convergence behaviour of the P1 and P2 finite element approximations.
 
-The scipy.linalg.eigh returned us the array of eigenvalues, but how are we going to check if the numbers are correct? 
+The \texttt{scipy.linalg.eigh} returned us the array of eigenvalues, but how are we going to check if the numbers are correct? 
 
 One of the ways is to make the calculations by hand and compare with obtained results (this was done for some eigenvalues on small mesh sizes), however it becomes more and more difficult to check every mesh refinement.
 
@@ -964,7 +963,7 @@ For the Laplace eigenproblem we obtained results for P1 and P2 elements. The res
     \label{tab:P1 error dependency}
     \begin{tabular}{rrrr}
         \toprule
-        $N$ points per axis & Interior DoF & Computed $\lambda_1$ & $|\lambda_1 - \lambda_{1,h}$ \\
+        $N$ points per axis & Interior DoF & Computed $\lambda_1$ & $|\lambda_1 - \lambda_{1,h}|$ \\
         \midrule
         3 & 1 & 48.000000 & 28.260791 \\
         6 & 16 & 21.640205 & 1.900996 \\
@@ -981,7 +980,7 @@ For the Laplace eigenproblem we obtained results for P1 and P2 elements. The res
     \label{tab:P2 error dependency}
     \begin{tabular}{rrrr}
         \toprule
-        $N$ points per axis & Interior DoF & Computed $\lambda_1$ & $|\lambda_1 - \lambda_{1,h}$ \\
+        $N$ points per axis & Interior DoF & Computed $\lambda_1$ & $|\lambda_1 - \lambda_{1,h}|$ \\
         \midrule
         3 & 9 & 19.94133 & 0.202126 \\
         6 & 81 & 19.76407 & 0.024864 \\
@@ -1264,18 +1263,18 @@ In order to spot this rotation for P1 elements the program returned the Table \r
     \label{tab:dot products}
     \begin{tabular}{rrrrr}
         \toprule
-        $N$ & $u_{1,2}\dot u_{h,1,2}$ & $u_{2,1}\dot u_{h,2,1}$ & $u_{1,2}\dot u_{h,2,1}$ & $u_{2,1}\dot u_{h,1,2}$ \\
+        $u_{1,2} u_{h,1,2}$ & $u_{2,1} u_{h,2,1}$ & $u_{1,2} u_{h,2,1}$ & $u_{2,1} u_{h,1,2}$ \\
         \midrule
-        1 & 0.609668 & 0.590639 & 0.803962 & 0.790167 \\
-        2 & 0.595032 & 0.593817 & 0.804533 & 0.803643 \\
-        3 & 0.610267 & 0.610161 & 0.792274 & 0.792193 \\
-        4 & 0.842743 & 0.842736 & 0.538327 & 0.538316 \\
+        0.609668 & 0.590639 & 0.803962 & 0.790167 \\
+        0.595032 & 0.593817 & 0.804533 & 0.803643 \\
+        0.610267 & 0.610161 & 0.792274 & 0.792193 \\
+        0.842743 & 0.842736 & 0.538327 & 0.538316 \\
         \bottomrule
     \end{tabular}
 \end{table}
 
 The observed values indicate that the numerical eigenvectors are rotated combinations of the exact eigenfunctions, which is the expected behaviour for a degenerate eigenspace.
-Additionally, dot products are not close to $1$, because the numerical eigenvectors are a rotation of the exact basis by some angle $\theta$. Dot product gives the $cos(\theta)$ and $sin(\theta)$. If we look at the table we will see that the $(u_{1,2}\dot u_{h,1,2})^2 + (u_{1,2}\dot u_{h,2,1})^2 \approx 0.6^2 + 0.8^2 \approx 1$, which is Pythagoras theorem. Hence, although neither numerical eigenvector individually coincides with particular analytical eigenfunction, together they provide evidence that the correct eigenspace has been captured.. 
+Additionally, dot products are not close to $1$, because the numerical eigenvectors are a rotation of the exact basis by some angle $\theta$. Dot product gives the $cos(\theta)$ and $sin(\theta)$. If we look at the table we will see that the $(u_{1,2} u_{h,1,2})^2 + (u_{1,2} u_{h,2,1})^2 \approx 0.6^2 + 0.8^2 \approx 1$, which is Pythagoras theorem. Hence, although neither numerical eigenvector individually coincides with particular analytical eigenfunction, together they provide evidence that the correct eigenspace has been captured.. 
 
 The jump up to $0.84$ in the last row can be explained that the eigensolver is free to choose any orthonormal basis of the approximate 2D eigenspace.
 However, small changes in the discretisation may therefore lead to different rotations of the numerical basis, even though the eigenspace itself is converging correctly. That is why convergence of individual eigenvectors is not an appropriate measure for repeated eigenvalue. Instead the convergence should be assessed at the level of the eigenspace itself.
@@ -1587,7 +1586,7 @@ We know that the second derivative can be approximated with finite differences \
     \label{eq:finite diff}
 \end{equation}
 
-After we solve each 1D problem individually using $scipy.linalg.eigh_tridiagonal$. We get eigenvalues and eigenfunctions. With eigenvalues in order to go from 1D to 2D we can simply add them together, which mathematically looks like this:
+After we solve each 1D problem individually using \texttt{scipy.linalg.eigh_tridiagonal}. We get eigenvalues and eigenfunctions. With eigenvalues in order to go from 1D to 2D we can simply add them together, which mathematically looks like this:
 \begin{equation}
 \begin{aligned}
     &H_x\phi_{n_x} = \lambda_m^{(x)}\phi_{n_x}, \quad H_y\phi_{n_y} = \lambda_n^{(y)}\phi_{n_y} \\
@@ -1888,8 +1887,6 @@ Another reason for the decaying convergence rates is the interpretation of the g
 These two reasons explain why the theoretical P2 convergence rates are not observed for the present mesh family. But it does not mean that P2 finite-element approximation failed, it means that this particular polar mesh family does not satisfy the geometric assumptions required by the standard convergence theory.
 
 Improving the mesh topology so that the elements remain shape-regular while retaining increased resolution near the nucleus would require substantial changes to the mesh-generation procedure. This is therefore considered beyond the scope of the present project and could form the basis of a separate investigation.
-
-
 
 
 \section{Conclusion}
