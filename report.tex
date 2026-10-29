@@ -704,7 +704,7 @@ If we rearrange the \ref{eq:reduced Schrodinger} and will call $\lambda = \frac{
 \end{equation}
 
 Which is exactly the form of the Laplace eigenproblem. Additionally, the infinite square well requires the infinite potential outside the domain, which is the Dirichlet boundary condition.
-Solving this problem will give us the wave function, whose square $|\psi(x)|^2$ represents the Born interpretation of probability density of finding a quantum particle at a specific position in space.
+Solving this problem will give us the wave function, whose square $|\psi(x)|^2$ represents the Born rule of probability density of finding a quantum particle at a specific position in space.
 
 Although the infinite square well is an idealised model, it provides a useful benchmark because its eigenvalues and eigenfunctions are known analytically.
 
@@ -1556,13 +1556,13 @@ The first eigenfunctions are identical, which means that potential matrix does n
 \subsection{Quantum harmonic oscillator}
 The quantum harmonic oscillator models a particle in a parabolic potential well, featuring discrete, equally spaced energy levels and a non-zero ground state energy \cite{b28}.
 
-The main difference between infinite square well and quantum harmonic oscillator is that in harmonic oscillator we have quantised energy levels that are given by \ref{eq:harmonic oscill}.
+The main difference between infinite square well and quantum harmonic oscillator is that the harmonic oscillator energy levels  are equally spaced with a nonzero ground state energy. Formula for finding these energy levels is given in \ref{eq:harmonic oscill}.
 \begin{equation}
     E_{n_x, n_y} = \sqrt{2}\omega(n_x + n_y + 1) \quad \text{where } n_x, n_y = 0, 1, 2, \dots
     \label{eq:harmonic oscill}
 \end{equation}
 
-Hence, because our problem is not on the infinite line, so our potential energy will be defined as $V(x, y) = \frac{1}{2}m\omega^2\Big((x - x_0)^2 + (y - y_0)^2\Big)$, where $\omega$ is angular frequency and $m$ is the mass of the particle \cite{b28}.
+Hence, because our problem is not on the infinite line, so our potential energy will be defined as $V(x, y) = \frac{1}{2}m\omega^2\Big((x - x_0)^2 + (y - y_0)^2\Big)$, where $\omega$ is angular frequency, which is a "tuning" parameter of the scaled problem and $m$ is the mass of the particle \cite{b28}.
 
 There are few changes that differ this problem from all previous problems. First of all, as it was mentioned before, because we define $V(x, y)$ with equation that contains independent variables: $x$ and $y$, and the basis functions $\phi_i(x, y)$ and $\phi_j(x, y)$ also depend on $x$ and $y$, multiplying all of them, we can get polynomial up to degree 6. The previous quadrature rule is exact only for polynomials up to degree 4 and is therefore insufficient to integrate this degree-6 integrand exactly.
 Additionally, there is no simple analytical solution for the harmonic oscillator on the finite square domain. Hence, to check whether the FEM eigenvalues are correct, we need a "numerical reference", in other words we need to solve the same problem with trusted numerical method and compare with FEM implementation. Luckily, this 2D problem can be solved easily with few numerical methods.
@@ -1609,7 +1609,7 @@ Another important note is normalisation. The \texttt{eigh_tridiagonal} returns t
 \end{equation}
 
 \subsubsection{Results: eigenvalues}
-In the implementation we took $\omega = 160$, which gives a sufficiently confining potential that produces oscillator-like low-energy states while remaining convenient for numerical computations. $(x_0, y_0) = (0.5, 0.5)$ to have the minimum potential in the middle of the unit square. The 1D reference problem is solved using a sufficiently fine finite-difference grid to obtain eigenvalues accurate to approximately four decimal places.
+In the implementation we took $\omega = 160$, which gives a sufficiently confining potential (the zero walls change the lowest 1D levels by less than $10^{-7}$) that produces oscillator-like low-energy states while remaining convenient for numerical computations. $(x_0, y_0) = (0.5, 0.5)$ to have the minimum potential in the middle of the unit square. The 1D reference problem is solved using a sufficiently fine finite-difference grid to obtain eigenvalues accurate to approximately four decimal places.
 
 In the Table \ref{tab:oscil results} eigenvalues and their errors are shown.
 \begin{table}[H]
@@ -1700,7 +1700,7 @@ Coulomb potential is definied as:
     V(r) = -\frac{Z}{r}, \quad r = \sqrt{(x - x_0)^2 + (y - y_0)^2}
     \label{eq:coulomb potential}
 \end{equation}
-Where $Z$ is the atomic number, that is equal to amount of protons in the nucleus \cite{b29}. For the physical hydrogen atom, the Coulomb potential energy term is proportional to $-\frac{Ze^2}{4\pi\epsilon}$ where $e$ is the elementary charge and $\epsilon$ is vacuum permittivity \cite{b30}. In this project we use scaled mathematical model in which the relevant physical constants are absorbed into scaling, giving $V(r) = -\frac{Z}{r}$. In addition to this, since the domain is quite small and we want wavefunction to be strongly concentrated around the nucleus, we use a hydrogen-like ion with $Z = 10$ to obtain a stronger Coulomb potential while retaining a one-electron system. 
+Where $Z$ is the atomic number, that is equal to amount of protons in the nucleus \cite{b29}. For the physical hydrogen atom, the softened Coulomb potential energy term is proportional to $-\frac{Ze^2}{4\pi\epsilon}$ where $e$ is the elementary charge and $\epsilon$ is vacuum permitivity \cite{b30}. In this project we use scaled mathematical model in which the relevant physical constants are absorbed into scaling, giving $V(r) = -\frac{Z}{r}$. In addition to this, since the domain is quite small and we want wavefunction to be strongly concentrated around the nucleus, we use a hydrogen-like ion with $Z = 10$ to obtain a stronger Coulomb potential while retaining a one-electron system. 
 
 As \ref{eq:coulomb potential} depends only on the distance $r$ from the nucleus, the potential is radially symmetric. Hence, instead of solving problem on the squared domain $\Omega^2 = [0, 1]^2$ with $n$ points per axis, we will choose a polar-coordinate-based mesh as it is more natural for Coulomb potential since the geometry of the potential is represented in terms of radial and angular coordinates. For simplicity we will put the nucleus in the middle at $(x_0, y_0) = (0.5, 0.5)$ with 2 mesh parameters $N_r$ and $N_{\theta}$, denoting the numbers of radial and angular divisions, respectively, with $r \in [0, R]$ and $\theta \in [0, 2\pi)$. The idea of the mesh on the new domain can be visualised as in Fig. \ref{fig:disk mesh} where as we can see mesh consists of rings, where the space between the rings is subdivided into triangles. Also since we are analysing the nucleus we want more nodes in the middle, because the wavefunction varies rapidly near the nucleus and a finer mesh resolves the spatial behaviour more accurately, in addition the singularity of the original Coulomb potential at $r = 0$ is treated separately using the regularisation introduced below.
 \begin{figure}[htbp]
@@ -1774,10 +1774,10 @@ Eigenvalues were obtained and compared with reference ones (important note, refe
 
 As we can notice the errors are not as small as they were in the previous problems, but before making any conclusions it is a good practice to check the relative error from \ref{eq:relative error}. For the first eigenvalue at the finest mesh $e_{rel} = |\frac{0.000746}{-78.922759}| \approx 9.45 \times 10^{-6}$. And for the degenerate pair $e_{rel} \approx 0.0011$. The first eigenvalue relative error same as the degenerate pair has much higher error comparing to the previous P2 element Laplace eigenproblem (about 46 times larger).
  
-From this we can conclude that eigenvalues were converging towards specific limiting values, which provides numerical evidence that the implementation is behaving as expected.
+From this we can conclude that eigenvalues agree with independent references to $9.5 \times 10^{-6}$ (ground state) and $1.1 \times 10{-3}$ (pair) that shows convergence and provides numerical evidence that the implementation is behaving as expected.
 
 \subsubsection{Results: eigenfunctions}
-Similar to eigenvalues, eigenfunctions showed predictable behaviour with the ground-state wavefunction having  the largest magnitude in the middle of the disk (near the nucleus), while the corresponding probability density is strongly concentrated around the centre of the disk. The two degenerate excited states exhibit nodal structure, with the regions of opposite sign separated by a nodal line as it is shown in Fig. \ref{fig:coulomb eigenfunc}. 
+Similar to eigenvalues, eigenfunctions showed predictable behaviour with the ground-state wavefunction having the largest magnitude in the middle of the disk (near the nucleus), while the corresponding probability density is strongly concentrated around the centre of the disk. The two degenerate excited states exhibit nodal structure, with the regions of opposite sign separated by a nodal line as it is shown in Fig. \ref{fig:coulomb eigenfunc}. 
 \begin{figure}[htbp]
     \centering
     \begin{subfigure}{\columnwidth}
@@ -1880,7 +1880,7 @@ Notwithstanding good results in error analysis, the convergence analysis did not
 
 The first noticeable feature comparing to the all previous results is that with the mesh refinement the convergence rates are decaying and approaching much lower value than was expected. 
 
-The main reason for this is that theoretical P2 convergence rates, namely $O(h^4)$ for eigenvalues, $O(h^3)$ for the $L^2$ eigenfunction error and $O(h^2)$ for the $H^1$ eigenfunction error, assume a shape-regular family of meshes. In particular, the aspect ratios of the elements must retain bounded independently of the mesh size $h$.
+The likely contributor for this is that theoretical P2 convergence rates, namely $O(h^4)$ for eigenvalues, $O(h^3)$ for the $L^2$ eigenfunction error and $O(h^2)$ for the $H^1$ eigenfunction error, assume a shape-regular family of meshes and solves on a polygon, not a disk. In particular, the aspect ratios of the elements must retain bounded independently of the mesh size $h$. This should explain most of finest-mesh errors.
 
 That is where the main difference lies, the polar mesh used for the Coulomb problem does not the condition stated above. At the centre of the disk, a single node is connected to all angular divisions, producing a fan of triangles. As the angular resolution is increased, the number of triangles meeting at this central node also increases. For this geometry, the worst-case aspect ratio of the fan grows approximately as $\frac{N_{\theta}}{2\pi}$, which was also confirmed against the measured mesh data up to rounding. Therefore, as $N_\theta$ increases during mesh refinement, the aspect ratio of the central elements becomes unbounded. This violates the shape-regularity assumption regardless of the radial grading or the chosen target aspect ratio.
 
@@ -1898,7 +1898,7 @@ To conclude, all discussed problems have their own important physical meaning, h
 \end{equation}
 with potential changing the bilinear form, that is why algorithms to their solutions are quite identical. 
 
-Of course in this project all the problems we simplified with scaled versions and did not use the actual metrics, but they showed the general solution steps, that can be implemented as well for the scaled formulations and will produce more physically accurate numbers.
+Of course in this project all the problems we simplified with scaled versions and did not use the actual metrics, but they showed the general solution steps, that can be implemented as well for the SI units formulations and will produce more physically accurate numbers.
 
 For partial differential equations finite-element method showed its strengths and applicability. It has many advantages, such as simple implementation, variety of approximations (P1, P2 etc elements), systematic convergence under appropriate mesh conditions and ability to build high quality visualisations and approximations. There are also some disadvantages, for example comparing to the finite-differences it is more complex to study, higher order convergence can be achieved with higher order elements that require more degrees of freedom which leads to increase in computational and implementation complexity.
 
