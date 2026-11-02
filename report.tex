@@ -14,7 +14,7 @@
 \usepackage{float}
 \usepackage{subcaption}
 \usepackage{url}
-\usepackage{hyperref}
+
 
 
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
@@ -84,7 +84,7 @@ Another variation of the eigenvalue problem is the generalised eigenvalue proble
 \begin{equation}
     AX = BXD
 \end{equation}
-Where $X$ is the column matrix of the eigenvectors; $D$ is a diagonal matrix of eigenvalues; $B$ acts as a weighting (mass) matrix that defines a new inner product for the vector space. The main condition is that $B$ is symmetric positive definite matrix. 
+Where $X$ is the column matrix of the eigenvectors; $D$ is a diagonal matrix of eigenvalues; $B$ acts as a weighting (mass) matrix that defines a new inner product for the vector space. The main condition is that $B$ is symmetric positive definite matrix \cite{b3}. 
 
 In other words, it changes the geometry of the problem by measuring vectors not in the standard Euclidean space, but relative to the properties of $B$ itself \cite{b1}. It usually represents a specific geometric or physical constraint \cite{b2}. 
 
@@ -651,7 +651,7 @@ Then with separation of variables we are getting \ref{eq:heat eq separation of v
     \label{eq:heat eq separation of var}
 \end{equation}
 
-Substituting back to \ref{eq:heat equation} and assigning $\lambda = e^{-\lambda t}$ gives us \ref{eq:heat Laplace}.
+Substituting back to \ref{eq:heat equation} and cancelling the common factor $\lambda = e^{-\lambda t}$ gives us \ref{eq:heat Laplace}.
 \begin{equation}
     -\Delta\phi = \lambda\phi
     \label{eq:heat Laplace}
@@ -1562,6 +1562,8 @@ The main difference between infinite square well and quantum harmonic oscillator
     \label{eq:harmonic oscill}
 \end{equation}
 
+In this particullar case $E$ is the eigenvalue $\lambda$ of the scaled problem.
+
 Hence, because our problem is not on the infinite line, so our potential energy will be defined as $V(x, y) = \frac{1}{2}m\omega^2\Big((x - x_0)^2 + (y - y_0)^2\Big)$, where $\omega$ is angular frequency, which is a "tuning" parameter of the scaled problem and $m$ is the mass of the particle \cite{b28}.
 
 There are few changes that differ this problem from all previous problems. First of all, as it was mentioned before, because we define $V(x, y)$ with equation that contains independent variables: $x$ and $y$, and the basis functions $\phi_i(x, y)$ and $\phi_j(x, y)$ also depend on $x$ and $y$, multiplying all of them, we can get polynomial up to degree 6. The previous quadrature rule is exact only for polynomials up to degree 4 and is therefore insufficient to integrate this degree-6 integrand exactly.
@@ -1718,7 +1720,7 @@ One of the main issues that arises from the first glance is the singularity when
     \label{eq:regularised coulomb}
 \end{equation}
 
-This ensures that we avoid the division by 0 because when $r = 0$ we will have $V(0) = -\frac{Z}{\epsilon}$, because denominator would be finite, while being close to 0. For $r \gg \epsilon$ the exponential term becomes negligible and $r_{reg} \approx r$, so the constrained potential approaches the original Coulomb potential, in this project $r = 0.5$ and $\epsilon = 0.01$.
+This ensures that we avoid the division by 0 because when $r = 0$ we will have $V(0) = -\frac{Z}{\epsilon}$, because denominator would be finite, while being close to 0. For $r \gg \epsilon$ the exponential term becomes negligible and $r_{reg} \approx r$, so the constrained potential approaches the original Coulomb potential. In this project the disk has radius $R = 0.5$ an is centred at $(0.5, 0.5)$ also the softening parameter $\epsilon = 0.01$.
 
 Another aspect that needed a change, comparing to the all previous computations, is the values that we are going to use as reference to compare obtained FEM numbers. 
 
@@ -1733,7 +1735,7 @@ The resolution was to abandon the substitution and solve directly for $R(r)$. De
 \begin{equation}
     \int_0^R R'\varphi'\, r\,dr + \int_0^R V(r)R\varphi\, r\,dr = E \int_0^R R\varphi\, r\,dr
 \end{equation}
-with $R(r)$ free (rather than constrained to zero) at $r = 0$. A P1 discretisation of this direct formulation converged rapidly and matched the P2 FEM solution to within $0.02\%$, confirming that the FEM implementation was correct throughout and the earlier discrepancy originated entirely in the reference solver. Because of its simplicity and low computational cost, this direct formulation was solved with $N = 5000$ P1 elements, verified sufficiently fine as a reference in \ref{sec: P1 vs P2}. Additionally, the quick test was made with $N = 40000$, the difference in error was not sufficient.
+with $R(r)$ free (rather than constrained to zero) at $r = 0$. A P1 discretisation of this direct formulation converged rapidly and matched the P2 FEM solution to within $0.02\%$, confirming that the FEM implementation was correct throughout and the earlier discrepancy originated entirely in the reference solver. Because of its simplicity and low computational cost, this direct formulation was solved with $N = 5000$ P1 elements, verified sufficiently fine as a reference in \ref{sec: P1 vs P2}. A check with $N = 40000$ changed the ground state eigenfunction by about $4 \times 10^{-8} (L^2)$ and $1 \times 10{-5} (H^1)$.
 
 
 \subsubsection{Results: eigenvalues}
@@ -1774,7 +1776,7 @@ Eigenvalues were obtained and compared with reference ones (important note, refe
 
 As we can notice the errors are not as small as they were in the previous problems, but before making any conclusions it is a good practice to check the relative error from \ref{eq:relative error}. For the first eigenvalue at the finest mesh $e_{rel} = |\frac{0.000746}{-78.922759}| \approx 9.45 \times 10^{-6}$. And for the degenerate pair $e_{rel} \approx 0.0011$. The first eigenvalue relative error same as the degenerate pair has much higher error comparing to the previous P2 element Laplace eigenproblem (about 46 times larger).
  
-From this we can conclude that eigenvalues agree with independent references to $9.5 \times 10^{-6}$ (ground state) and $1.1 \times 10{-3}$ (pair) that shows convergence and provides numerical evidence that the implementation is behaving as expected.
+From this we can conclude that eigenvalues agree with independent references to $9.5 \times 10^{-6}$ (ground state) and $1.1 \times 10^{-3}$ (pair) that shows convergence and provides numerical evidence that the implementation is behaving as expected.
 
 \subsubsection{Results: eigenfunctions}
 Similar to eigenvalues, eigenfunctions showed predictable behaviour with the ground-state wavefunction having the largest magnitude in the middle of the disk (near the nucleus), while the corresponding probability density is strongly concentrated around the centre of the disk. The two degenerate excited states exhibit nodal structure, with the regions of opposite sign separated by a nodal line as it is shown in Fig. \ref{fig:coulomb eigenfunc}. 
@@ -1837,7 +1839,7 @@ The errors for the degenerate pair can be found in Table \ref{tab:coulomb degene
     \end{tabular}
 \end{table}
 
-In both tables it is noticeable that the $H^1$-norm projection error is noticeably higher than the corresponding $L^2$-norm error about. This is expected from the standard finite-element approximation theory rather than any limitation of the reference solution: for P2 elements, the $H^1$ error converges as $O(h^2)$ while the $L^2$ error converges as $O(h^3)$, one order faster, since the $H^1$-norm measures errors in the derivatives of the eigenfunction, which a piecewise-quadratic approximation captures one order less accurately than the function values themselves. At any fixed mesh size $h$, this means the $H^1$ error is inherently larger than the $L^2$ error, independent of the reference accuracy. The reference solution's own contribution to this gap is in fact negligible: comparing the $N = 5000$ and $N = 40\,000$-element P1 reference solutions directly gives a residual difference on the order of $10^{-7}$, several orders of magnitude smaller than the reported $H^1$ errors themselves. The consistent decrease of both errors under mesh refinement provides evidence of convergence, at the rates discussed in the following section.
+In both tables it is noticeable that the $H^1$-norm projection error is noticeably higher than the corresponding $L^2$-norm error about. This is expected from the standard finite-element approximation theory rather than any limitation of the reference solution: for P2 elements, the $H^1$ error converges as $O(h^2)$ while the $L^2$ error converges as $O(h^3)$, one order faster, since the $H^1$-norm measures errors in the derivatives of the eigenfunction, which a piecewise-quadratic approximation captures one order less accurately than the function values themselves. At any fixed mesh size $h$, this means the $H^1$ error is inherently larger than the $L^2$ error, independent of the reference accuracy. The reference solution's own contribution to this gap is in fact negligible: comparing the $N = 5000$ and $N = 40\,000$-element reference solutions gives a difference about $4 \times 10^{-8} (L^2)$ and $1 \times 10^{-5} (H^1)$ for the ground state, which is roughly $1,600$ and $200$ times smaller than the finest-mesh FEM errors ($6.6 \times 10^{-5}$ and $2.1 \times 10^{-3}$). The consistent decrease of both errors under mesh refinement provides evidence of convergence, at the rates discussed in the following section.
 
 \subsubsection{Convergence}
 Notwithstanding good results in error analysis, the convergence analysis did not show the expected results. First of all lets look at Table \ref{tab:coulomb eigval conv} and Table \ref{tab:coulomb eigfunc conv}.
@@ -1906,15 +1908,14 @@ Nevertheless, finite-element is a very strong mathematical tool that proved its 
 
 \newpage
 \begin{thebibliography}{00}
-\bibitem{b10} M. G. Larson and Fredrik Bengzon, The Finite Element Method: Theory, Implementation, and Applications. Springer Science $\&$ Business Media, 2013
-\bibitem{b0.0} S. C. Brenner and L Ridgway Scott, The mathematical theory of finite element methods. New York ; London: Springer, 2011
-\bibitem{b0} W. A. Strauss, Partial Differential Equations. Wiley Global Education, 2012
+\bibitem{b10} M. G. Larson and Fredrik Bengzon, The Finite Element Method: Theory, Implementation, and Practice. Springer, 2010. Accessed: Oct. 31, 2026. [Online]. Available: \url{https://vefur.simula.no/~hpl/INF5620/books/Larson_Bengzon.pdf}
+\bibitem{b0.0} S. C. Brenner and L. R. Scott, The Mathematical Theory of Finite Element Methods. New York, NY: Springer New York, 2002. \url{https://doi.org/10.1007/978-1-4757-3658-8}
+\bibitem{b0} W. A. Strauss, “Partial Differential Equations,” WordPress.com, 2007. \url{https://math24.wordpress.com/wp-content/uploads/2016/03/partial-differential-equations-by-w-a-s.pdf}
 \bibitem{b1} Arxiv.org, 2023. \url{https://arxiv.org/pdf/1903.11240} 
-\bibitem{b2} W. Ding and Y. Wei, “Generalized Tensor Eigenvalue Problems,” Theory and Computation of Tensors, pp. 11-36, 2016, doi: 10.1016/b978-0-12-803953-3.50002-2
+\bibitem{b2} W. Ding and Y. Wei, “Generalized Tensor Eigenvalue Problems,” Theory and Computation of Tensors, pp. 11-36, 2016, \url{https://doi.org/10.1016/b978-0-12-803953-3.50002-2}
 \bibitem{b3} A. K. Saad, “An algorithm for the generalized matrix eigenvalue problem $Ax=\lambda Bx$,” ResearchGate. [Online]. Available: \url{https://www.researchgate.net/publication/235012188_An_Algorithm_for_the_Generalized_Matrix_Eigenvalue_Problem_Ax_Lambda_Bx}
 \bibitem{b4} “What is the difference between strong form and weak form? | ResearchGate,” ResearchGate, 2016. \url{https://www.researchgate.net/post/What_is_the_difference_between_strong_form_and_weak_form}
 \bibitem{b4.1} “Variational Formulation 2.1 Boundary Value problems Example 2.1.1 (One dim'l problem),”. [Online]. Available: \url{https://mathsci.kaist.ac.kr/~dykwak/Courses/FEM765-17/variation-fem.pdf}
-\bibitem{b5} GeeksforGeeks, “Bilinear Form,” GeeksforGeeks, Sept. 11, 2024. \url{https://www.geeksforgeeks.org/engineering-mathematics/bilinear-form/}
 \bibitem{b6} manavofficial577, “Bilinear Form Linear Algebra Notes,” Scribd, 2026. \url{https://www.scribd.com/document/931572146/Bilinear-Form-Linear-Algebra-Notes}
 \bibitem{b6.1} D. Grinberg, “Bilinear forms,” University of Minnesota. [Online]. Available: \url{https://www.cip.ifi.lmu.de/~grinberg/algebra/bilf.pdf}
 \bibitem{b7} “Lax-Milgram Theorem,” WolframResearch, 2026. \url{https://mathworld.wolfram.com/Lax-MilgramTheorem.html}
@@ -1924,15 +1925,15 @@ Nevertheless, finite-element is a very strong mathematical tool that proved its 
 \bibitem{b11} IEEE, “The Advantages of the Finite Element Method - IEEE Innovation at Work,” May 2019. [Online]. Available: \url{https://innovationatwork.ieee.org/the-advantages-of-fem/}
 \bibitem{b12.1} G. Strang and G. Fix, An Analysis of the Finite Element Method. Wellesley-Cambridge Press, 2018
 \bibitem{b12.2} I. Babuška and J. Osborn, "Eigenvalue problems," in Handbook of Numerical Analysis, vol. II, Finite Element Methods (Part 1), P. G. Ciarlet and J. L. Lions, Eds. Amsterdam, Netherlands: North-Holland, 1991, pp. 641-787
-\bibitem{b12.3} G. Dusson and Y. Maday, “An overview of a posteriori error estimation and post-processing methods for nonlinear eigenvalue problems,” Journal of Computational Physics, vol. 491, p. 112352, July 2023, doi: 10.1016/j.jcp.2023.112352
-\bibitem{b12.4} I. Babuška and J. E. Osborn, “Finite element-Galerkin approximation of the eigenvalues and eigenvectors of selfadjoint problems,” Mathematics of Computation, vol. 52, no. 186, pp. 275-297, 1989, doi: 10.1090/s0025-5718-1989-0962210-8
+\bibitem{b12.3} G. Dusson and Y. Maday, “An overview of a posteriori error estimation and post-processing methods for nonlinear eigenvalue problems,” Journal of Computational Physics, vol. 491, p. 112352, July 2023, \url{https:doi.org/10.1016/j.jcp.2023.112352}
+\bibitem{b12.4} I. Babuška and J. E. Osborn, “Finite element-Galerkin approximation of the eigenvalues and eigenvectors of selfadjoint problems,” Mathematics of Computation, vol. 52, no. 186, pp. 275-297, 1989, \url{https://doi.org/10.1090/s0025-5718-1989-0962210-8}
 \bibitem{b12} GeeksforGeeks, “Triangulations Using Matplotlib,” GeeksforGeeks, Feb. 02, 2023. \url{https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/}
 \bibitem{b13} J. Burkardt, “Computational Geometry Lab: FEM BASIS FUNCTIONS FOR A TRIANGLE,” 2018. [Online]. Available: \url{https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf}
-\bibitem{b13.1} N. G. Gençer and I. O. Tanzer, “Forward problem solution of electromagnetic source imaging using a new BEM formulation with high-order elements,” Physics in Medicine and Biology, vol. 44, no. 9, pp. 2275-2287, Aug. 1999, doi: 10.1088/0031-9155/44/9/314
+\bibitem{b13.1} N. G. Gençer and I. O. Tanzer, “Forward problem solution of electromagnetic source imaging using a new BEM formulation with high-order elements,” Physics in Medicine and Biology, vol. 44, no. 9, pp. 2275-2287, Aug. 1999, \url{https://doi.org/10.1088/0031-9155/44/9/314}
 \bibitem{b14} M. Igel, “Finite elements: Basis functions,” Ludwig Maximilian University of Munich. [Online]. Available: \url{https://www.geophysik.uni-muenchen.de/~igel/Lectures/NMG/08_finite_elements_basisfunctions.pdf}
-\bibitem{b15} D. Xu, J. Stare, and A. L. Cooksy, “Solving the vibrational Schrödinger equation on an arbitrary multidimensional potential energy surface by the finite element method,” Computer Physics Communications, vol. 180, no. 11, pp. 2079-2094, June 2009, doi: 10.1016/j.cpc.2009.06.010
-\bibitem{b16} Hammer, Preston C., Marlowe, O. J., and Stroud, A. H. Numerical integration over simplexes and cones, Mathematical Tables and Other Aids to Computation 10(55), 130-137, 1956. [DOI: 10.2307/2002483]
-\bibitem{b17} D. A. Dunavant, “High degree efficient symmetrical Gaussian quadrature rules for the triangle,” International Journal for Numerical Methods in Engineering, vol. 21, no. 6, pp. 1129-1148, June 1985, doi: 10.1002/nme.1620210612
+\bibitem{b15} D. Xu, J. Stare, and A. L. Cooksy, “Solving the vibrational Schrödinger equation on an arbitrary multidimensional potential energy surface by the finite element method,” Computer Physics Communications, vol. 180, no. 11, pp. 2079-2094, June 2009, \url{https://doi.org/10.1016/j.cpc.2009.06.010}
+\bibitem{b16} Hammer, Preston C., Marlowe, O. J., and Stroud, A. H. Numerical integration over simplexes and cones, Mathematical Tables and Other Aids to Computation 10(55), 130-137, 1956. \url{https://doi.org/10.2307/2002483}
+\bibitem{b17} D. A. Dunavant, “High degree efficient symmetrical Gaussian quadrature rules for the triangle,” International Journal for Numerical Methods in Engineering, vol. 21, no. 6, pp. 1129-1148, June 1985, \url{https://doi.org/10.1002/nme.1620210612}
 \bibitem{b18} J. Burkardt, “triangle\_dunavant\_rule.cpp,” Triangle Dunavant Rule, [C++ source code]. [Online]. Available: \url{https://people.math.sc.edu/Burkardt/cpp_src/triangle_dunavant_rule/triangle_dunavant_rule.cpp}
 \bibitem{b19} “Assembly — FEM Tutorial 0.1.0 documentation,” Uni-erlangen.de, 2017. \url{https://ww8central.ww.uni-erlangen.de/courses/fem101/fem/assembly.html} 
 \bibitem{b20} “Chapter 25,” iFEM: Introduction to Finite Element Methods. [Online]. Available: \url{https://quickfem.com/wp-content/uploads/IFEM.Ch25.pdf}
@@ -1941,9 +1942,9 @@ Nevertheless, finite-element is a very strong mathematical tool that proved its 
 \bibitem{b22} “7. Dirichlet boundary conditions — Finite element course 2024.0 documentation,” 2024. [Online]. Available: \url{https://finite-element.github.io/7_boundary_conditions.html}
 \bibitem{b22.1} P. G. Ciarlet, The Finite Element Method for Elliptic Problems. SIAM, 2002
 \bibitem{b23} “scipy.linalg.eigh — SciPy v1.10.1 Manual.”. [Online]. Available: \url{https://docs.scipy.org/doc/scipy/reference/generated/scipy.linalg.eigh.html}
-\bibitem{b24} R. Courant and D. Hilbert, Methods of Mathematical Physics, Volume I
+\bibitem{b24} R. Courant, Methods of mathematical physics, vol. 1. New York, Interscience Publishers, 1953. Accessed: Oct. 31, 2026. [Online]. Available: \url{https://archive.org/details/methodsofmathema0001cour}
 \bibitem{b25} “Degenerate eigenvalues,” Bohrium SciencePedia. [Online]. Available: \url{https://www.bohrium.com/en/sciencepedia/feynman/keyword/degenerate_eigenvalues}
-\bibitem{b26} “Understanding Convergence Rates — Hermes Tutorial Guide,” Hpfem.org, 2026. \url{https://hpfem.org/wp-content/uploads/doc-web/doc-tutorial/src/hermes2d/D-adaptivity/intro-2.html?utm_source=chatgpt.com}
+\bibitem{b26} “Understanding Convergence Rates — Hermes Tutorial Guide,” Hpfem.org, 2026. \url{https://hpfem.org/wp-content/uploads/doc-web/doc-tutorial/src/hermes2d/D-adaptivity/intro-2.html}
 \bibitem{b27} “2.4. Particle in an box with infinite-potential walls — Introduction to Quantum Physics,” York.ac.uk, 2019. \url{https://www-users.york.ac.uk/~pjd113/notebooks/2_4_infinite_square_well.html}
 \bibitem{b28} “7.6: The Quantum Harmonic Oscillator,” Physics LibreTexts, Nov. 01, 2016. \url{https://phys.libretexts.org/Bookshelves/University_Physics/University_Physics_(OpenStax)/University_Physics_III_-_Optics_and_Modern_Physics_(OpenStax)/07%3A_Quantum_Mechanics/7.06%3A_The_Quantum_Harmonic_Oscillator}
 \bibitem{b29} S. Fraser, “Schrödinger equation for the nuclear potential,” NUCS 342: Introduction to Nuclear Science, Simon Fraser University, Jan. 24, 2011. [Online]. Available: \url{https://web-docs.gsi.de/~wolle/TELEKOLLEG/KERN/LECTURE/Fraser/L6.pdf}
