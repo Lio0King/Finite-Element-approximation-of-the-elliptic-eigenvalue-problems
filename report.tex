@@ -396,7 +396,7 @@ We know from \cite{b10} that a function $v$ in $V_h$ is uniquely determined by i
 The Fig. \ref{fig:1D hat function} illustrates a typical basis function $\phi_j$ which because of their shape sometimes are called hat functions.
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\columnwidth]{hat function.png}
+    \includegraphics[width=\columnwidth]{P1 hat functions 1D.png}
     \caption{Hat function \cite{b10}}
     \label{fig:1D hat function}
 \end{figure}
@@ -447,7 +447,7 @@ So, instead of the polynomial space given in \ref{eq:P1 space}, we are going to 
 In Fig. \ref{fig:quadratic hat functions} we can see how the basis functions will behave.
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\columnwidth]{quadratic.png}
+    \includegraphics[width=\columnwidth]{P2 basis functions 1D.png}
     \caption{P2 Hat function \cite{b14}}
     \label{fig:quadratic hat functions}
 \end{figure}
@@ -466,7 +466,7 @@ That is why we need to come up with the "common factor" that we can relate to ev
 By definition reference triangle is a triangle with vertices in: (1, 0), (0, 1) and (0, 0) \cite{b13}. In order to avoid confusion with the coordinates, we will say every triangle in $(x, y)$ is mapped to the reference coordinate plane $(\xi, \eta)$, this mapping is illustrated in Fig. \ref{fig:reference triangle mapping}.
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\columnwidth]{reference triangle.png}
+    \includegraphics[width=\columnwidth]{reference_triangle.png}
     \caption{Reference triangle mapping for the (a) linear, (b) quadratic and (c) cubic elements \cite{b13.1}}
     \label{fig:reference triangle mapping}
 \end{figure}
@@ -538,7 +538,7 @@ In Fig. \ref{fig:p1 approximation} we can see how the linear approximation looks
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\columnwidth]{P1 approximation.png}
+    \includegraphics[width=\columnwidth]{P1_approximation_2D.png}
     \caption{Linear approximation \cite{b14}}
     \label{fig:p1 approximation}
 \end{figure}
@@ -597,8 +597,7 @@ This allow us to obtain basis functions in \ref{eq:basis functions P2} and illus
 As it is seen from the \ref{eq:basis functions P2}, this approximation is more complex but allows us to get more detailed picture about our unknown function. The shape of these basis functions is presented in Fig. \ref{fig:p2 approximation}.
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\columnwidth]{P2.1 approximation.png}
-    \includegraphics[width=\columnwidth]{P2.2 approximation.png}
+    \includegraphics[width=\columnwidth]{P2 basis functions all.png}
     \caption{Quadratic approximations \cite{b14}}
     \label{fig:p2 approximation}
 \end{figure}
@@ -1589,7 +1588,7 @@ We know that the second derivative can be approximated with finite differences \
     \label{eq:finite diff}
 \end{equation}
 
-After we solve each 1D problem individually using \texttt{scipy.linalg.eigh_tridiagonal}. We get eigenvalues and eigenfunctions. With eigenvalues in order to go from 1D to 2D we can simply add them together, which mathematically looks like this:
+After we solve each 1D problem individually using \texttt{scipy.linalg.eigh\_tridiagonal}. We get eigenvalues and eigenfunctions. With eigenvalues in order to go from 1D to 2D we can simply add them together, which mathematically looks like this:
 \begin{equation}
 \begin{aligned}
     &H_x\phi_{n_x} = \lambda_m^{(x)}\phi_{n_x}, \quad H_y\phi_{n_y} = \lambda_n^{(y)}\phi_{n_y} \\
@@ -1605,7 +1604,7 @@ However, there is one issue, the finite difference method uses more grid points 
 \begin{equation}
     \psi_{m, n}^{ref}(x_i, y_i) = \phi_m^{ref}(x_i)\phi_n^{ref}(y_i)
 \end{equation}
-Another important note is normalisation. The \texttt{eigh_tridiagonal} returns the Euclidean norm, while we need the $L^2$ norm \ref{eq:norm L2}, so normalisation has the form:
+Another important note is normalisation. The \texttt{eigh\_tridiagonal} returns the Euclidean norm, while we need the $L^2$ norm \ref{eq:norm L2}, so normalisation has the form:
 \begin{equation}
     u_{\mathrm{ref}} = \frac{u_{ref}}{\sqrt{u_{ref}^TMu_ref}}
 \end{equation}
