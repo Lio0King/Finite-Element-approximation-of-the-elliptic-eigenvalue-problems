@@ -206,24 +206,23 @@ But why did we need all these spaces? The answer is that for the FEM if our func
 \subsection{Existence of the solution}
 Two of the most important questions in mathematics are the questions of existence and uniqueness. So what we want to ask while solving the PDE using FEM is why do we have a solution and is this solution unique. The answer for these questions is the Lax-Milgram theorem.
 
-The Lax-Milgram theorem provides the uniqueness and existence of the solution of the variational problem. Formally, let $V$ be a Hilbert space, $a: V \times V \rightarrow \mathbb{R}$ be continuous and coercive, and $L: V \rightarrow \mathbb{R}$ be a bounded linear functional. Then there exists a unique $u \in V$ such that \ref{eq:Milgram} is true.
+The Lax-Milgram theorem provides the uniqueness and existence of the solution of the variational problem. Formally, let $V$ be a Hilbert space, $B: V \times V \rightarrow \mathbb{R}$ be continuous and coercive, and $L: V \rightarrow \mathbb{R}$ be a bounded linear functional. Then there exists a unique $u \in V$ such that \ref{eq:Milgram} is true.
 \begin{equation}
     B(u, v) = L(v) \quad \forall v \in V
     \label{eq:Milgram}
 \end{equation}
 
-Where $\phi(x, x_f)$ is a bounded coercive bilinear form of a Hilbert space \cite{b7}.
-
 It is worth mentioning that Lax-Milgram theorem follows as a corollary to the Stampacchia theorems that states: any function $f \in H$ necessarily corresponds to a unique function $u \in H$ for which the inequality \ref{eq:Stampacchia inequality} is satisfied for all functions $v \in H$.
 \begin{equation}
-    \phi(u, v - u) \geq \langle f, v - u \rangle_H
+    B(u, v - u) \geq \langle f, v - u \rangle_H
     \label{eq:Stampacchia inequality}
 \end{equation}
-Where $\langle f, v - u \rangle_H$ is an inner product, which in Hilbert spaces defined by \ref{eq:inner product}.
+This holds for a closed convex set $K \subset H$, where $\langle f, v - u \rangle_H$ is an inner product, which in Hilbert spaces defined by \ref{eq:inner product}.
 \begin{equation}
     \langle u, v \rangle_{H^1}(\Omega) = \int_{\Omega}(uv + \nabla u \nabla v) \, dx
     \label{eq:inner product}
 \end{equation}
+Taking $K = H$ will give us Lax-Milgram.
 
 So using \ref{eq:bilinear Poisson} we will have that $B(u, v)$ is a bilinear form and $L(v)$ is a linear functional. 
 
@@ -650,7 +649,7 @@ Then with separation of variables we are getting \ref{eq:heat eq separation of v
     \label{eq:heat eq separation of var}
 \end{equation}
 
-Substituting back to \ref{eq:heat equation} and cancelling the common factor $\lambda = e^{-\lambda t}$ gives us \ref{eq:heat Laplace}.
+Substituting back to \ref{eq:heat equation} and cancelling the common factor $e^{-\lambda t}$ gives us \ref{eq:heat Laplace}.
 \begin{equation}
     -\Delta\phi = \lambda\phi
     \label{eq:heat Laplace}
@@ -732,12 +731,12 @@ Next sections will show the implementation part of this project.
 
 \section{Goals and Objectives}
 
-The idea behind this project is to research about solving 1D and 2D partial differential equations using Finite Element Method and implement 2D solutions in practice. Another goal is compare and analyse the convergence rates of P1 and P2 elements and compare them to the known data.
+The idea behind this project is to research about solving 2D partial differential equations using Finite Element Method and implement 2D solutions in practice. Another goal is compare and analyse the convergence rates of P1 and P2 elements and compare them to the known data.
 
 
 
 \section{Implementation}
-In order to complete this project, the Visual Studio Code was used to write and run the code in Python and Jupiter.
+In order to complete this project, the Visual Studio Code was used to write and run the code in Python and Jupyter.
 
 In order to simplify the work various libraries were used, like NumPy, Math and SciPy for different mathematical operations; Pandas for presenting results in good-looking tables; and Matplotlib and PyVista to visualise plots in 2D and 3D respectively.
 
@@ -809,7 +808,7 @@ Therefore, the determinant of $J$ is
     det(J) = 2|K|
 \end{equation}
 
-Now approximating the integral over $\vec{K}$ from \ref{eq:from physical to reference} by a quadrature formula we get \ref{eq:quadrature reference}.
+Now approximating the integral over $\hat{K}$ from \ref{eq:from physical to reference} by a quadrature formula we get \ref{eq:quadrature reference}.
 \begin{equation}
 \begin{aligned}
     \int_{\hat{K}}f(\xi, \eta) &|det(J(\xi, \eta))| \, d\xi d\eta \approx \\
@@ -842,9 +841,9 @@ Once we obtained the local matrices that represent certain physical properties o
 
 To do so, we need to follow the straightforward algorithm called assembly \cite{b19}. Each local element matrix is expressed with respect to the local basis functions associated with the nodes of that element. These local degrees of freedom correspond to specific global degrees of freedom in the mesh. During assembly, each local matrix is added to the corresponding entries of the global matrix \cite{b10}.
 
-More detailed, if an element $K$ has global node indices $N_1$, $N_2$ and $N_3$, its local matrix $A_K$ contributes like it is shown in \ref{eq:local contribution}.
+More detailed, if an element $K$ has global node indices $N_1, \ldots , N_{n_K}$ ($n_K = 3$ for P1, 6 for P2), its local matrix $A_K$ contributes like it is shown in \ref{eq:local contribution}.
 \begin{equation}
-    A_{N_i, N_j} += (A_K)_{ij} \quad i, j = 1, \ldots, 6
+    A_{N_i, N_j} += (A_K)_{ij} \quad i, j = 1, \ldots, n_K
     \label{eq:local contribution}
 \end{equation}
 
@@ -1078,7 +1077,7 @@ In addition to this, it should be mentioned that all the vectors should be norma
 \end{aligned}
 \end{equation}
 
-Graphically, even on the relatively fine mesh (6 points per axis) our approximation with both P1 Fig. \ref{fig:numerical/exact P1} and P2 elements Fig. \ref{fig:numerical/exact P2} look very similar to the exact. 
+Graphically, even on the coarse mesh (6 points per axis) our approximation with both P1 Fig. \ref{fig:numerical/exact P1} and P2 elements Fig. \ref{fig:numerical/exact P2} look very similar to the exact. 
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\columnwidth]{numerical vs exact P1.png}
@@ -1326,7 +1325,7 @@ Before we proceed to the computed errors, firstly, we need to get the visual per
     \label{fig:degenerate numerical vs exact}
 \end{figure}
 
-As we can see on the relatively fine mesh (6 points per axis) we are getting quite accurate visual approximation.
+As we can see on the coarse mesh (6 points per axis) we are getting quite accurate visual approximation.
 
 But what about computed errors?
 
@@ -1372,7 +1371,7 @@ Similarly we obtained the errors for $H^1$-norm projection error for the P1 and 
 
 For the P1 element to find the squared $H^1$ error the small trick was used. For any nodal vector $w$ representing a piecewise-linear function, the discrete $H^1$ norm can be found using \ref{eq:discrete H1 norm}.
 \begin{equation}
-    \|w\|_{H^1} = w^T Mw + w^T Aw = w^T(M + A)w
+    \|w\|_{H^1}^2 = w^T Mw + w^T Aw = w^T(M + A)w
     \label{eq:discrete H1 norm}
 \end{equation}
 Where $M$ is a mass matrix and $A$ is a stiffness matrix or the discrete bilinear form $\int\nabla u\nabla v$. This approach allows us to avoid finding centroid and do complex computations with quadrature.
@@ -1522,7 +1521,7 @@ The comparison is presented in Table \ref{tab:Laplace vs Schrod}.
 
 As we can see all the eigenvalues shifted by the amount of the potential. But what about eigenfunctions? We will check the eigenfunctions on the coarsest mesh, simply because finer meshes will produce more dimensional vectors and it would be difficult to write them down to analyse and moreover all we need is just to see the shift or trend in changes.
 
-The two matrices in \ref{eq:vectors} show the column spaces of first three eigenfunctions.
+The two vectors in \ref{eq:vectors} are the first eigenfunction for the Laplace problem (left) and the Schr\"{o}dinger problem with $V = 5$ (right).
 \begin{equation}
     \begin{bmatrix}
         -2.03449568 \\
@@ -1561,7 +1560,7 @@ The main difference between infinite square well and quantum harmonic oscillator
     \label{eq:harmonic oscill}
 \end{equation}
 
-In this particullar case $E$ is the eigenvalue $\lambda$ of the scaled problem.
+In this particular case $E$ is the eigenvalue $\lambda$ of the scaled problem.
 
 Hence, because our problem is not on the infinite line, so our potential energy will be defined as $V(x, y) = \frac{1}{2}m\omega^2\Big((x - x_0)^2 + (y - y_0)^2\Big)$, where $\omega$ is angular frequency, which is a "tuning" parameter of the scaled problem and $m$ is the mass of the particle \cite{b28}.
 
@@ -1696,12 +1695,12 @@ As it was expected, both eigenvalues and eigenvectors errors converged at the th
 
 
 \subsection{Coulomb potential and radial formulation}
-Coulomb potential is definied as: 
+Coulomb potential is defined as: 
 \begin{equation}
     V(r) = -\frac{Z}{r}, \quad r = \sqrt{(x - x_0)^2 + (y - y_0)^2}
     \label{eq:coulomb potential}
 \end{equation}
-Where $Z$ is the atomic number, that is equal to amount of protons in the nucleus \cite{b29}. For the physical hydrogen atom, the softened Coulomb potential energy term is proportional to $-\frac{Ze^2}{4\pi\epsilon}$ where $e$ is the elementary charge and $\epsilon$ is vacuum permitivity \cite{b30}. In this project we use scaled mathematical model in which the relevant physical constants are absorbed into scaling, giving $V(r) = -\frac{Z}{r}$. In addition to this, since the domain is quite small and we want wavefunction to be strongly concentrated around the nucleus, we use a hydrogen-like ion with $Z = 10$ to obtain a stronger Coulomb potential while retaining a one-electron system. 
+Where $Z$ is the atomic number, that is equal to amount of protons in the nucleus \cite{b29}. For the physical hydrogen atom, the Coulomb potential energy term is proportional to $-\frac{Ze^2}{4\pi\epsilon_0}$ where $e$ is the elementary charge and $\epsilon_0$ is vacuum permittivity \cite{b30}. In this project we use scaled mathematical model in which the relevant physical constants are absorbed into scaling, giving $V(r) = -\frac{Z}{r}$. In addition to this, since the domain is quite small and we want wavefunction to be strongly concentrated around the nucleus, we use a hydrogen-like ion with $Z = 10$ to obtain a stronger Coulomb potential while retaining a one-electron system. 
 
 As \ref{eq:coulomb potential} depends only on the distance $r$ from the nucleus, the potential is radially symmetric. Hence, instead of solving problem on the squared domain $\Omega^2 = [0, 1]^2$ with $n$ points per axis, we will choose a polar-coordinate-based mesh as it is more natural for Coulomb potential since the geometry of the potential is represented in terms of radial and angular coordinates. For simplicity we will put the nucleus in the middle at $(x_0, y_0) = (0.5, 0.5)$ with 2 mesh parameters $N_r$ and $N_{\theta}$, denoting the numbers of radial and angular divisions, respectively, with $r \in [0, R]$ and $\theta \in [0, 2\pi)$. The idea of the mesh on the new domain can be visualised as in Fig. \ref{fig:disk mesh} where as we can see mesh consists of rings, where the space between the rings is subdivided into triangles. Also since we are analysing the nucleus we want more nodes in the middle, because the wavefunction varies rapidly near the nucleus and a finer mesh resolves the spatial behaviour more accurately, in addition the singularity of the original Coulomb potential at $r = 0$ is treated separately using the regularisation introduced below.
 \begin{figure}[htbp]
@@ -1719,7 +1718,7 @@ One of the main issues that arises from the first glance is the singularity when
     \label{eq:regularised coulomb}
 \end{equation}
 
-This ensures that we avoid the division by 0 because when $r = 0$ we will have $V(0) = -\frac{Z}{\epsilon}$, because denominator would be finite, while being close to 0. For $r \gg \epsilon$ the exponential term becomes negligible and $r_{reg} \approx r$, so the constrained potential approaches the original Coulomb potential. In this project the disk has radius $R = 0.5$ an is centred at $(0.5, 0.5)$ also the softening parameter $\epsilon = 0.01$.
+This ensures that we avoid the division by 0 because when $r = 0$ we will have $V(0) = -\frac{Z}{\epsilon}$, because denominator would be finite, while being close to 0. For $r \gg \epsilon$ the exponential term becomes negligible and $r_{reg} \approx r$, so the constrained potential approaches the original Coulomb potential. In this project the disk has radius $R = 0.5$ and is centred at $(0.5, 0.5)$ also the softening parameter $\epsilon = 0.01$.
 
 Another aspect that needed a change, comparing to the all previous computations, is the values that we are going to use as reference to compare obtained FEM numbers. 
 
@@ -1734,7 +1733,7 @@ The resolution was to abandon the substitution and solve directly for $R(r)$. De
 \begin{equation}
     \int_0^R R'\varphi'\, r\,dr + \int_0^R V(r)R\varphi\, r\,dr = E \int_0^R R\varphi\, r\,dr
 \end{equation}
-with $R(r)$ free (rather than constrained to zero) at $r = 0$. A P1 discretisation of this direct formulation converged rapidly and matched the P2 FEM solution to within $0.02\%$, confirming that the FEM implementation was correct throughout and the earlier discrepancy originated entirely in the reference solver. Because of its simplicity and low computational cost, this direct formulation was solved with $N = 5000$ P1 elements, verified sufficiently fine as a reference in \ref{sec: P1 vs P2}. A check with $N = 40000$ changed the ground state eigenfunction by about $4 \times 10^{-8} (L^2)$ and $1 \times 10{-5} (H^1)$.
+with $R(r)$ free (rather than constrained to zero) at $r = 0$. A P1 discretisation of this direct formulation converged rapidly and matched the P2 FEM solution to within $0.02\%$, confirming that the FEM implementation was correct throughout and the earlier discrepancy originated entirely in the reference solver. Because of its simplicity and low computational cost, this direct formulation was solved with $N = 5000$ P1 elements. A check with $N = 40000$ changed the ground state eigenfunction by about $4 \times 10^{-8} (L^2)$ and $1 \times 10^{-5} (H^1)$.
 
 
 \subsubsection{Results: eigenvalues}
@@ -1773,7 +1772,7 @@ Eigenvalues were obtained and compared with reference ones (important note, refe
     \end{tabular}
 \end{table}
 
-As we can notice the errors are not as small as they were in the previous problems, but before making any conclusions it is a good practice to check the relative error from \ref{eq:relative error}. For the first eigenvalue at the finest mesh $e_{rel} = |\frac{0.000746}{-78.922759}| \approx 9.45 \times 10^{-6}$. And for the degenerate pair $e_{rel} \approx 0.0011$. The first eigenvalue relative error same as the degenerate pair has much higher error comparing to the previous P2 element Laplace eigenproblem (about 46 times larger).
+As we can notice the errors are not as small as they were in the previous problems, but before making any conclusions it is a good practice to check the relative error from \ref{eq:relative error}. For the first eigenvalue at the finest mesh $e_{rel} = |\frac{0.000746}{-78.922759}| \approx 9.45 \times 10^{-6}$. And for the degenerate pair $e_{rel} \approx 0.0011$. In other words, ground state is about 46 times larger than the Laplace P2 ground state ($9.45 \times 10^{-6} / 2.03 \times 10^{-7}$) and the degenerate pair is about 1200 times the Laplace P2 pair ($1.15 \times 10^{-3} / 9.5 \times 10^{-7}$).
  
 From this we can conclude that eigenvalues agree with independent references to $9.5 \times 10^{-6}$ (ground state) and $1.1 \times 10^{-3}$ (pair) that shows convergence and provides numerical evidence that the implementation is behaving as expected.
 
@@ -1881,9 +1880,9 @@ Notwithstanding good results in error analysis, the convergence analysis did not
 
 The first noticeable feature comparing to the all previous results is that with the mesh refinement the convergence rates are decaying and approaching much lower value than was expected. 
 
-The likely contributor for this is that theoretical P2 convergence rates, namely $O(h^4)$ for eigenvalues, $O(h^3)$ for the $L^2$ eigenfunction error and $O(h^2)$ for the $H^1$ eigenfunction error, assume a shape-regular family of meshes and solves on a polygon, not a disk. In particular, the aspect ratios of the elements must retain bounded independently of the mesh size $h$. This should explain most of finest-mesh errors.
+The likely contributor for this is that theoretical P2 convergence rates, namely $O(h^4)$ for eigenvalues, $O(h^3)$ for the $L^2$ eigenfunction error and $O(h^2)$ for the $H^1$ eigenfunction error, assume a shape-regular family of meshes and solves on a polygonal domain, not a disk. In particular, the aspect ratios of the elements must remain bounded independently of the mesh size $h$. This should explain most of finest-mesh errors.
 
-That is where the main difference lies, the polar mesh used for the Coulomb problem does not the condition stated above. At the centre of the disk, a single node is connected to all angular divisions, producing a fan of triangles. As the angular resolution is increased, the number of triangles meeting at this central node also increases. For this geometry, the worst-case aspect ratio of the fan grows approximately as $\frac{N_{\theta}}{2\pi}$, which was also confirmed against the measured mesh data up to rounding. Therefore, as $N_\theta$ increases during mesh refinement, the aspect ratio of the central elements becomes unbounded. This violates the shape-regularity assumption regardless of the radial grading or the chosen target aspect ratio.
+That is where the main difference lies, the polar mesh used for the Coulomb problem does not satisfy the condition stated above. At the centre of the disk, a single node is connected to all angular divisions, producing a fan of triangles. As the angular resolution is increased, the number of triangles meeting at this central node also increases. For this geometry, the worst-case aspect ratio of the fan grows approximately as $\frac{N_{\theta}}{2\pi}$, which was also confirmed against the measured mesh data up to rounding. Therefore, as $N_\theta$ increases during mesh refinement, the aspect ratio of the central elements becomes unbounded. This violates the shape-regularity assumption regardless of the radial grading or the chosen target aspect ratio.
 
 Another reason for the decaying convergence rates is the interpretation of the global mesh size $h$. For a general triangulation, $h = \max_{K \in \Omega_h}diam(K)$. In previous examples, we used quasi-uniform meshes, for which the element sizes were comparable throughout the domain, so its global value provided a good representation of the overall mesh resolution. In the polar mesh for the Coulomb problem, however, the elements near the centre are much smaller than those near the boundary, because the geometric radial distribution was used to cluster the nodes near the nucleus. Consequently, the global mesh value of $h$ is determined by the largest elements and does not fully represent the much finer resolution near the nucleus.
 
@@ -1899,7 +1898,7 @@ To conclude, all discussed problems have their own important physical meaning, h
 \end{equation}
 with potential changing the bilinear form, that is why algorithms to their solutions are quite identical. 
 
-Of course in this project all the problems we simplified with scaled versions and did not use the actual metrics, but they showed the general solution steps, that can be implemented as well for the SI units formulations and will produce more physically accurate numbers.
+Of course in this project all the problems were simplified with scaled versions and did not use the actual metrics, but they showed the general solution steps, that can be implemented as well for the SI units formulations and will produce more physically accurate numbers.
 
 For partial differential equations finite-element method showed its strengths and applicability. It has many advantages, such as simple implementation, variety of approximations (P1, P2 etc elements), systematic convergence under appropriate mesh conditions and ability to build high quality visualisations and approximations. There are also some disadvantages, for example comparing to the finite-differences it is more complex to study, higher order convergence can be achieved with higher order elements that require more degrees of freedom which leads to increase in computational and implementation complexity.
 
@@ -1924,7 +1923,7 @@ Nevertheless, finite-element is a very strong mathematical tool that proved its 
 \bibitem{b11} IEEE, “The Advantages of the Finite Element Method - IEEE Innovation at Work,” May 2019. [Online]. Available: \url{https://innovationatwork.ieee.org/the-advantages-of-fem/}
 \bibitem{b12.1} G. Strang and G. Fix, An Analysis of the Finite Element Method. Wellesley-Cambridge Press, 2018
 \bibitem{b12.2} I. Babuška and J. Osborn, "Eigenvalue problems," in Handbook of Numerical Analysis, vol. II, Finite Element Methods (Part 1), P. G. Ciarlet and J. L. Lions, Eds. Amsterdam, Netherlands: North-Holland, 1991, pp. 641-787
-\bibitem{b12.3} G. Dusson and Y. Maday, “An overview of a posteriori error estimation and post-processing methods for nonlinear eigenvalue problems,” Journal of Computational Physics, vol. 491, p. 112352, July 2023, \url{https:doi.org/10.1016/j.jcp.2023.112352}
+\bibitem{b12.3} G. Dusson and Y. Maday, “An overview of a posteriori error estimation and post-processing methods for nonlinear eigenvalue problems,” Journal of Computational Physics, vol. 491, p. 112352, July 2023, \url{https://doi.org/10.1016/j.jcp.2023.112352}
 \bibitem{b12.4} I. Babuška and J. E. Osborn, “Finite element-Galerkin approximation of the eigenvalues and eigenvectors of selfadjoint problems,” Mathematics of Computation, vol. 52, no. 186, pp. 275-297, 1989, \url{https://doi.org/10.1090/s0025-5718-1989-0962210-8}
 \bibitem{b12} GeeksforGeeks, “Triangulations Using Matplotlib,” GeeksforGeeks, Feb. 02, 2023. \url{https://www.geeksforgeeks.org/python/triangulations-using-matplotlib/}
 \bibitem{b13} J. Burkardt, “Computational Geometry Lab: FEM BASIS FUNCTIONS FOR A TRIANGLE,” 2018. [Online]. Available: \url{https://people.math.sc.edu/Burkardt/classes/cg_2007/cg_lab_fem_basis_triangle.pdf}
